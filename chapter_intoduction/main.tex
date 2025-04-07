@@ -1,0 +1,46 @@
+\chapter{Introduction} \label{sec: introduction}
+\setcounter{page}{1}
+\renewcommand{\thepage}{\arabic{page}} % arabic numerals for page counter
+\input{intro/introduction.tex}
+
+\section{This is the First Section}
+Contents...
+
+\begin{figure}[!hbp]
+    \centering
+    \includegraphics[scale=0.4]{figures/drawing.pdf}
+    \caption{Figure caption.}
+    \label{fig: figure_name}
+\end{figure}
+
+\begin{algorithm}[!hbt]
+    \caption{Algorithm caption.}
+    \label{alg: alg_name}
+    \begin{algorithmic}
+        \State Pseudocode line 1
+        \State Pseudocode line 2
+    \end{algorithmic}
+\end{algorithm}
+
+\begin{restatable}{thm}{thm_name} \label{thm: thm_name}
+    Theorem statement.
+\end{restatable}
+\begin{proof}
+    Add the proof here.
+\end{proof}
+
+\begin{table}[!hbt]
+    \centering
+    \begin{tabular}{c|c|c}
+        \textbf{Col 1} & \textbf{Col 2} & \textbf{Col 3} \\
+        \hline \hline
+        text           & text           & text           \\
+        \hline
+        text           & text           & text           \\
+    \end{tabular}
+    \caption{Table caption.}
+    \label{table: caption}
+\end{table}
+
+\section{This is the Second Section}
+Contents...

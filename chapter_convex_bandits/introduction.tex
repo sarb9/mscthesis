@@ -1,0 +1,119 @@
+\section{Introduction}
+Thompson sampling (\ts{}) is a simple and often practical algorithm for interactive decision-making with a long history \citep{Tho33,RVK17}.
+Our interest is in its application to (Bayesian) bandit convex optimisation \citep{lat24book}.
+Let $K$ be a convex body in $\R^d$ and $\sF$ be a set of convex functions from $K$ to $[0,1]$.
+We assume there is a known (prior) probability measure $\xi$ on $\sF$. The interaction between the learner and environment
+lasts for $n$ rounds. At the beginning the environment secretly samples $f$ from the prior $\xi$. Subsequently the learner and
+environment interact sequentially. In round $t$ the learner plays an action $X_t \in K$ and observes
+$Y_t \in \{0, 1\}$ for which $\E[Y_t|X_1,Y_1,\ldots,X_t,f] = f(X_t)$.
+The assumption that the noise is Bernoulli is for convenience only. Our analysis would be unchanged with any bounded noise model and would continue to hold
+for subgaussian noise with minor modifications.
+A learner $\sA$ is a (possibly random) mapping from sequences of action/loss pairs to actions and its Bayesian regret with respect to prior $\xi$ is
+\begin{align*}
+    \BReg_n(\sA, \xi) = \E\left[\sup_{x \in K} \sum_{t=1}^n \left(f(X_t) - f(x)\right)\right] \,.
+\end{align*}
+Note that both $f$ and the iterates $(X_t)$ are random elements. Moreover, in the Bayesian setting the learner $\sA$ is allowed to depend on the prior $\xi$.
+The main quantity of interest is
+\begin{align}
+    \sup_{\xi \in \sP(\sF)} \BReg_n(\ts, \xi)\,,
+    \label{eq:reg}
+\end{align}
+where $\sP(\sF)$ is the space of probability measures on $\sF$ (with a suitable $\sigma$-algebra) and $\ts$ is Thompson sampling (\cref{alg:ts})
+with prior $\xi$ (the dependence on the prior is always omitted from the notation).
+The quantity in \cref{eq:reg} depends on the function class $\sF$. Our analysis explores this dependence for various natural classes of convex functions.
+\ts{} (\cref{alg:ts}) is theoretically near-trivial. In every round it samples $f_t$ from the posterior and plays $X_t$ as the minimizer of $f_t$.
+
+\paragraph{Contributions}
+Our main contribution is showing the following:
+\begin{itemize}
+    \item When $d = 1$, $\BReg_n(\ts, \xi) = \tilde O(\sqrt{n})$ for all priors (\cref{thm:ts-1d}).
+
+    \item A convex function $f$ is called a monotone ridge function if there exists a convex monotone function $\ell : \R \to \R$ and $\theta \in \R^d$ such that
+          $f(x) = \ell(\ip{x, \theta})$.
+          Theorem~\ref{thm:ts-ridge} shows when $\xi$ is supported on monotone ridge functions, then $\BReg_n(\ts, \xi) = \tilde O(d^{2.5} \sqrt{n})$.
+
+    \item In general, the Bayesian regret of \ts{} can be exponential in the dimension (\cref{thm:ts-lower}).
+
+    \item The classical information-theoretic machinery used by \cite{BE18} an \cite{Lat20-cvx} cannot improve
+          the regret for bandit convex optimisation beyond the best known upper bound of $\tilde O(d^{1.5} \sqrt{n})$.
+\end{itemize}
+Although the regret bounds are known already in the frequentist setting for different algorithms, there is still value in studying Bayesian algorithms
+and especially \ts{}.
+Most notably, none of the frequentist algorithms can make use of prior information about the loss functions and adapting them to exploit such information
+is often painstaking and ad-hoc.
+\ts{}, on the other hand, automatically exploits prior information.
+Our bounds for ridge functions can be viewed as a Bayesian regret bound for a kind of generalised linear bandit where
+the link function is unknown and assumed to be convex and monotone
+increasing. This choice is a natural fit for a variety of problems such as resource allocation, which we discuss in (a little) more detail in the discussion.
+
+Our lower bounds show that \ts{} does not behave well in the general bandit convex optimisation unless possibly the dimension is quite small.
+Perhaps more importantly, we show that the classical information-theoretic machinery used by \cite{BE18} and \cite{Lat20-cvx} cannot be used to improve the current
+best dimension dependence of the regret for bandit convex optimisation. Combining this with the duality between exploration-by-optimisation and information-directed sampling
+shows that exploration-by-optimisation (with negentropy potential) also cannot naively improve on the best known $\tilde O(d^{1.5} \sqrt{n})$ upper bound \citep{ZL19,LG23}.
+We note that this does not imply a lower bound for bandit convex optimisation.
+The construction in the lower bound is likely amenable to methods for learning a direction based on the power method \citep{lattimore2021bandit,huang2021optimal}.
+The point is that the information ratio bound characterises the signal-to-noise ratio for the prior, but does not prove the signal-to-noise ratio does not increase
+as the learner gains information.
+
+\paragraph{Related work}
+Bandit convex optimisation in the regret setting was first studied by \cite{FK05} and \cite{Kle04}. Since then the field has grown considerably as summarised
+in the recent monograph by \cite{lat24book}.
+Our focus is on the Bayesian version of the problem, which has seen only limited attention. \cite{BDKP15} consider the adversarial version of the Bayesian
+regret and show that a (heavy) modification of \ts{} enjoys a Bayesian regret of $\tilde O(\sqrt{n})$ when $d = 1$.
+Interestingly, they argue that \ts{} without modification is not amenable to analysis via the information-theoretic machinery,
+but this argument only holds in the adversarial setting as our analysis shows.
+\cite{BE18} and \cite{Lat20-cvx} generalised the information-theoretic machinery used by \cite{BDKP15} to higher dimensions, also in the adversarial setting.
+These works focus on proving bounds for information-directed sampling (\IDS{}), which is a conceptually simple but computationally more complicated algorithm
+introduced by \cite{RV14}.
+Nevertheless, we borrow certain techniques from these papers.
+Convex ridge functions have been studied before by
+\cite{lattimore2021minimax}, who showed that \IDS{} has a Bayesian regret in the stochastic setting of $\tilde O(d \sqrt{n})$,
+which matches the lower bound provided by linear bandits
+\citep{DHK08}. Regrettably, however, this algorithm is not practically implementable, even under the assumption that you can sample efficiently from
+the posterior.
+\cite{SNNJ21} also study a variation on the problem where the losses have the form $f(g(x))$ with $g : \R^d \to \R$ a \textit{known} function
+and $f : \R \to \R$ an unknown convex function.
+When $g$ is linear, then $f \circ g$ is a convex ridge function. The assumption that $g$ is known dramatically changes the setting, however.
+The best known bound for an efficient algorithm in the monotone convex ridge function setting
+is $\tilde O(d^{1.5} \sqrt{n})$, which also holds for general convex functions, even in the frequentist setting \citep{LFMV24}.
+Convex ridge functions can also be viewed as a special case of the generalised linear model, which has been studied extensively
+as a reward model for stochastic bandits \citep[and many more]{FiOlGaSze10}.
+\ts{} and other randomised algorithms have been studied with generalised linear models in Bayesian and frequentist settings \citep{AL17,dong2019performance,kveton2020randomized}.
+None of these papers assume convexity (concavity for rewards) and consequentially suffer a regret that depends on other properties of the link function
+that can be arbitrarily large. Moreover, in generalised linear bandits it is standard to assume the link function is known.
+
+
+\paragraph{Notation}
+Let $\norm{\cdot}$ be the standard euclidean norm on $\R^d$.
+For natural number $k$ let $[k] = \{1,\ldots,k\}$.
+Define $\norm{x}_\Sigma = \sqrt{x^\top \Sigma x}$ for positive definite $\Sigma$.
+Given a function $f : K \to \R$, let $\norm{f}_\infty = \sup_{x \in K} f(x)$.
+The centered euclidean ball of radius $r > 0$ is $\ball_r = \{x \in \R^d : \norm{x} \leq r\}$ and
+the sphere is $\sphere_r = \{x \in \R^d : \norm{x} = r\}$. We also let $\ball_r(x) = \{y \in \R^d : \norm{x - y} \leq r\}$.
+We let $H(x, \eta) = \{y : \ip{y, \eta} \geq \ip{x, \eta}\}$, which is a half-space with inward-facing normal $\eta$.
+Given a finite set $\cC$ let $\pair(\cC) = \{(x, y) \in \cC : x \neq y\}$ be the set of all distinct ordered pairs and abbreviate $\pair(k) = \pair([k])$.
+The convex hull of a subset $A$ of a linear space is $\conv(A)$.
+The space of probability measures on $K$ with respect to the Borel $\sigma$-algebra is $\sP(K)$.
+Similarly, $\sP(\sF)$ is a space of probability measures on $\sF$ with some unspecified $\sigma$-algebra ensuring that $f \mapsto f(x)$
+is measurable for all $x \in K$.
+Given a convex function $f : K \to \R$ we define $\lip_K(f) = \sup_{x \neq y \in K} (f(x) - f(y)) / \norm{x - y}$
+and $f_\star = \inf_{x \in K} f(x)$ and $x_f = \argmin_{x \in K} f(x)$ where ties are broken in an arbitrary measurable fashion.
+Such a mapping exists and $f \mapsto f_\star$ is also measurable as we explain in Appendix~\ref{app:measure}.
+$\bbP_t = \bbP(\cdot|X_1,Y_1,\ldots,X_t,Y_t)$ and $\E_t$ be the expectation operator with respect to $\bbP_t$.
+The following assumption on $K$ is considered global throughout:
+
+\begin{assumption}
+    $K$ is a convex body (compact, convex with non-empty interior) and $\zeros \in K$.
+\end{assumption}
+
+\paragraph{Spaces of convex functions}
+A function $f : K \to \R$ is called a convex ridge function if there exists a convex $\ell : \R \to \R$ and $\theta \in \R^d$ such that
+$f(x) = \ell(\ip{x, \theta})$. Moreover, $f$ is called a monotone convex ridge function if it is a convex ridge function and $\ell$ is
+monotone increasing.
+We are interested in the following classes of convex functions:
+\texttt{(a)} $\sF_{\pb}$ is the space of all bounded convex functions $f : K \to [0,1]$.
+\texttt{(b)} $\sF_{\pl}$ is the space of convex functions $f : K \to \R$ with $\lip(f) \leq 1$.
+\texttt{(c)} $\sF_{\pr}$ is the space of all convex ridge functions.
+\texttt{(d)} $\sF_{\pr\pm}$ is the space of all monotone convex ridge functions.
+Intersections are represented as you might expect: $\sF_{\pb\pl} = \sF_{\pb} \cap \sF_{\pl}$ and similarly for other combinations.
+The set $\sF$ refers to a class of convex functions, which will always be either $\sF_{\pb\pl}$ or $\sF_{\pb\pl\pr\pm}$.
