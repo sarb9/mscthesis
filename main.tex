@@ -1,0 +1,2900 @@
+\documentclass[letter, 12pt]{report}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    packages    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[utf8]{inputenc}
+\usepackage[USenglish]{babel}
+\usepackage{colorprofiles}
+\usepackage[a-3b,mathxmp]{pdfx}[2018/12/22]
+\usepackage{fullpage}
+\usepackage{titling}
+\usepackage{nicefrac}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{hyperref}
+\usepackage{bbm}
+\usepackage{lineno}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{makecell}
+\usepackage{lipsum}
+\usepackage{etoolbox} %% <- for \pretocmd and \apptocmd
+\usepackage[noend]{algpseudocode}
+\usepackage[normalem]{ulem}
+\usepackage{thmtools, thm-restate}
+\usepackage[nottoc]{tocbibind} % for adding list of figures to the table of contents
+% packages from colt
+\usepackage{comment}
+\usepackage{listings}
+\lstset{emph={try,catch,throw,def,or,to,for,then,end,for,if,args,else,return},emphstyle=\color{blue!100!black}\textbf}
+\lstset{mathescape=true,escapechar=\&,numbers=left,xleftmargin=3mm,linewidth=0.47\textwidth,framextopmargin=0pt,framexbottommargin=0pt,aboveskip=-1pt,belowskip=-1pt}
+\usepackage{mdframed}
+\mdfsetup{skipabove=0pt,skipbelow=0pt,backgroundcolor=black!3}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{3d}
+\setlength{\marginparwidth}{2cm}
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny,disable]{todonotes}
+\newcommand{\todoc}[2][]{\todo[size=\scriptsize,color=blue!20!white,#1]{Csb: #2}}
+\newcommand{\todoa}[2][]{\todo[size=\scriptsize,color=green!20!white,#1]{Alr: #2}}
+\definecolor{dkblue}{cmyk}{1,.54,.04,.19}
+\usepackage{enumitem}
+\usepackage{times}
+\pgfplotsset{compat=1.11}
+\usepackage{pgfplotstable}
+\usepackage{multicol}
+\usepackage{colortbl}
+\usepackage{floatrow}
+\usepackage{setspace}
+\usepackage{mathtools}
+\usepackage{mathrsfs}
+\usepackage{soul}
+\usepackage{wrapfig}
+\usepackage{dsfont}
+\usepackage[plain]{algorithm}
+\usepackage{bm}
+\usepackage[bf]{caption}
+\usepackage{graphicx}
+\usepackage[capitalize]{cleveref}
+\usepackage{natbib}
+\hypersetup{
+    pdfstartview=,
+    colorlinks,
+    linkcolor={red!33!black},
+    citecolor={blue!33!black},
+    urlcolor={blue!33!black}
+}
+\setlength{\droptitle}{-6em}   % This is your set screw, for shifting up the title
+\setlength{\parskip}{0.5em} % paragraph spacing
+\usepackage{xspace}
+\usepackage{placeins}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    commands    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\baselinestretch}{1.1} % line spacing
+\newcommand{\epsF}{{\epsilon_{\text{\tiny \textsc{f}}}}}
+\newcommand{\epsR}{{\epsilon_R}}
+\newcommand{\epsO}{{\epsilon_O}}
+\newcommand{\opt}{\operatorname{\textsc{optr}}}
+\newcommand{\opte}{\operatorname{\textsc{opt}}}
+\newcommand{\hopt}{\operatorname{\widetilde{\textsc{optr}}}}
+\newcommand{\pr}{\text{\tiny\texttt{r}}}
+\newcommand{\pb}{\text{\tiny\texttt{b}}}
+\newcommand{\pl}{\text{\tiny\texttt{l}}}
+\renewcommand{\pm}{\text{\tiny\texttt{m}}}
+\newcommand{\ceil}[1]{\left\lceil #1 \right\rceil}
+\newcommand{\floor}[1]{\left\lfloor #1 \right\rfloor}
+\newcommand{\pair}{\operatorname{\textsc{pair}}}
+\newcommand{\spt}{\operatorname{spt}}
+\newcommand{\R}{\mathbb R}
+\newcommand{\esssup}{\operatorname{ess\,sup}}
+\newcommand{\essinf}{\operatorname{ess\,inf}}
+\newcommand{\argmin}{\operatornamewithlimits{arg\,min}}
+\newcommand{\argmax}{\operatornamewithlimits{arg\,max}}
+\newcommand{\explan}[1]{\stackrel{\text{\tiny \texttt{#1}}}}
+\newcommand{\ip}[1]{\left \langle #1 \right \rangle}
+\newcommand{\bip}[1]{\left\langle #1 \right\rangle}
+\newcommand{\sip}[1]{\langle #1 \rangle}
+\newcommand{\Reg}{\textup{\textrm{Reg}}}
+\newcommand{\esup}{\operatorname{ess\,sup}}
+\newcommand{\uReg}{\overline{\textrm{Reg}}}
+\newcommand{\BReg}{\textrm{BReg}}
+\newcommand{\Breg}{\operatorname{D}}
+\newcommand{\Fmax}{\textup{\textrm{F}}_{\max}}
+\newcommand{\Hmax}{\textrm{H}_{\max}}
+\newcommand{\Bmax}{\textrm{B}_{\max}}
+\newcommand{\Rmax}{\textrm{R}_{\max}}
+\newcommand{\Rmin}{\textrm{R}_{\min}}
+\newcommand{\Kmax}{\textrm{K}_{\max}}
+\newcommand{\sphere}{\mathbb{S}}
+\newcommand{\logs}{L}
+\newcommand{\KL}{\operatorname{KL}}
+\newcommand{\ball}{\mathbb{B}}
+\newcommand{\paren}[1]{\left( #1 \right)}
+\newcommand{\abs}[1]{\left| #1 \right|}
+\newcommand{\brak}[1]{\left[ #1 \right]}
+\newcommand{\sett}[1]{\left\{ #1 \right\}}
+\newcommand{\norm}[1]{\left \Vert  #1 \right \Vert}
+\newcommand{\snorm}[1]{ \Vert  #1 \Vert}
+\newcommand{\Lsnorm}[1]{ \Vert  #1 \Vert_{\text{\scriptsize \textrm{L2}}}}
+\newcommand{\sS}{\mathscr S}
+\newcommand\half[1]{\textstyle{\frac{#1}{2}}}
+\newcommand{\ext}{\operatorname{e}}
+\newcommand{\psd}{\mathbb S^+}
+\newcommand{\cond}{\operatorname{cond}}
+\newcommand{\normt}[2]{\Vert #2 \Vert_{#1}}
+\newcommand{\bnorm}[1]{\left\Vert #1 \right\Vert}
+\newcommand{\barnorm}[1]{\bar \Vert #1 \bar \Vert}
+\newcommand{\bignorm}[1]{\bigl\Vert #1 \bigr\Vert}
+\newcommand{\E}{\mathbb E}
+\newcommand{\Var}{\mathbb V}
+\newcommand{\err}[1]{\operatorname{err}_{\ref{#1}}}
+\newcommand{\cE}{\mathcal E}
+\newcommand{\Cnst}{\textrm{C}}
+\newcommand{\cnst}{\textrm{c}}
+\newcommand{\cK}{\mathcal K}
+\newcommand{\cH}{\mathcal H}
+\newcommand{\cF}{\mathcal F}
+\newcommand{\cC}{\mathcal C}
+\newcommand{\cT}{\mathcal T}
+\newcommand{\sG}{\mathscr G}
+\newcommand{\sF}{\mathscr F}
+\newcommand{\cL}{\mathcal L}
+\newcommand{\cI}{\mathcal I}
+\newcommand{\cS}{\mathcal S}
+\newcommand{\cD}{\mathcal D}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\cN}{\mathcal N}
+\newcommand{\sB}{\mathscr B}
+\newcommand{\sA}{\mathscr A}
+\newcommand{\sP}{\mathscr P}
+\newcommand{\cX}{\mathcal X}
+\newcommand{\bS}{\mathbb S}
+\newcommand{\bB}{\mathbb B}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\cHb}{\mathcal H_{\circ}}
+\newcommand{\zeros}{ \bm 0}
+\newcommand{\ones}{ \bm 1}
+\newcommand{\bbP}{\mathbb P}
+\newcommand{\N}{\mathbb N}
+\newcommand{\lip}{\operatorname{Lip}}
+\newcommand{\vol}{\operatorname{vol}}
+\newcommand{\polylog}{\operatorname{polylog}}
+\newcommand{\const}{\operatorname{const}}
+\newcommand{\interior}{\operatorname{int}}
+\newcommand{\conv}{\operatorname{conv}}
+\newcommand{\diam}{\operatorname{diam}}
+\newcommand{\poly}{\operatorname{poly}}
+\newcommand{\sind}{\bm{1}}
+\renewcommand{\d}[1]{\operatorname{d}\!#1}
+\newcommand{\id}{\mathds{1}}
+\newcommand{\I}{\mathcal{I}}
+\newcommand{\1}{\mathbf{1}}
+\newcommand{\cY}{\mathcal{Y}}
+\newcommand{\mP}{\mathbb{P}}
+\newcommand{\mI}{\mathbb{I}}
+\newcommand{\IR}{\operatorname{\textsc{ir}}}
+\newcommand{\bco}{\texttt{BCO}\xspace}
+\newcommand{\ts}{\textsc{TS}\xspace}
+\newcommand{\ats}{\textsc{ATS}}
+\newcommand{\IDS}{\textsc{IDS}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     stuff      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{optprob}[theorem]{Optimisation Problem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{claim}[theorem]{Claim}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+\theoremstyle{remark}
+\setlist[itemize,1]{label={$\circ$},itemsep=0pt,labelindent=0pt,labelwidth=!,leftmargin=14pt}
+\newlist{enumroman}{enumerate}{1}
+\newlist{enumsteps}{enumerate}{1}
+\newlist{enumcases}{enumerate}{1}
+\setlist[enumcases,1]{label={\normalfont\sffamily\textbf{\textsc{\color{dkblue}case \arabic*}}},itemsep=0pt,wide,labelwidth=!,labelindent=0pt,itemsep=0pt}
+\setlist[enumerate,1]{label={\normalfont\texttt{(\alph*)}},itemsep=0pt,wide,labelwidth=!,labelindent=0pt,itemsep=0pt}
+\setlist[enumroman,1]{label={\normalfont\texttt{\color{dkblue}(\uline{\roman*})}},itemsep=0pt,wide,labelwidth=!,labelindent=0pt,itemsep=0pt}
+\setlist[enumsteps,1]{label={\normalfont\sffamily\textbf{\textsc{\color{dkblue}step \arabic*}}},itemsep=0pt,wide,labelwidth=!,labelindent=0pt,itemsep=0pt}
+%\setlist[description]{itemsep=0pt,labelwidth=!,labelindent=0pt,wide,leftmargin=0pt}
+\setlist[description]{itemsep=0pt,wide,labelwidth=!,labelindent=0pt,itemsep=0pt,format={\normalfont \textit}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    document    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\setcounter{page}{1}
+\renewcommand{\thepage}{\roman{page}} % Roman numerals for page counter
+
+\begin{titlepage}
+    \centering
+    \textbf{\large{Thompson Sampling for Bandit Convex Optimization}}
+    \vskip.5in by \vskip.5in
+    \large{Alireza Bakhtiari}
+
+    \vfill \vfill
+    A thesis submitted in partial fulfillment of the requirements for the degree of
+    \vskip.3in Master of Science
+    \vskip.3in \vfill \vfill
+    Department of Computing Science
+    \vskip.3in
+    University of Alberta
+    \vfill \vfill
+    $\copyright$ Alireza Bakhtiari, 2025
+\end{titlepage}
+
+\doublespacing
+
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+Thompson sampling (\ts) is a popular and empirically successful algorithm for online decision-making problems.
+This thesis advances our understanding of \ts when applied to bandit convex optimization (\bco) problems,
+by providing new theoretical guarantees and characterizing its limitations.
+
+First, we analyze $1$-dimensional \bco and show that \ts achieves a near-optimal Bayesian regret of at most $\tilde O(\sqrt{n})$, where $n$ is the time horizon.
+This result holds without strong assumptions on the loss functions, requiring only convexity, boundedness, and a mild Lipschitz condition.
+In sharp contrast, we demonstrate that for general high-dimensional problems, \ts can fail catastrophically.
+
+More positively, we establish a Bayesian regret bound of $\tilde O(d^{2.5} \sqrt{n})$ for \ts in generalized linear bandits, even when the convex monotone link function is unknown.
+Finally, we prove a fundamental limitation of current analysis techniques: we show that the standard information-theoretic machinery can never yield a regret bound better than the existing $\tilde O(d^{1.5} \sqrt{n})$ in the general case.
+
+\setcounter{page}{2}
+\renewcommand{\thepage}{\roman{page}} % Roman numerals for page counter
+
+\onehalfspacing
+\chapter*{Preface} \addcontentsline{toc}{chapter}{Preface}
+TODO.
+\chapter*{Acknowledgements} \addcontentsline{toc}{chapter}{Acknowledgements}
+TODO.
+
+\tableofcontents
+\listoftables
+\listoffigures
+\listofalgorithms \addcontentsline{toc}{chapter}{List of Algorithms}
+
+\clearpage
+\setcounter{page}{1}   % Start at page 1
+\renewcommand{\thepage}{\arabic{page}} % Roman numerals for page counter
+\chapter{Introduction} \label{ch:intro}
+Convexity is a common assumption in optimization problems \citep{boyd2004convex}.
+Bandit convex optimization (\bco) addresses the fundamental problem of minimizing a convex function over a convex set when only noisy evaluations of the function are available at selected points. This setting naturally arises in scenarios where:
+
+\begin{enumroman}
+    \item \textcolor{dkblue}{Limited Access:} The algorithm can only observe noisy evaluations of the objective function.
+    \item \textcolor{dkblue}{Cumulative Cost:} The goal is to minimize the cumulative cost of these evaluations over time, rather than to simply identify the function’s minimizer.
+\end{enumroman}
+
+In classical optimization, it is typically assumed that the optimizer has access to the full function, or at least to its value and gradient at any point in the domain. However, this assumption often fails in practice. A representative example is dynamic pricing, where a seller selects a price (the input) and observes the resulting profit (the output), which is often modeled as a concave function of the price. The seller cannot directly observe the profit function itself, but only noisy feedback through customer purchases at chosen prices. Each evaluation corresponds to a real transaction and thus incurs a potentially significant cost. In such cases, the objective is not to eventually find the best price at any expense, but rather to make pricing decisions that yield high cumulative profit over time.
+
+This thesis focuses on this \emph{zeroth-order} or \emph{bandit feedback} setting, which is prevalent in domains where gradients are unavailable or costly to compute, and where each function evaluation carries a tangible cost. While convexity is an idealization, it is a broadly applicable assumption that facilitates principled algorithm design and analysis. Unlike traditional optimization settings—where function evaluations are often treated as free abstractions—many real-world problems demand an approach that explicitly accounts for the cumulative cost incurred during learning.
+
+Formally, the goal is to approximately solve the optimization problem
+\begin{align}
+    \argmin_{x \in \cK} f(x)\,,
+\end{align}
+where \( \cK \subset \mathbb{R}^d \) is a convex set (typically compact with non-empty interior) and \( f : \cK \to \mathbb{R} \) is a convex function.
+In the \bco setting, the learner does not observe gradients or even function values at arbitrary points;
+instead, in each round of interaction it selects a point \( x_t \in \cK \) and receives noisy feedback \( y_t = f(x_t) + \varepsilon_t \), where \( \varepsilon_t \) models the noise.
+While the convexity assumption may seem restrictive, it captures a rich class of problems and provides a tractable framework to develop principled algorithms with provable guarantees.
+
+The learner aims to minimize the cumulative loss over \( T \) rounds,
+which leads to the online variant of the optimization problem, where the learner’s goal is to minimize
+cumulative loss compared to the best action in hindsight, which is
+\begin{align}
+    \text{Regret}(T) = \sum_{t=1}^T f(x_t) - \min_{x \in \cK} \sum_{t=1}^T f(x)\,,
+\end{align}
+often referred to as \emph{bandit regret}. This perspective connects \bco to the broader literature on online learning and multi-armed bandits. While \bco is challenging due to the simultaneous absence of gradient information and the need for exploration, it offers a powerful abstraction for decision-making under uncertainty with limited feedback. The convexity assumption, though idealized, provides a tractable and theoretically rich framework for developing and analyzing algorithms that strike a balance between exploration and exploitation.
+
+\section{Examples of \bco}
+This setting naturally arises in a variety of applications where gradient information is unavailable, unreliable, or too expensive to compute,
+such as
+\begin{description}
+    \item[\textcolor{dkblue}{Manufacturing:}]
+          Consider a cheese factory that aims to optimize its recipe by adjusting the temperature and humidity of its warehouse.
+          The quality of the final product can be modeled as a convex function of these parameters.
+          However, each measurement becomes available only after the batch is complete, and producing a batch incurs a financial cost.
+          The factory’s goal is to iteratively improve product quality based on customer feedback, but it cannot afford to ruin too many batches in the process.
+          This situation is even more pronounced for expensive or custom products—like cars, airplanes, or musical instruments—where each failed experiment is prohibitively costly and feedback may only be available post-sale.
+
+          % \item[\textcolor{dkblue}{Hyperparameter Tuning:}]
+          %       Optimizing hyperparameters is crucial for systems that must perform well in real time.
+          %       For instance, consider an automated trading algorithm with tunable hyperparameters.
+          %       Its performance—measured by profit—can often be modeled as a convex function of these parameters.
+          %       Evaluating performance requires running the algorithm live, which comes with financial risk and opportunity cost.
+          %       Since the system is deployed in production, the goal is not to identify the best hyperparameters in hindsight, but to continually adapt and improve performance over time with minimal cumulative loss.
+
+    \item[\textcolor{dkblue}{Dynamic Pricing:}]
+          In dynamic pricing, a retailer interacts sequentially with an uncertain market.
+          At each round, they select a price \(X_t \in \cK \subset \R\), and the associated loss \(f(X_t)\) represents the negative of expected profit.
+          Prices that are too high may deter purchases, while prices that are too low leave revenue on the table.
+          The profit function \(f\) is unknown in advance and customer behavior introduces noise into observations.
+          The goal is to adjust prices over time to maximize cumulative profit, not just to identify an optimal price after at any cost.
+
+    \item[\textcolor{dkblue}{Service Personalization:}]
+          Large Language Models (LLMs) often personalize their responses based on user preferences.
+          At each interaction, the system selects a response style \(X_t \in \cK \subset \R^d\) — e.g., controlling tone, formality, or humor.
+          The user’s satisfaction is captured by a loss function \(f(X_t)\), which reflects poor alignment with their preferences.
+          This function is unknown, subjective, and observed only through noisy feedback such as click-through rates or engagement metrics.
+          The system must learn and adapt over time to minimize dissatisfaction, making this a natural fit for the bandit convex optimization setting.
+
+    \item[\textcolor{dkblue}{Resource Allocation:}]
+          Many decision-making problems involve allocating limited resources—like budget or bandwidth—across competing options.
+          For example, a company might distribute marketing funds across various channels.
+          The return on investment typically exhibits diminishing returns and can be modeled by a convex utility function.
+          The utility is not directly observable but can be estimated after committing to a specific allocation.
+          Since each evaluation carries cost, the company seeks to minimize cumulative regret over time by carefully balancing exploration and exploitation.
+
+    \item[\textcolor{dkblue}{Online Advertising---$\R$-valued parameters:}]
+          Online advertisement is a classical application of bandit algorithms.
+          Often, advertisers can choose among nearly-continuous design parameters—like font size and color.
+          These decisions affect user engagement in a way that can be modeled by a convex function over the parameter space.
+          The feedback (e.g., click-through rates) is noisy and delayed, and testing each variation has opportunity cost.
+          Bandit convex optimization provides a principled framework to navigate this space efficiently and improve ad performance over time.
+
+    \item[\textcolor{dkblue}{Efficiency Tuning:}]
+          In commercial aviation, dispatchers must decide the cruise altitude and Mach number for each flight, represented as \(X_t = (\text{Mach}, \text{Altitude}) \in \cK \subset \R^2\).
+          The loss \(f(X_t)\) is the fuel burned per seat-kilometre—a quantity well-approximated by a convex function due to the trade-offs between speed, altitude, and drag.
+          Crucially, the true fuel burn is revealed only after the flight, and is confounded by weather, routing, and payload variability.
+          Since each evaluation corresponds to a real flight with significant operational cost, the airline cannot afford extensive trial-and-error.
+          Instead, it must adapt its cruise settings sequentially, improving fuel efficiency over time while minimizing total cost—an ideal use case for bandit convex optimization.
+\end{description}
+
+
+\section{Thompson Sampling and Bayesian Bandits}
+
+Thompson sampling (\ts) is a simple and often practical algorithm for interactive
+decision-making with a long history \citep{Tho33,RVK17}.
+Our interest is in its application to Bayesian bandit convex optimization \citep{lat24book}.
+
+A Bayesian bandit problem is a sequential decision-making problem where the learner has access to a prior distribution over the unknown objective function.
+The learner interacts with the environment by selecting actions and observing noisy feedback, which is modeled as a realization of a random variable whose distribution depends on the unknown objective function.
+This prior distribution captures the learner or the domain expert's beliefs about the objective function before any interaction.
+
+At its core, Thompson Sampling is a Bayesian algorithm that maintains a posterior distribution over the unknown objective (or cost) function.
+In each round, it samples a function from this posterior and selects the action that minimizes the sampled function.
+The elegance of \ts lies in its simplicity and flexibility---it requires no explicit exploration bonus or confidence bounds and can be
+implemented in a wide range of settings, provided posterior sampling is computationally feasible.
+
+\chapter{Related work}
+\bco in the regret setting was first studied by \cite{FK05} and \cite{Kle04}. Since then the field has grown considerably as summarized
+in the recent monograph by \cite{lat24book}.
+Our focus is on the Bayesian version of the problem, which has seen only limited attention. \cite{BDKP15} consider the adversarial version of the Bayesian
+regret and show that a (heavy) modification of \ts enjoys a Bayesian regret of $\tilde O(\sqrt{n})$ when $d = 1$.
+Interestingly, they argue that \ts without modification is not amenable to analysis via the information-theoretic machinery,
+but this argument only holds in the adversarial setting as our analysis shows.
+\cite{BE18} and \cite{Lat20-cvx} generalized the information-theoretic machinery used by \cite{BDKP15} to higher dimensions, also in the adversarial setting.
+These works focus on proving bounds for information-directed sampling (\IDS{}), which is a conceptually simple but computationally more complicated algorithm
+introduced by \cite{RV14}.
+Nevertheless, we borrow certain techniques from these papers.
+Convex ridge functions have been studied before by
+\cite{lattimore2021minimax}, who showed that \IDS{} has a Bayesian regret in the stochastic setting of $\tilde O(d \sqrt{n})$,
+which matches the lower bound provided by linear bandits
+\citep{DHK08}. Regrettably, however, this algorithm is not practically implementable, even under the assumption that you can sample efficiently from
+the posterior.
+\cite{SNNJ21} also study a variation on the problem where the losses have the form $f(g(x))$ with $g : \R^d \to \R$ a \textit{known} function
+and $f : \R \to \R$ an unknown convex function.
+When $g$ is linear, then $f \circ g$ is a convex ridge function. The assumption that $g$ is known dramatically changes the setting, however.
+The best known bound for an efficient algorithm in the monotone convex ridge function setting
+is $\tilde O(d^{1.5} \sqrt{n})$, which also holds for general convex functions, even in the frequentist setting \citep{LFMV24}.
+Convex ridge functions can also be viewed as a special case of the generalized linear model, which has been studied extensively
+as a reward model for stochastic bandits \citep[and many more]{FiOlGaSze10}.
+\ts{} and other randomized algorithms have been studied with generalized linear models in Bayesian and frequentist settings \citep{AL17,dong2019performance,kveton2020randomized}.
+None of these papers assume convexity (concavity for rewards) and consequentially suffer a regret that depends on other properties of the link function
+that can be arbitrarily large. Moreover, in generalized linear bandits it is standard to assume the link function is known.
+
+
+\chapter{Bayesian \bco Problem and the \ts Algorithm}
+Let $K$ be a convex body in $\R^d$ and $\sF$ be a set of convex functions from $K$ to $[0,1]$.
+We assume there is a known (prior) probability measure $\xi$ on $\sF$. The interaction between the learner and environment
+lasts for $n$ rounds. At the beginning the environment secretly samples $f$ from the prior $\xi$.
+Subsequently, the learner and environment interact sequentially. In round $t$ the learner plays an action $X_t \in K$ and observes
+$Y_t \in \{0, 1\}$ for which $\E[Y_t|X_1,Y_1,\ldots,X_t,f] = f(X_t)$.
+The assumption that the noise is Bernoulli is for convenience only. Our analysis would be unchanged with any bounded noise model and would continue to hold
+for sub-gaussian noise with minor modifications.
+A learner $\sA$ is a (possibly random) mapping from sequences of action/loss pairs to actions and its Bayesian regret with respect to prior $\xi$ is
+\begin{align*}
+    \BReg_n(\sA, \xi) = \E\left[\sup_{x \in K} \sum_{t=1}^n \left(f(X_t) - f(x)\right)\right] \,.
+\end{align*}
+Note that both $f$ and the iterates $(X_t)$ are random elements. Moreover, in the Bayesian setting the learner $\sA$ is allowed to depend on the prior $\xi$.
+The main quantity of interest is
+\begin{align}
+    \sup_{\xi \in \sP(\sF)} \BReg_n(\ts, \xi)\,,
+    \label{eq:reg}
+\end{align}
+where $\sP(\sF)$ is the space of probability measures on $\sF$ (with a suitable $\sigma$-algebra) and $\ts$ is Thompson sampling (\cref{alg:ts})
+with prior $\xi$ (the dependence on the prior is always omitted from the notation).
+The quantity in \cref{eq:reg} depends on the function class $\sF$. Our analysis explores this dependence for various natural classes of convex functions.
+\ts{} (\cref{alg:ts}) is theoretically near-trivial. In every round it samples $f_t$ from the posterior and plays $X_t$ as the minimizer of $f_t$.
+\begin{algorithm}[h!]
+    \begin{minipage}{12cm}
+        \begin{mdframed}
+            \begin{lstlisting}
+args: prior $\xi$
+for $t = 1$ to $\infty$:
+  sample $f_t$ from $\bbP(f = \cdot| X_1,Y_1,\ldots,X_{t-1},Y_{t-1})$
+  play $X_t = x_{f_t}$ and observe $Y_t$
+\end{lstlisting}
+            \caption{Thompson sampling}\label{alg:ts}
+        \end{mdframed}
+    \end{minipage}
+\end{algorithm}
+
+\section{Thompson Sampling for Bandit Convex Optimization}
+With these definitions in place, we can now summarize our results:
+\begin{itemize}
+    \item When $d = 1$, $\BReg_n(\ts, \xi) = \tilde O(\sqrt{n})$ for all priors (\cref{thm:ts-1d}).
+
+    \item A convex function $f$ is called a monotone ridge function if there exists a convex monotone function $\ell : \R \to \R$ and $\theta \in \R^d$ such that
+          $f(x) = \ell(\ip{x, \theta})$.
+          \cref{thm:ts-ridge} shows when $\xi$ is supported on monotone ridge functions, then $\BReg_n(\ts, \xi) = \tilde O(d^{2.5} \sqrt{n})$.
+
+    \item In general, the Bayesian regret of \ts{} can be exponential in the dimension (\cref{thm:ts-lower}).
+
+    \item The classical information-theoretic machinery used by \cite{BE18} an \cite{Lat20-cvx} cannot improve
+          the regret for \bco beyond the best known upper bound of $\tilde O(d^{1.5} \sqrt{n})$.
+\end{itemize}
+Although the regret bounds are known already in the frequentist setting for different algorithms, there is still value in studying Bayesian algorithms
+and especially \ts.
+Most notably, none of the frequentist algorithms can make use of prior information about the loss functions and adapting them to exploit such information
+is often painstaking and ad-hoc.
+\ts, on the other hand, automatically exploits prior information.
+Our bounds for ridge functions can be viewed as a Bayesian regret bound for a kind of generalized linear bandit where
+the link function is unknown and assumed to be convex and monotone
+increasing.
+
+Many problems are reasonably modelled as $1$-dimensional convex bandits, with the classical example being dynamic pricing
+where $K$ is a set of prices and convexity is a reasonable assumption based on the response of demand to price.
+The monotone ridge function class is a natural model for resource allocation problems where a single resource (e.g., money) is allocated to $d$ locations.
+The success of some global task increases as more resources are allocated, but with diminishing returns. Problems like this can reasonably be modelled
+by convex monotone ridge functions with $K = \{x \geq \zeros : \norm{x}_1 \leq 1\}$.
+
+
+Our lower bounds show that \ts does not behave well in the general \bco unless possibly the dimension is quite small.
+Perhaps more importantly, we show that the classical information-theoretic machinery used by \cite{BE18} and \cite{Lat20-cvx} cannot be used to improve the current
+best dimension dependence of the regret for \bco.
+Combining this with the duality between exploration-by-optimisation and information-directed sampling
+shows that exploration-by-optimisation (with negentropy potential) also cannot naively improve on the best known $\tilde O(d^{1.5} \sqrt{n})$ upper bound \citep{ZL19,LG23}.
+We note that this does not imply a lower bound for \bco.
+The construction in the lower bound is likely amenable to methods for learning a direction based on the power method \citep{lattimore2021bandit,huang2021optimal}.
+The point is that the information ratio bound characterises the signal-to-noise ratio for the prior, but does not prove the signal-to-noise ratio does not increase
+as the learner gains information.
+
+\section{Notation}
+Let $\norm{\cdot}$ be the standard euclidean norm on $\R^d$.
+For natural number $k$ let $[k] = \{1,\ldots,k\}$.
+Define $\norm{x}_\Sigma = \sqrt{x^\top \Sigma x}$ for positive definite $\Sigma$.
+Given a function $f : K \to \R$, let $\norm{f}_\infty = \sup_{x \in K} |f(x)|$.
+The centered euclidean ball of radius $r > 0$ is $\ball_r = \{x \in \R^d : \norm{x} \leq r\}$ and
+the sphere is $\sphere_r = \{x \in \R^d : \norm{x} = r\}$. We also let $\ball_r(x) = \{y \in \R^d : \norm{x - y} \leq r\}$.
+We let $H(x, \eta) = \{y : \ip{y, \eta} \geq \ip{x, \eta}\}$, which is a half-space with inward-facing normal $\eta$.
+Given a finite set $\cC$ let $\pair(\cC) = \{(x, y) \in \cC : x \neq y\}$ be the set of all distinct ordered pairs and abbreviate $\pair(k) = \pair([k])$.
+The convex hull of a subset $A$ of a linear space is $\conv(A)$.
+The space of probability measures on $K$ with respect to the Borel $\sigma$-algebra is $\sP(K)$.
+Similarly, $\sP(\sF)$ is a space of probability measures on $\sF$ with some unspecified $\sigma$-algebra ensuring that $f \mapsto f(x)$
+is measurable for all $x \in K$.
+Given a convex function $f : K \to \R$ we define $\lip_K(f) = \sup_{x \neq y \in K} (f(x) - f(y)) / \norm{x - y}$
+and $f_\star = \inf_{x \in K} f(x)$ and $x_f = \argmin_{x \in K} f(x)$ where ties are broken in an arbitrary measurable fashion.
+Such a mapping exists and $f \mapsto f_\star$ is also measurable;
+\cite{niemiro1992asymptotics} showed that such a mapping always exists.
+Of course it follows that $f \mapsto f_\star = f(x_f)$ is also measurable.
+$\bbP_t = \bbP(\cdot|X_1,Y_1,\ldots,X_t,Y_t)$ and $\E_t$ be the expectation operator with respect to $\bbP_t$.
+The following assumption on $\cK$ is considered global throughout:
+
+\begin{assumption}
+    $\cK$ is a convex body (compact, convex with non-empty interior) and $\zeros \in \cK$.
+\end{assumption}
+
+\subsection{Spaces of convex functions}
+A function $f : K \to \R$ is called a convex ridge function if there exists a convex $\ell : \R \to \R$ and $\theta \in \R^d$ such that
+$f(x) = \ell(\ip{x, \theta})$. Moreover, $f$ is called a monotone convex ridge function if it is a convex ridge function and $\ell$ is
+monotone increasing.
+We are interested in the following classes of convex functions:
+\texttt{(a)} $\sF_{\pb}$ is the space of all bounded convex functions $f : K \to [0,1]$.
+\texttt{(b)} $\sF_{\pl}$ is the space of convex functions $f : K \to \R$ with $\lip(f) \leq 1$.
+\texttt{(c)} $\sF_{\pr}$ is the space of all convex ridge functions.
+\texttt{(d)} $\sF_{\pr\pm}$ is the space of all monotone convex ridge functions.
+Intersections are represented as you might expect: $\sF_{\pb\pl} = \sF_{\pb} \cap \sF_{\pl}$ and similarly for other combinations.
+The set $\sF$ refers to a class of convex functions, which will always be either $\sF_{\pb\pl}$ or $\sF_{\pb\pl\pr\pm}$.
+
+The representation of $f$ as a ridge convex function is not unique,
+meaning that there could be (are) two sets $(\theta_1, \ell_1)$ and $(\theta_2, \ell_2)$ such that
+$f = \ell_1(\ip{x, \theta_1})$ and $f = \ell_2(\ip{x, \theta_2})$.
+The following lemma ensures that the \textit{link function} $\ell$ can be chosen
+in a way that the Lipschitzness of the original function $f$ is preserved.
+\begin{lemma}\label{lem:lip}
+    Suppose that $K$ is a convex body and $f \in \sF_{\pl\pr}$ is a Lipschitz convex ridge function.
+    Then there exists a $\theta \in \sphere_1$ and a convex $\ell : \R \to \R$
+    such that $f(x) = \ell(\ip{x, \theta})$ and $\lip_K(\ell) \leq \lip(f)$.
+\end{lemma}
+
+\begin{proof}
+    By assumption there exists a convex function $\ell : \R \to \R$ and $\theta \in \sphere_1$ such that $f(x) = \ell(\ip{x, \theta})$.
+    What remains to show that $\ell$ can be chosen so that $\lip(\ell) \leq \lip_K(f)$.
+    Let $h_K$ be the support function associated with $K$, given by $h_K(v) = \sup_{x \in K} \ip{v, x}$.
+    Therefore $\ell$ is uniquely defined on $I = [-h_K(-\theta), h_K(\theta)]$ and can be defined in any way that preserves convexity outside.
+    Let $Dg(x)[v]$ be the directional derivative of $g$ at $x$ in direction $v$, which for convex $g$ exists for all $x$ in the interior of the domain of $g$.
+    Then
+    \begin{align*}
+        \lip_K(f)
+         & \geq \sup_{x \in \interior(K)} \max(Df(x)[\theta], Df(x)[-\theta])                  \\
+         & = \sup_{x \in \interior(K)} \max(D\ell(\ip{x,\theta})[1], D\ell(\ip{x,\theta})[-1]) \\
+         & = \sup_{x \in \interior(I)} \max(|D\ell(x)[1]|, |D\ell(x)[-1]|)                     \\
+         & = \lip_{\interior(I)}(\ell)                                                         \\
+         & = \lip_I(\ell) \,.
+    \end{align*}
+    Then define $\ell$ on all of $\R$ via the classical extension \citep[Proposition 3.18, for example]{lat24book}.
+\end{proof}
+
+\chapter{Generalized Information Ratio}\label{ch:gir}
+The main theoretical tool is a version of the information ratio, which was introduced by \cite{RV16} as a means to bound the Bayesian regret of
+\ts for finite-armed and linear bandits.
+Given a distribution $\xi \in \sP(\sF)$ and policy $\pi \in \sP(K)$, let $(X, f)$ have law $\pi \otimes \xi$ and with $\bar f = \E[f]$ define
+\begin{align*}
+    \Delta(\pi, \xi) = \E\left[\bar f(X) - f_\star\right] \quad \text{and} \quad
+    \I(\pi, \xi) = \E\left[(f(X) - \bar f(X))^2\right]\,,
+\end{align*}
+which are both non-negative.
+The quantity $\Delta(\pi, \xi)$ is the regret suffered by $\pi$ when the loss function is sampled from $\xi$, while $\I(\pi, \xi)$ is a measure of the observed variation
+of the loss function. Intuitively, if $\I(\pi, \xi)$ is large, then the learner is gaining information.
+A classical version of the information ratio is $\Delta(\pi, \xi)^2 / \I(\pi, \xi)$, though the most standard version replaces $\I(\pi, \xi)$ with
+an expected relative entropy term that is never smaller than $\I(\pi, \xi)$ \citep{RV16}.
+Given a distribution $\xi$ and a random function $f$ with law $\xi$, we let $\pi^\xi_\ts \in \sP(K)$ be the law of $x_f$, which is the minimiser of $f$.
+The minimax generalised information ratio associated with \ts on class of loss functions $\sF$ is
+\begin{align*}
+    \IR(\sF) = \left\{(\alpha, \beta) \in \R_+^2 : \sup_{\xi \in \sP(\sF)} \left[\Delta(\pi^\xi_\ts, \xi) - \alpha - \sqrt{\beta \I(\pi^\xi_\ts, \xi)}\right] \leq 0 \right\} \,.
+\end{align*}
+Note that $(0, \beta) \in \IR(\sF)$ is equivalent to $\Delta(\pi_\ts^\xi, \xi)^2 / \I(\pi_\ts^\xi, \xi) \leq \beta$ for all $\xi \in \sP(\sF)$.
+The $\alpha$ term is used to allow a small amount of slack that eases analysis and may even be essential in non-parametric and/or infinite-action settings.
+
+\begin{theorem}\label{thm:ts-ir-regret}
+    Suppose that $\sF \in \{\sF_{\pb\pl}, \sF_{\pb\pl\pr\pm}\}$ and $(\alpha, \beta) \in \IR(\sF)$.
+    Then, for any prior $\xi \in \sP(\sF)$, the regret of \ts{} (Algorithm~\ref{alg:ts}) is at most
+    \begin{align*}
+        \BReg_n(\ts, \xi) \leq n \alpha + O\left(\sqrt{\beta n d \log(n \diam(K))}\right) \,,
+    \end{align*}
+    where the Big-O hides only a universal constant.
+\end{theorem}
+This theorem is a direct consequence of \cref{thm:ir-general},
+so we defer the proof to \cref{sec:ir-general}.
+At a high level the argument is based on similar results by \cite{BDKP15} and \cite{BE18}.
+Also note that the space of ridge functions is not closed under convex combinations, which introduces certain challenges also
+noticed by \cite{lattimore2021minimax}.
+The main takeaway is that bounding the information ratio $\IR(\sF)$ is sufficient to bound the regret of \ts.
+Also note that the space of ridge functions is not closed under convex combinations, which introduces certain challenges also
+noticed by \cite{lattimore2021minimax}.
+To address this last issue, we introduce a cover in \cref{sec:cover} that let us
+work with subsets of $\sF$ that are closed under convex combinations,
+and also satisfy some other properties.
+
+\section{Decomposition lemma}
+We also introduce a new mechanism for bounding $\IR(\sF)$.
+The rough idea is to decompose the function class $\sF$ into disjoint subsets $\sF_i$ such that the information ratio (not exactly) can be bounded for each subset.
+\begin{lemma}\label{lem:decomp-big}
+    Suppose there exist natural numbers $k$ and $m$ such that for all $\bar f \in \conv(\sF)$ there exists a disjoint union $\sF = \cup_{i=1}^m \sF_i$ of measurable sets
+    for which
+    \begin{align*}
+        \max_{i \in [m]} \left[\sup_{f \in \sF_i} (\bar f(x_f) - f_\star) - \alpha - \sqrt{\beta \inf_{f_1,\ldots,f_k \in \sF_i} \sum_{j,l \in \pair(k)} (f_j(x_{f_l}) - \bar f(x_{f_l}))^2} \right] \leq 0 \,.
+    \end{align*}
+    Then $(\alpha, k(k-1)m\beta) \in \IR(\sF)$.
+\end{lemma}
+Let us pause for a moment to provide some intuition.
+The supremum term is the worst possible regret within $\sF_i$ while the infimum represents a kind of bound on the minimum amount of information obtained by \ts{}.
+In particular, \ts{} plays the optimal action for some sampled loss and gains information when there is variation of the losses at that point.
+The appearance of $m$ in the information ratio bound arises from a Cauchy-Schwarz (what else?) that is somehow the `same' Cauchy-Schwarz used in the analysis
+of the information ratio for finite-armed bandits \citep{RV14} and in the information ratio decomposition by \cite{Lat20-cvx}.
+\begin{proof}[Proof of \cref{lem:decomp-big}]
+    Let $\xi \in \sP(\sF)$ and $\bar f = \E[f]$ and
+    $\sF_1,\ldots,\sF_m$ be disjoint subsets of $\sF$ such that $\sF = \cup_{i=1}^m \sF_i$ and
+    \begin{align}
+        \max_{i \in [m]} \left[\sup_{f \in \sF_i} \left(\bar f(x_f) - f_\star\right) - \alpha - \sqrt{\beta \inf_{f_1,\ldots,f_k \in \sF_i} \sum_{j, l \in \pair(k)} (\bar f_j(x_{f_l}) - f(x_{f_l}))^2}\right] \leq 0 \,,
+        \label{eq:decomp:1}
+    \end{align}
+    which exists by the assumptions in the lemma.
+    When $\xi(\sF_i)$ define $\nu_i$ as an arbitrary probability measure on $\sF$ and otherwise let
+    $\nu_i(\cdot) = \xi(\cdot \cap \sF_i) / \xi(\sF_i)$ and $w_i = \xi(\sF_i)$.
+    Therefore
+    \begin{align}
+        \Delta(\pi, \xi)
+         & = \int_\sF \left(\bar f(x_f) - f_\star\right) \d{\xi}(f) \nonumber                                                                                               \\
+         & = \sum_{i=1}^m w_i \int_\sF \left(\bar f(x_f) - f_\star\right) \d{\nu_i}(f) \nonumber                                                                            \\
+         & \explan{(a)}\leq \sum_{i=1}^m w_i \sup_{f \in \sF_i} (\bar f(x_f) - f_\star) \nonumber                                                                           \\
+         & \explan{(b)}\leq \alpha + \sum_{i=1}^m w_i \sqrt{\beta \inf_{f_1,\ldots,f_k \subset \sF_i} \sum_{j,l \in \pair(k)} (f_j(x_{f_l}) - \bar f(x_{f_l}))^2} \nonumber \\
+         & \explan{(c)}\leq \alpha + \sum_{i=1}^m w_i \sqrt{\beta k(k-1) \int_\sF \int_\sF (\bar f(x_g) - f(x_g))^2 \d{\nu_i}(f) \d{\nu_i}(g)} \nonumber                    \\
+         & \explan{(d)}\leq \alpha + \sqrt{\beta m k(k-1) \sum_{i=1}^m w_i^2 \int_\sF \int_\sF (\bar f(x_g) - f(x_g))^2 \d{\nu_i}(f) \d{\nu_i}(g)} \nonumber                \\
+         & \explan{(e)}\leq \alpha + \sqrt{\beta m k(k-1) \sum_{i=1}^m \sum_{j=1}^m w_i w_j \int_\sF \int_\sF (\bar f(x_g) - f(x_g))^2 \d{\nu_i}(f) \d{\nu_j}(g)} \nonumber \\
+         & = \alpha + \sqrt{\beta m k(k-1) \int_\sF \int_\sF (\bar f(x_g) - f(x_g))^2 \d{\xi}(f) \d{\xi}(g)} \nonumber                                                      \\
+         & = \alpha + \sqrt{\beta m k(k-1) \I(\pi, \xi)} \,, \label{eq:decomp:2}
+    \end{align}
+    where \texttt{(a)} is immediate from the definition of the integral.
+    \texttt{(b)} follows from \cref{eq:decomp:1}.
+    \texttt{(c)} is true because if $f_1,\ldots,f_k$ are sampled independently from $\nu_i$, then
+    \begin{align*}
+        \int_\sF \int_\sF (\bar f(x_g) - f(x_g)) \d{\nu_i}(f) \d{\nu_i}(g)
+         & = \frac{1}{k(k-1)} \E\left[\sum_{j,l \in \pair(k)} (\bar f(x_{f_l}) - f_j(x_{f_l}))^2 \right]                            \\
+         & \geq \frac{1}{k(k-1)} \inf_{f_1,\ldots,f_k \subset \sF_i} \sum_{j,l \in \pair(k)} (\bar f(x_{f_l}) - f_j(x_{f_l}))^2 \,.
+    \end{align*}
+    \texttt{(d)} follows from Cauchy-Schwarz and \texttt{(e)} by introducing additional non-negative terms.
+    Since \cref{eq:decomp:2} holds for all $\xi \in \sP(\sF)$ it follows that
+    \begin{align*}
+        \sup_{\xi \in \sP(\sF)} \left[\Delta(\pi, \xi) - \alpha - \sqrt{\beta mk(k-1) \I(\pi, \xi)}\right] \leq 0
+    \end{align*}
+    and therefore $(\alpha, \beta mk(k-1)) \in \IR(\xi)$.
+\end{proof}
+
+\chapter{Approximate Thompson Sampling}\label{ch:ats}
+Often \textit{exact} minimization a convex function is computationally expensive.
+Therefore, it is natural to consider approximate minimization.
+In this chapter we study approximate Thompson sampling (\ats), which is a variant of \ts that
+only approximately minimizes the sampled loss function.
+
+\begin{algorithm}[h!]
+    \begin{minipage}{12cm}
+        \begin{mdframed}
+            \begin{lstlisting}
+args: prior $\xi$
+for $t = 1$ to $\infty$:
+  sample $f_t$ from $\bbP(f = \cdot| X_1,Y_1,\ldots,X_{t-1},Y_{t-1})$
+  play $X_t \in \bar x_{f_t}$
+  observe $Y_t$
+\end{lstlisting}
+            \caption{Approximate Thompson sampling}\label{alg:ats}
+        \end{mdframed}
+    \end{minipage}
+\end{algorithm}
+\ats{} is defined in \cref{alg:ats} and is similar to \ts except that it only approximately minimizes the sampled loss function.
+$X_t$ only needs to approximately minimize $f_t$.
+The analysis of this algorithm is surprisingly subtle,
+and indeed, we were only able to analyze an approximate version of \ts that uses a small amount of regularization.
+
+\begin{definition}\label{def:opt}
+    Let $\epsO \leq \epsR$ be non-negative constants called the optimization accuracy and regularization parameter, respectively.
+    Given $f \in \sF_{\pl}$ let $\tilde f(x) = f(x) + \frac{\epsR}{2} \norm{x}^2$ when $\epsR > 0$ define
+    \begin{align*}
+        \tilde x_f & = \argmin_{x \in K} \tilde f(x)                                              &
+        \bar x_f   & = \left\{x : \tilde f(x) \leq \min_{y \in K} \tilde f(y) + \epsO\right\} \,.
+    \end{align*}
+    When the regularization parameter $\epsR = 0$, define
+    $\tilde x_f = x_f$
+    and $\bar x_f = \{x_f\}$.
+\end{definition}
+
+When $\epsR = \epsO = 0$, then \ats{} and \ts{} are equivalent, though we note the importance in our analysis
+that the ties in \ts{} are broken in a consistent fashion.
+The regularization in the definition of $\tilde f$ ensures that all points in $\bar x_f$ are reasonably close to $\tilde x_f$ and introduces
+a degree of stability into \ats{}.
+An obvious question is whether or not you could do away with the regularization and define $\bar x_f$ by  $\{x : f_t(x) \leq f_{t\star} + \epsilon\}$
+for suitably small $\epsilon \geq 0$.
+We suspect the answer is yes but do not currently have a proof.
+The regularization ensures that $\bar x_f$ has small diameter, which need not be true in general for $\{x : f(x) \leq f_\star + \epsilon\}$,
+even if $\epsilon$ is arbitrarily small.
+
+\section{A Convex Cover}\label{sec:cover}
+We start by defining a kind of cover of a set of convex functions $\sF$.
+In the standard analysis introduced by \cite{BDKP15} and \cite{BE18}, this cover was defined purely in terms of the optimal action.
+As noticed by \cite{lattimore2021minimax}, this argument relies on $\sF$ being closed under convex combinations, which is not true
+for the space of ridge functions. Here we introduce a new definition notion of cover for function classes $\sF$ that are not closed
+under convex combinations.
+\begin{definition}\label{def:cover}
+    Let $\sF$ be a set of convex functions from $K$ to $\R$ and $\epsilon > 0$.
+    Define $N(\sF, \epsilon)$ to be the smallest number $N$ such that there exists $\{\sF_1,\ldots,\sF_N\}$ such that for all $k \in [N]$:
+    \begin{itemize}
+        \item \textit{Closure:} $\sF_k$ is a subset of $\sF$ and $\conv(\sF_k) \subset \sF$.
+        \item \textit{Common near-minimiser:} There exists an $x_k \in K$ such that $\norm{\tilde x_f - x_k} \leq \epsilon$ for all $f \in \sF_k$.
+    \end{itemize}
+    Moreover:
+    \begin{itemize}
+        \item \textit{Approximation:} For all $f \in \sF$ there exists a $k \in [N]$ and $g \in \sF_k$ such that $\norm{f - g}_\infty \leq \epsilon$
+              and $\norm{\tilde x_f - x_k} \leq \epsilon$.
+    \end{itemize}
+\end{definition}
+We now bound the covering number $N(\sF, \epsilon)$ for function classes $\sF_{\pb\pl}$ and $\sF_{\pb\pl\pr\pm}$.
+The former class is closed under convex combinations, which somewhat simplifies the situation.
+
+\begin{proposition}\label{prop:N}
+    Suppose that $\sF = \sF_{\pb\pl}$. Then $\log N(\sF, \epsilon) = O\left(d \log\left(\frac{\diam(K)}{\epsilon}\right)\right)$.
+\end{proposition}
+\begin{proof}
+    Let $\cC_K$ be a finite subset of $K$ such that for all $x \in K$ there exists a $y \in \cC_K$ with $\norm{x - y} \leq \epsilon$.
+    Standard bounds on covering numbers \citep[\S4]{ASG15} show that $\cC_K$ can be chosen so that
+    \begin{align*}
+        |\cC_K| \leq \left(1 + \frac{2\diam(K)}{\epsilon}\right)^d \,.
+    \end{align*}
+    Given $x \in \cC_K$ define $\sF_x = \{f \in \sF : \norm{\tilde x_f - x} \leq \epsilon\}$.
+    Since $\conv(\sF) = \sF$ it follows trivially that $\conv(\sF_x) \subset \conv(\sF) = \sF$.
+    The common near minimiser property is satisfied automatically by definition.
+    Suppose that $f \in \sF$ is arbitrary and let $x \in \cC_K$ be such that $\norm{x - \tilde x_f} \leq \epsilon$, which exists by construction.
+    Therefore $f \in \sF_x$ and the approximation property also holds.
+\end{proof}
+
+\begin{proposition}\label{prop:N-ridge}
+    Suppose that $\sF = \sF_{\pb\pl\pr\pm}$. Then $\log N(\sF, \epsilon) = O\left(d \log\left(\frac{\diam(K)}{\epsilon}\right)\right)$.
+\end{proposition}
+
+\begin{proof}
+    To begin, define $\epsilon_{\mathbb S} = \epsilon/\diam(K)$.
+    Given a ridge function $f \in \sF$, let $\theta_f \in \sphere_1$ be a direction such that $f(\cdot) = u(\ip{\theta, \cdot})$ for some convex function $u$.
+    Given $x \in K$ and $\theta \in \sphere_1$ let
+    \begin{align*}
+        \sF_{x,\theta} = \{f \in \sF : \norm{\tilde x_f - x} \leq \epsilon \text{ and } \theta_f = \theta\} \,.
+    \end{align*}
+    Note that $\{f \in \sF : f_\theta = \theta\}$ is convex and hence $\conv(\sF_{x,\theta}) \subset \sF$ holds.
+    Let $\cC_{\mathbb S}$ be a finite subset of $\sphere_1$ such that for all $\theta \in \sphere_1$ there exists an $\eta \in \cC_{\mathbb S}$
+    for which $\norm{\theta - \eta} \leq \epsilon_{\mathbb S}$.
+    Similarly, let $\cC_K$ be a finite subset of $K$ such that for all $x \in K$ there exists a $y \in \cC_K$ with $\norm{x - y} \leq \epsilon$.
+    Classical covering number results \citep[\S4]{ASG15} show that $\cC_{\mathbb S}$ and $\cC_K$ can be chosen so that
+    \begin{align*}
+        |\cC_{\mathbb S}| & \leq \left(1 + \frac{4}{\epsilon_{\mathbb S}}\right)^d  &
+        |\cC_K|           & \leq \left(1 + \frac{2 \diam(K)}{\epsilon}\right)^d \,.
+    \end{align*}
+    Consider the collection $\{\sF_{x,\theta} : x \in \cC_K, \theta \in \cC_{\mathbb S}\}$, which has size $N = |\cC_K| |\cC_{\mathbb S}|$.
+    Let $f \in \sF$ be arbitrary and let $\theta \in \cC_{\mathbb S}$ and $x \in \cC_K$ be such that
+    $\norm{\theta - \theta_f} \leq \delta$ and $\norm{x - \tilde x_f} \leq \epsilon$.
+    Then define $g = u_f(\ip{\cdot, \theta}) \in \sF$, which satisfies
+    \begin{align*}
+        \norm{f - g}_\infty
+         & = \sup_{x \in K} |u_f(\ip{x, \theta}) - u_f(\ip{x, \theta_f})|
+        \leq \sup_{x \in K} |\ip{x, \theta - \theta_f}|
+        \leq \epsilon_{\mathbb S} \diam(K)
+        \leq \epsilon \,.
+    \end{align*}
+    Therefore the approximation property holds.
+\end{proof}
+
+
+\section{Continuity of Regret and Information Gain}
+In order to bound the information ratio $\IR(\sF)$, we need to bound the regret $\Delta(\pi, \xi)$
+in terms of the information gain $I(\pi, \xi)$ for a prior $\xi \in \sP(\sF)$ and policy $\pi \in \sP(K)$.
+It turns out useful to prove continuitity (Lipschitzness) properties of these quantities
+in terms of the distance between two different priors $\xi, \nu \in \sP(\sF)$ and the distance between two different policies $\pi, \rho \in \sP(K)$.
+Of course, the proper \textit{distance} metric on $\sP(\sF)$ and $\sP(K)$ needs to be specified to make this precise.
+\begin{lemma}\label{lem:cont:I}
+    Suppose $f$ and $g$ are random elements in $\sF$ with laws $\xi$ and $\nu$
+    and that $X, Y \in K$ are independent of $f$ and $g$ and have laws $\pi$ and $\rho$.
+    Suppose that
+    $\norm{f - g}_\infty \leq \epsilon$ almost surely and $\norm{X - Y} \leq \epsilon$ almost surely.
+    Then
+    \begin{enumerate}
+        \item $I(\pi, \nu)^{1/2} \leq I(\pi, \xi)^{1/2} + \epsilon$.
+        \item $I(\pi, \nu)^{1/2} \leq I(\rho, \nu)^{1/2} + \epsilon$.
+    \end{enumerate}
+\end{lemma}
+
+\begin{proof}
+    For random variable $X$ let $\Lsnorm{X} = \E[X^2]^{1/2}$, which is a norm
+    on the space of square integrable random variables on some probability space with suitable a.s.\ identification.
+    Let $\bar f = \E[f]$ and $\bar g = \E[g]$.
+    By definition $I(\pi, \xi)^{1/2} = \Lsnorm{f(X) - \bar f(X)}$ and $I(\pi, \nu)^{1/2} = \Lsnorm{g(X) - \bar g(X)}$.
+    The first claim follows since $\Lsnorm{\cdot}$ is a norm.
+    The second claim follows in the same manner and using the fact that $f, g, \bar f, \bar g$ are Lipschitz.
+\end{proof}
+
+
+\begin{lemma}\label{lem:ts-eps}
+    Suppose that $\alpha, \beta \in \IR(\sF)$.
+    Suppose that $X$ and $f$ are (possibly dependent) random elements with laws $\pi \in \sP(K)$ and $\nu \in \sP(\sF)$ and such that
+    $f(X) \leq f_\star + \epsilon$ almost surely. Then
+    \begin{align*}
+        \Delta(\pi, \nu) \leq \alpha + \sqrt{\beta I(\pi, \nu)} + \epsilon\left[1 + \sqrt{\beta}\right]\,.
+    \end{align*}
+\end{lemma}
+
+\begin{proof}
+    Let $g(x) = \max(f(x), f(X))$ and $\xi$ be the law of $g$, which means that $\pi \in \ts$. %\todot{fix notation here}
+    % \todot{here I am using that $\max(f, u) \in \sF$ whenever $f \in \sF$.}
+    As usual, let $\bar f = \E[f]$ and $\bar g = \E[g]$.
+    By construction $\norm{f - g}_\infty \leq \epsilon$ and therefore
+    \begin{align*}
+        \Delta(\pi, \nu)
+        = \E[\bar f(X) - f_\star]
+        \leq \E[\bar g(X) - g_\star] + \epsilon
+        = \Delta(\pi, \xi) + \epsilon
+        \leq \alpha + \sqrt{\beta I(\pi, \xi)} + \epsilon \,.
+    \end{align*}
+    The result now follows from Lemma~\ref{lem:cont:I}.
+\end{proof}
+
+The next lemma establishes basic properties of the regularised minimisers $\tilde x_f$ and $\bar x_f$, which are defined
+in Definition~\ref{def:opt}.
+Remember that $\epsR$ is the amount of regularisation. Larger values make $\tilde x_f$ more stable but also a worse approximation of $x_f$.
+The approximation error in the definition of $\bar x_f$ is $\epsO$, which can be chosen extremely small.
+
+\begin{lemma}\label{lem:sc}
+    Suppose that $f, g \in \sF$.
+    Then
+    \begin{enumerate}
+        \item $\sup \{\norm{\tilde x_f - y} : y \in \bar x_f\} \leq \sqrt{2\epsO / \epsR}$ with $0/0 \triangleq 0$. \label{lem:sc:approx-close}
+        \item $f(\tilde x_f) \leq f_\star + \frac{\epsR}{2} \diam(K)^2$. \label{lem:sc:min}
+    \end{enumerate}
+\end{lemma}
+
+\begin{proof}
+    Note the special case that $\epsR = \epsO = 0$, then $\bar x_f = \{\tilde x_f\}$ by definition and \ref{lem:sc:approx-close} is immediate.
+    Otherwise
+    let $\tilde f(x) = f(x) + \frac{\epsR}{2} \norm{x}^2$
+    and $x = \tilde x_f$ and $y \in \bar x_f$. Then
+    \begin{align*}
+        \tilde f(\tilde x_f) + \epsO
+        \geq \tilde f(y)
+        \geq \tilde f(\tilde x_f) + D\tilde f(\tilde x_f)[y - \tilde x_f] + \frac{\epsR}{2} \norm{\tilde x_f - y}^2
+        \geq \tilde f(\tilde x_f) + \frac{\epsR}{2} \norm{\tilde x_f - y}^2 \,.
+    \end{align*}
+    Rearranging completes the proof of the first part.
+    For \ref{lem:sc:min}, let $y \in K$ be arbitrary
+    \begin{align*}
+        f(\tilde x_f) + \frac{\epsR}{2} \norm{x}^2 \leq f(y) + \frac{\epsR}{2} \norm{y}^2  \,.
+    \end{align*}
+    And the result follows since $\norm{y}^2 - \norm{x}^2 \leq \diam(K)^2$.
+\end{proof}
+
+
+\section{A Regret Bound in Terms of the Information Ratio}\label{sec:ir-general}
+We can now state a general theorem from which Theorem~\ref{thm:ts-ir-regret} follows.
+
+\begin{theorem}\label{thm:ir-general}
+    Suppose that $\epsilon \in (0,1)$ and $\frac{1}{2} \epsR \diam(K)^2 \leq \epsilon2$ and $2\epsO/\epsR \leq \epsilon^2$
+    and let $\sF$ be a set of convex functions from $K$ to $[0,1]$ and $(\alpha, \beta) \in \IR(\sF)$.
+    Then the Bayesian regret of \ats{} for any prior $\xi$ is at most
+    \begin{align*}
+        \BReg_n(\ats, \xi) \leq n \alpha + n\epsilon[6 + 2 \sqrt{\beta}] + \sqrt{\frac{\beta n}{2} \log\left(N\left(\sF, 1/\epsilon\right)\right)} \,.
+    \end{align*}
+\end{theorem}
+
+Theorem~\ref{thm:ts-ir-regret} follows by choosing $\epsilon = 1/n$ and $\epsR = \epsO = 0$ and by
+Proposition~\ref{prop:N} and Proposition~\ref{prop:N-ridge} to bound the covering numbers for the relevant classes.
+
+\begin{proof}
+    Let $N = N(\sF, \epsilon)$
+    and $\sF_1,\ldots,\sF_N$ be a collection of subset of $\sF$ satisfying the conditions of Definition~\ref{def:cover}.
+    Hence, there exists a sequence $x_1,\ldots,x_N$ such that for all $k \in [N]$ and $f \in \sF_k$,
+    \begin{align*}
+        \snorm{\tilde x_f - x_k} \leq \epsilon \,.
+    \end{align*}
+    Let $\xi \in \sP(\sF)$ be any prior.
+    Suppose that $f$ is sampled from $\xi$ and $X_\star$ be a random element in $K$ such that $X_\star \in \bar x_f$ and let $X$ be an independent copy of $X_\star$
+    and $Y$ be a random variable such that $\E[Y|f, X] = f(X)$ and $Y \in [0,1]$ almost surely.
+    By Definition~\ref{def:cover} there exists an $[N]$-valued random variable $\kappa$ such that:
+    \begin{enumroman}
+        \item There exists a random function $f_\kappa \in \sF_\kappa$ with $\norm{f - f_\kappa} \leq \epsilon$; and
+        \item $\norm{\tilde x_f - x_\kappa} \leq \epsilon$.
+        \item There exists a random function $f_\kappa \in \sF_\kappa$ with $\norm{f - f_\kappa}_\infty \leq \epsilon$; and \label{proof:ir:i}
+        \item $\norm{\tilde x_f - x_\kappa} \leq \epsilon$. \label{proof:ir:ii}
+    \end{enumroman}
+    Define $\pi$ as the law of $X$, which is a (approximate) Thompson sampling policy for $\xi$.
+
+    \begin{lemma}\label{lem:ir}
+        The following holds:
+        \begin{align*}
+            \Delta(\pi, \xi) \leq \alpha + \sqrt{\beta I(\kappa ; X, Y)} + \epsilon \poly(\diam(K), \beta) \,,
+            \Delta(\pi, \xi) \leq \alpha + \sqrt{\beta I(\kappa ; X, Y)} + \epsilon [6 + 2 \sqrt{\beta}] \,,
+        \end{align*}
+        where $I(\kappa ; X, Y)$ is the mutual information
+        between $\kappa$ and the pair $(X, Y)$.
+        where $I(\kappa ; X, Y)$ is the mutual information between $\kappa$ and the pair $(X, Y)$.
+    \end{lemma}
+
+    \begin{proof}
+        Let $\nu$ be the law of $\E[f|\kappa]$ and $\nu_\kappa$ be the law of $\E[f_\kappa|\kappa]$ and
+        $\pi_\kappa$ be the law of $x_\kappa$.
+        Let $\bar f_\kappa = \E[f_\kappa]$.
+        Then
+        \begin{align*}
+            \Delta(\pi, \xi)
+             & = \E[\bar f(X) - f_\star]                                                                            \\
+             & \explan{(a)}= \E[\bar f(X) - \E[f_\star|\kappa]]                                                     \\
+             & \explan{(b)}\leq \E[\bar f_\kappa(X) - \E[f_\star|\kappa]] + \epsilon                                \\
+             & \explan{(c)}\leq \E[\bar f_\kappa(x_\kappa) - \E[f_\kappa|\kappa]_\star] + 6 \epsilon                \\
+             & \explan{(d)}= \Delta(\pi_\kappa, \nu_\kappa) + 6 \epsilon                                            \\
+             & \explan{(e)}\leq \alpha + \sqrt{\beta I(\pi_\kappa, \nu_\kappa)} + 6 \epsilon                        \\
+             & \explan{(f)}\leq \alpha + \sqrt{\beta I(\pi_\kappa, \nu)} + \epsilon[6 + \sqrt{\beta}]               \\
+             & \explan{(g)}\leq \alpha + \sqrt{\beta I(\pi, \nu)} + \epsilon [6 + 2 \sqrt{\beta}]                   \\
+             & \explan{(h)}\leq \alpha + \sqrt{\frac{\beta I(\kappa ; X, Y)}{2}} + \epsilon[6 + 2 \sqrt{\beta}] \,,
+        \end{align*}
+        where
+        \begin{enumerate}
+            \item by the tower rule.
+            \item follows since $\snorm{f_\kappa - f}_\infty \leq \epsilon$ by definition and by convexity of $\norm{\cdot}_\infty$,
+                  \begin{align*}
+                      \snorm{\bar f - \bar f_\kappa}_\infty
+                       & = \snorm{\E[f] - \E[f_\kappa]}_\infty
+                      \leq \E[\snorm{f - f_\kappa}_\infty]
+                      \leq \epsilon \,.
+                  \end{align*}
+            \item
+                  follows because $\norm{f - f_\kappa}_\infty \leq \epsilon$ and $\norm{\tilde x_f - x_\kappa} \leq \epsilon$ so that
+                  \begin{align*}
+                      \E[f_\star|\kappa]
+                       & = \E[f(x_f)|\kappa]                                        \\
+                       & \geq \E[f(\tilde x_f)|\kappa] - \frac{\epsR}{2} \diam(K)^2 \\
+                       & \geq \E[f(x_\kappa)|\kappa] - 2\epsilon                    \\
+                       & \geq \E[f_\kappa(x_\kappa)|\kappa] - 3\epsilon             \\
+                       & \geq \E[f_\kappa|\kappa]_\star - 3\epsilon \,.
+                      \E[f_\star|\kappa]
+                       & = \E[f(x_f)|\kappa]                                        \\
+                      \tag*{by Lemma~\ref{lem:sc}\ref{lem:sc:min}}
+                       & \geq \E[f(\tilde x_f)|\kappa] - \frac{\epsR}{2} \diam(K)^2 \\
+                      \tag*{by the assumption on $\epsR$ and \ref{proof:ir:ii}}
+                       & \geq \E[f(x_\kappa)|\kappa] - 2\epsilon                    \\
+                      \tag*{by \ref{proof:ir:i}}
+                       & \geq \E[f_\kappa(x_\kappa)|\kappa] - 3\epsilon             \\
+                       & \geq \E[f_\kappa|\kappa]_\star - 3\epsilon \,.
+                  \end{align*}
+                  And because $\snorm{X_\star - x_\kappa} \leq \snorm{X_\star - \tilde x_f} + \snorm{\tilde x_f - x_\kappa} \leq 2 \epsilon$ so that
+                  \begin{align*}
+                      \E[\bar f_\kappa(X)] = \E[\bar f_\kappa(X_\star)] \leq \E[\bar f_\kappa(x_\kappa)] + 2 \epsilon \,.
+                  \end{align*}
+                  And because by the triangle inequality, the definition of $X_\star$ and Lemma~\ref{lem:sc}\ref{lem:sc:approx-close},
+                  \begin{align}
+                      \snorm{X_\star - x_\kappa}
+                      \leq \snorm{X_\star - \tilde x_f} + \snorm{\tilde x_f - x_\kappa}
+                      \leq \sqrt{2\epsO / \epsR} + \epsilon
+                      \leq 2 \epsilon\,,
+                      \label{eq:ir:3}
+                  \end{align}
+                  which implies that $\E[\bar f_\kappa(X)] = \E[\bar f_\kappa(X_\star)] \leq \E[\bar f_\kappa(x_\kappa)] + 2 \epsilon$.
+            \item follows by definition.
+            \item follows because
+                  \begin{align*}
+                      \E[f_\kappa|\kappa](x_\kappa)
+                      = \E[f_\kappa(x_\kappa)|\kappa]
+                      \leq \E[f_{\kappa \star}|\kappa] + \epsilon
+                      \leq \E[f_\kappa|\kappa]_\star + \epsilon
+                  \end{align*}
+                  Then use Lemma~\ref{lem:ts-eps}.
+                  $\E[f_\kappa|\kappa](x_\kappa)
+                      = \E[f_\kappa(x_\kappa)|\kappa]
+                      \leq \E[f_{\kappa \star}|\kappa] + \epsilon
+                      \leq \E[f_\kappa|\kappa]_\star + \epsilon$
+                  and Lemma~\ref{lem:ts-eps}.
+            \item follows from Lemma~\ref{lem:cont:I} and because
+                  \begin{align*}
+                      \snorm{\E[f_\kappa|\kappa] - \E[f|\kappa]}_\infty
+                       & \leq \E[\snorm{f_\kappa - f}_\infty] \leq \epsilon \,.
+                  \end{align*}
+            \item follows from Lemma~\ref{lem:cont:I} and because
+                  \begin{align*}
+                      \snorm{X_\star - x_\kappa}
+                      \leq \snorm{X_\star - \tilde x_f} + \snorm{\tilde x_f - x_\kappa}
+                      \leq \sqrt{2\epsO / \epsR} + \epsilon
+                      \leq 2\epsilon \,.
+                  \end{align*}
+                  $\snorm{\E[f_\kappa|\kappa] - \E[f|\kappa]}_\infty
+                      \leq \E[\snorm{f_\kappa - f}_\infty] \leq \epsilon$.
+            \item follows from Lemma~\ref{lem:cont:I} and \cref{eq:ir:3}.
+            \item follows from Pinsker's inequality. Let $\KL(\cdot, \cdot)$ be the relative entropy. Then
+                  \begin{align*}
+                      \I(\pi, \nu)
+                       & = \E[(\E[f(X)|X] - \E[f(X)|\kappa,X])^2]                 \\
+                       & = \E[(\E[Y|X] - \E[Y|\kappa,X])^2]                       \\
+                       & \leq \frac{1}{2} \E[ \KL(\bbP_{Y|X}, \bbP_{Y|X,\kappa})] \\
+                       & = \frac{1}{2} I(\kappa | X, Y)
+                  \end{align*}
+                  \begin{align*}
+                      \I(\pi, \nu)
+                       & = \E[(\E[f(X)|X] - \E[f(X)|\kappa,X])^2]                 \\
+                       & = \E[(\E[Y|X] - \E[Y|\kappa,X])^2]                       \\
+                       & \leq \frac{1}{2} \E[ \KL(\bbP_{Y|X}, \bbP_{Y|X,\kappa})] \\
+                       & = \frac{1}{2} I(\kappa | X, Y) \,.
+                  \end{align*}
+        \end{enumerate}
+        This concludes the explanation of the steps and so the proof of the lemma.
+    \end{proof}
+
+    We are now in a position to prove Theorem~\ref{thm:ir-general}.
+    Let $\pi_t$ be the law of $X_t$ under $\bbP_{t-1}$ and $\xi_t$ be the law of $f$ under $\bbP_{t-1}$.
+    By Lemma~\ref{lem:ir},
+    \begin{align*}
+        \Delta(\pi_t, \xi_t) \leq \alpha + \sqrt{\beta I_t(\kappa ; X_t, Y_t)} + \epsilon[6 + 2 \sqrt{\beta}]\,.
+    \end{align*}
+    Hence, letting $I_t$ be the mutual information with respect to probability measure $\bbP_t$,
+    \begin{align*}
+        \BReg_n(\ts, \xi)
+         & = \E\left[\sum_{t=1}^n \Delta(\pi_t, \xi_t)\right]                                                                         \\
+         & \leq n \alpha + \E\left[\sum_{t=1}^n \sqrt{\beta I_{t-1}(\kappa ; X_t, f(X_t))}\right] + n \epsilon[6 + 2 \sqrt{\beta}]    \\
+         & \leq n \alpha + \sqrt{\beta n \E\left[\sum_{t=1}^n I_{t-1}(\kappa ; X_t, f(X_t))\right]} + n \epsilon [6 + 2 \sqrt{\beta}] \\
+        \BReg_n(\ats, \xi)
+         & = \E\left[\sum_{t=1}^n \Delta(\pi_t, \xi_t)\right]                                                                         \\
+         & \leq n \alpha + \E\left[\sum_{t=1}^n \sqrt{\beta I_{t-1}(\kappa ; X_t, Y_t)}\right] + n \epsilon[6 + 2 \sqrt{\beta}]       \\
+         & \leq n \alpha + \sqrt{\beta n \E\left[\sum_{t=1}^n I_{t-1}(\kappa ; X_t, Y_t)\right]} + n \epsilon [6 + 2 \sqrt{\beta}]    \\
+         & \leq n \alpha + \sqrt{\beta n \log(N)} + n \epsilon [6 + 2 \sqrt{\beta}] \,,
+    \end{align*}
+    where the final inequality holds by the chain rule for the mutual information and because $\kappa \in [N]$ and hence its entropy is at most $\log(N)$.
+\end{proof}
+
+\chapter{Thompson Sampling in 1-dimension}
+Our first main theorem shows that \ts{} is statistically efficient when the loss is bounded and Lipschitz and $d = 1$.
+\begin{theorem}\label{thm:ts-1d}
+    When $d = 1$, $\displaystyle \sup_{\xi \in \sP(\sF_{\pb\pl})} \BReg_n(\ts, \xi) = O\left(\sqrt{n \log(n) \log(n \diam(K))}\right)$.
+\end{theorem}
+
+\cref{thm:ts-1d} is established by combining the following bound on the information ratio and $\alpha = 1/n$ with \cref{thm:ts-ir-regret}.
+
+\begin{theorem}\label{thm:ts}
+    Suppose that $d = 1$ and $\alpha \in (0,1)$. Then $(\alpha, 10^4 \ceil{\log(1/\alpha)}) \in \IR(\sF_{\pb\pl})$.
+\end{theorem}
+
+\begin{proof}
+    Let $\bar f \in \conv(\sF_{\pb\pl})$ and for integer $i$ define
+    \begin{align}
+        \sF_i & = \begin{cases}
+                      \{f \in \sF_{\pb\pl} : \bar f(x_f) - f_\star \in (\alpha 2^{|i|-1}, \alpha 2^{|i|}],\, x_f \geq x_{\bar f}\} & \text{if } i > 0     \\
+                      \{f \in \sF_{\pb\pl} : \bar f(x_f) - f_\star \in (\alpha 2^{|i|-1}, \alpha 2^{|i|}],\, x_f < x_{\bar f}\}    & \text{if } i < 0     \\
+                      \{f \in \sF_{\pb\pl} : \bar f(x_f) - f_\star \leq \alpha \}                                                  & \text{if } i = 0 \,.
+                  \end{cases}
+    \end{align}
+    Since the losses in $\sF_{\pb\pl}$ are bounded by assumption, for $|i| > m = \ceil{\log_2(1/\alpha)}$, $\sF_i = \emptyset$
+    so that $\sF_{\pb\pl} = \cup_{i=-m}^m \sF_i$.
+    In a moment we will show that with $k = 4$ and $-m \leq i \leq m$ and $\epsilon = \alpha 2^{|i|}$ that
+    \begin{align}
+        \sup_{f \in \sF_i} \left(\bar f(x_f) - f_\star\right)
+        \leq \epsilon \leq \alpha + \sqrt{230\inf_{f_1,\ldots,f_k \in \sF_i} \sum_{j,l \in \pair(k)} (f_j(x_{f_l}) - \bar f(x_{f_l}))^2} \,.
+        \label{eq:ts:1d:goal}
+    \end{align}
+    Hence, by Lemma~\ref{lem:decomp-big} and naive simplification of constants $(\alpha, 10^4 \ceil{\log(1/\alpha)}) \in \IR(\sF_{\pb\pl})$ as desired.
+    The first inequality in \cref{eq:ts:1d:goal} is an immediate consequence of the definition of $\sF_i$ and $\epsilon$.
+    The second is also immediate when $i = 0$.
+    The situation when $i < 0$ and $i > 0$ is symmetric, so for the remainder we prove that the second inequality in \cref{eq:ts:1d:goal} holds for any $i > 0$.
+    Let $f_1,\ldots,f_k \in \sF_i$ and
+    for $j \in [4]$ let $x_j = x_{f_j}$ and assume without loss of generality that $x_1 \leq x_2 \leq x_3 \leq x_4$.
+    Suppose that
+    \begin{align}
+        \sum_{j,l \in \pair(4)} (f_j(x_{f_l}) - \bar f(x_{f_l}))^2 < c^2 \epsilon^2 \qquad\text{with}\qquad c = \frac{\sqrt{65} - 7}{16} \,.
+        \label{eq:ts:max}
+    \end{align}
+    Let us now establish a contradiction, which we do in three steps. The main argument in each step is illustrated in Figure~\ref{fig:ts}.
+    \begin{enumsteps}
+        \item \label{step:ts:i} We start by showing that $x_2$ must be somewhat closer to $x_3$ than to $x_1$.
+        \begin{align*}
+            f_1(x_3)
+            \explan{(a)}\leq \bar f(x_3) + \epsilon c
+            \explan{(b)}\leq f_3(x_3) + \epsilon[c+1] \leq f_3(x_1) + \epsilon[c+1]
+            \explan{(c)}\leq \bar f(x_1) + \epsilon[2c+1] \,,
+        \end{align*}
+        where \texttt{(a)} follows from \cref{eq:ts:max}, \texttt{(b)} since for $f \in \sF_i$, $f(x_f) \geq \bar f(x_f) - \epsilon$
+        and \texttt{(c)} from \cref{eq:ts:max} again.
+        Hence, with $p \in [0,1]$ such that $x_2 = (1 - p)x_1 + p x_3$,
+        \begin{align*}
+            \bar f(x_1)
+            \explan{(a)}\leq \bar f(x_2)
+            \explan{(b)}\leq f_1(x_2) + c\epsilon
+             & \explan{(c)}\leq (1 - p) f_1(x_1) + p f_1(x_3) + c\epsilon                     \\
+             & \explan{(d)}\leq (1 - p) (\bar f_1(x_1) - \epsilon/2) + p f_1(x_3) + c\epsilon \\
+             & \explan{(e)}\leq \bar f(x_1) + \epsilon\left[c + p[2c + 3/2] - 1/2\right] \,,
+        \end{align*}
+        where \texttt{(a)} follows because $\bar f$ is non-decreasing on $[x_1,x_4]$ by the definition of $\sF_i$ and $i > 0$,
+        \texttt{(b)} from \cref{eq:ts:max},
+        \texttt{(c)} by convexity and the definition of $p$,
+        \texttt{(d)} since $f_1(x_1) \leq \bar f_1(x_1) - \epsilon/2$ by the definition of $\sF_i$ and
+        \texttt{(e)} is true by the previous display.
+        Therefore $p \geq (1/2 - c) / (2c + 3/2) \approx 0.27$.
+
+        \item \label{step:ts:ii} Having shown that $x_2$ is close to $x_3$, we now show that $f_3(x_3)$ is not much smaller than $\bar f(x_1)$. Indeed,
+        \begin{align*}
+            \bar f(x_1)
+             & \explan{(a)}\leq \bar f(x_2)
+            \explan{(b)}\leq f_3(x_2) + c\epsilon                                 \\
+             & \explan{(c)}\leq (1 - p) f_3(x_1) + p f_3(x_3) + c\epsilon         \\
+             & \explan{(d)}\leq (1 - p) \bar f(x_1) + p f_3(x_3) + 2c\epsilon \,,
+        \end{align*}
+        \texttt{(a)-(c)} follows as above in \ref{step:ts:i} and \texttt{(d)} from \cref{eq:ts:max}.
+        Rearranging shows that $f_3(x_3) \geq \bar f(x_1) - \frac{2c\epsilon}{p}$.
+
+        \item \label{step:ts:iii}
+        Lastly we derive a contradiction using \ref{step:ts:i} and \ref{step:ts:ii} since
+        \begin{align*}
+            f_4(x_3)
+             & \explan{(a)}\leq f_4(x_1)
+            \explan{(b)}\leq \bar f(x_1) + c\epsilon                                              \\
+             & \explan{(c)}\leq f_3(x_3) + \epsilon\left[c + \frac{2c}{p}\right]                  \\
+             & \explan{(d)}\leq \bar f(x_3) + \epsilon\left[c + \frac{2c}{p} - \frac{1}{2}\right] \\
+             & \explan{(e)}\leq \bar f(x_3) - c \epsilon \,,
+        \end{align*}
+    \end{enumsteps}
+    where \texttt{(a)} follows by convexity and because $f_4$ is minimised at $x_4$,
+    \texttt{(b)} from \cref{eq:ts:max},
+    \texttt{(c)} from \ref{step:ts:ii},
+    \texttt{(d)} since $f_3(x_3) \leq \bar f(x_3) - \epsilon/2$ by the definition of $\sF_i$
+    and \texttt{(e)} from the bound on $p$ in \ref{step:ts:i} and the definition of $c$.
+    But this contradicts \cref{eq:ts:max}.
+    Hence \cref{eq:ts:max} does not hold. And since $c^2 \geq \frac{1}{230}$ it follows that \cref{eq:ts:1d:goal} holds.
+\end{proof}
+
+\begin{figure}[h!]
+    \begin{tikzpicture}[scale=3]
+        \draw[thin] (0,0) -- (0.3,0.02) -- (0.6,0.1) -- (1,0.5);
+        \draw[thick,red] (0,-0.23) -- (1,0.52);
+        \node[anchor=west] at (1,.52) {$f_1$};
+        \node[anchor=west] at (1, 0.2){$f_3$};
+        \node[anchor=east] at (0,0) {$\bar f$};
+        \draw[thick,blue] plot [smooth] coordinates {(1,0.2) (0.5,0.2) (0,0.3)};
+        \draw (0,-0.25) -- (1,-0.25);
+        \draw (0,-0.25) -- (0,-0.27);
+        \draw (1,-0.25) -- (1,-0.27);
+        \node[anchor=north] at (0,-0.25) {$x_1$};
+        \node[anchor=north] at (0.3, -0.25) {$x_2$};
+        \node[anchor=north] at (1,-0.25) {$x_3$};
+        \node[anchor=north] at (0.5,-0.45) {\texttt{(i)}};
+    \end{tikzpicture}
+    \hspace{0.5cm}
+    \begin{tikzpicture}[scale=3]
+        \draw[thin] (0,0) -- (0.6,0.02) -- (1,0.22);
+        \draw[thick,red] (0,-0.23) -- (1,0.24);
+        \node[anchor=west] at (1,.24) {$f_1$};
+
+        \node[anchor=west] at (1, -0.06){$f_3$};
+        \draw[thick,blue] (0,0.1) -- (1,-0.08);
+
+        \node[anchor=east] at (0,0) {$\bar f$};
+        \draw (0,-0.25) -- (1,-0.25);
+        \draw (0,-0.25) -- (0,-0.27);
+        \draw (1,-0.25) -- (1,-0.27);
+        \node[anchor=north] at (0,-0.25) {$x_1$};
+        \node[anchor=north] at (0.6, -0.25) {$x_2$};
+        \node[anchor=north] at (1,-0.25) {$x_3$};
+        \node[anchor=north] at (0.5,-0.45) {\texttt{(ii)}};
+    \end{tikzpicture}
+    \hspace{0.5cm}
+    \begin{tikzpicture}[scale=3]
+        \draw[thin] (0,0) -- (0.6,0.02) -- (1,0.22) -- (1.5,0.44);
+
+        \draw[thick,red] (0,-0.23) -- (1.5,0.46);
+        \node[anchor=south] at (1.5,.46) {$f_1$};
+
+        \draw[thick,green!30!black] (0,0.02) -- (1.5,-0.04);
+        \node[anchor=west] at (1.5,-0.04) {$f_4$};
+
+        \node[anchor=west] at (1.5, 0.41){$f_3$};
+        \draw[thick,blue] (0,0.08) -- (1,-0.06) -- (1.5,0.41);
+        \node[anchor=east] at (0,0) {$\bar f$};
+
+        \draw (0,-0.25) -- (1.5,-0.25);
+        \draw (0,-0.25) -- (0,-0.27);
+        \draw (1.5,-0.25) -- (1.5,-0.27);
+
+        \node[anchor=north] at (0,-0.25) {$x_1$};
+        \node[anchor=north] at (0.6, -0.25) {$x_2$};
+        \node[anchor=north] at (1,-0.25) {$x_3$};
+        \node[anchor=north] at (1.5,-0.25) {$x_4$};
+        \node[anchor=north] at (0.75,-0.45) {\texttt{(iii)}};
+    \end{tikzpicture}
+
+    \caption{
+        \texttt{(i)} shows that if $x_2$ is too close to $x_1$, then $f_1(x_3)$ must be large, which implies that $f_3(x_3)$ must be large
+        and so too must $f_3(x_1)$, which shows that $f_3(x_1) - \bar f(x_1)$ is large.
+        \texttt{(ii)} shows what happens if $f_3(x_3)$ is too far below $\bar f(x_1)$, which is that $f_3(x_1)$ must be much larger than $\bar f(x_1)$.
+        \texttt{(iii)} shows that $f_4(x_3)$ cannot be much larger than $f_3(x_3)$ and therefore $\bar f(x_3) - f_4(x_3)$ must be large.
+    }
+    \label{fig:ts}
+\end{figure}
+
+\chapter{Thompson Sampling for Ridge Functions}
+
+We now consider the multi-dimensional convex monotone ridge function setting where $\sF = \sF_{\pb\pl\pr\pm}$
+
+\begin{theorem}\label{thm:ts-ridge}
+    $\displaystyle \sup_{\xi \in \sP(\sF_{\pb\pl\pr\pm})} \BReg_n(\ts, \xi) = O\left(d^{2.5} \sqrt{n} \log(n d \diam(K))^2\right)$.
+\end{theorem}
+
+\cite{RV16} used information-theoretic means to show that for linear bandits the regret is at most $\tilde O(d \sqrt{n})$.
+\cite{lattimore2021minimax} showed that for (possibly non-monotone) convex ridge functions a version of \IDS{} has Bayesian regret at most $\tilde O(d \sqrt{n})$.
+The downside is that \IDS{} is barely implementable in practice, even given efficient access to posterior samples.
+Like \cref{thm:ts-1d}, \cref{thm:ts-ridge} is established by combining a bound on the information ratio with \cref{thm:ts-ir-regret}.
+
+\begin{theorem}\label{thm:ridge-ir}
+    $(\alpha, \beta \ceil{\log(1/\alpha)}) \in \IR(\sF_{\pb\pl\pr\pm})$ whenever $\alpha \in (0,1)$ and
+    \begin{align*}
+        \beta = \Omega\left(d^4 \log\left(\frac{d \diam(K)}{\alpha}\right)^2\right) \,.
+    \end{align*}
+    with the Big-O hiding only a universal constant.
+\end{theorem}
+
+
+\begin{proof}
+    Abbreviate $\sF = \sF_{\pb\pl\pm\pr}$.
+    The high-level argument follows the proof of Theorem~\ref{thm:ts}.
+    The main challenge is lower bounding the quadratic (information gain) term that appears in Lemma~\ref{lem:decomp-big},
+    which uses an argument based on the method of inscribed ellipsoid for optimisation \citep{tarasov1988method}.
+    Let $\bar f \in \conv(\sF)$.
+    Given a nonempty finite set $\cC \subset \sF$ and $\delta > 0$, let
+    $J_\delta(\cC) = \conv\left(\cup_{g \in \cC} \ball_\delta(x_g)\right)$.
+    Moreover, let $E_\delta(\cC)$ be the ellipsoid of maximum volume enclosed in $J_\delta(\cC)$, which is called John's ellipsoid.
+    We now need two lemmas. The first shows that for a suitable subset $\cC$ of loss functions either the information gain is reasonably large
+    or some function $f$ can be removed from $\cC$ in such a way that $E_\delta(\cC \setminus \{f\})$ is considerably smaller than $E_\delta(\cC)$.
+
+    \begin{lemma}\label{lem:ridge-ir-1}
+        Let $\epsilon > 0$, $\delta = \frac{\epsilon}{12(d+1)}$ and $\cC \subset \sF$ be a nonempty finite set such that for all $f, g \in \cC$,
+        $\bar f(x_f) - f_\star \in [\epsilon/2, \epsilon]$ and
+        $|\bar f(x_f) - \bar f(x_g)| \leq \delta$.
+        Then at least one of the following holds:
+        \begin{enumroman}
+            \item There exists an $f \in \cC$ such that $\vol(E_\delta(\cC \setminus \{f\})) \leq 0.85 \vol(E_\delta(\cC))$. \label{lem:ridge-ir-1:a}
+            \item There exists a pair $f, g \in \pair(\cC)$ such that $(f(x_g) - \bar f(x_g))^2 \geq \delta^2$. \label{lem:ridge-ir-1:b}
+        \end{enumroman}
+    \end{lemma}
+
+    \begin{proof}
+        Let $\mu \in \R^d$ and $\Sigma$ be positive definite such that $E_{\delta}(\cC) = \{x : \norm{x - \mu}_{\Sigma^{-1}} \leq 1 \}$ and for $r > 0$,
+        let $E_{\delta,r} = \{x : \norm{x - \mu}_{\Sigma^{-1}} \leq r\}$.
+        By John's theorem \citep[Remark 2.1.17]{ASG15}, $E_{\delta}(\cC) \subset J_\delta(\cC) \subset E_{\delta,d}(\cC)$.
+        Let $f \in \cC$ be arbitrary.
+        By assumption there exists a convex monotone increasing $\ell$ and $\theta \in \sphere_1$ such that
+        $f = \ell(\ip{\cdot, \theta})$.
+        Let $H = H(\mu, \theta)$, which is the half-space passing through the center of John's ellipsoid $E_{\delta}(\cC)$ with inward-facing normal $\theta$.
+        Consider the following cases, illustrated in Figure~\ref{fig:ir-ridge}:
+        \begin{enumcases}
+            \item \label{lem:ir-ridge:c1} $\ip{x_g, \theta} \geq \ip{\mu, \theta} + \delta$ for all $g \in \cC \setminus \{f\}$.
+            In this case $J_\delta(\cC \setminus \{f\}) \subset H \cap J_\delta(\cC)$ and therefore
+            the inequality of \cite{khachiyan1990inequality} shows that
+            $\vol(E_{\delta}(\cC \setminus \{f\}))) \leq 0.85 \vol(E_{\delta}(\cC))$.
+            \item \label{lem:ir-ridge:c2} There exists a $g \in \cC \setminus \{f\}$ such that
+            such that $\ip{x_g, \theta} < \ip{\mu, \theta} + \delta$.
+            Since $E_{\delta}(\cC) \subset J_\delta(\cC)$, there exists an $x \in J_\delta(\cC)$ such that
+            $\ip{x, \theta} \geq \ip{\mu, \theta} + \norm{\theta}_\Sigma$.
+            By the definition of $J_\delta(\cC)$ it follows that there there exists a $h \in \cC$ such that
+            $\ip{x_h, \theta} \geq \ip{\mu, \theta} + \norm{\theta}_\Sigma - \delta$.
+            Let $x_h' = x_h + \delta \theta$ and $x_g' = x_g - \delta \theta$ and $x_f' = x_f - \delta \theta$.
+            Collecting the above facts, we have
+            \begin{align}
+                \sip{x_f', \theta} & \geq \ip{\mu, \theta} - d \norm{\theta}_\Sigma                           &
+                \sip{x_g', \theta} & \leq \ip{\mu, \theta}                                                    &
+                \sip{x_h', \theta} & \geq \ip{\mu, \theta} + \norm{\theta}_\Sigma \,. \label{eq:ts-ridge:rel}
+            \end{align}
+            Since $\ell$ is nondecreasing and $f(x_f) \leq f(x_g)$ it follows that $\sip{x_f', \theta} \leq \sip{x_g', \theta} \leq \sip{x_h', \theta}$.
+            Therefore,
+            \begin{align}
+                f(x_g)
+                 & \explan{(a)}\leq \delta + f(x_g')                                                                                 \nonumber
+                \explan{(b)}= \delta + f\left(\frac{\sip{x_g' - x_f', \theta}}{\sip{x_h' - x_f', \theta}} x_h' + \frac{\sip{x_h' - x_g', \theta}}{\sip{x_h' - x_f',\theta}} x_f'\right) \nonumber \\
+                 & \explan{(c)}\leq \delta + f(x_h') + \frac{\sip{x_h' - x_g', \theta}}{\sip{x_h' - x_f', \theta}} (f(x_f') - f(x_h')) \nonumber                                                  \\
+                 & \explan{(d)}\leq \delta + f(x_h') + \frac{1}{d+1} (f(x_f') - f(x_h'))
+                \explan{(e)}\leq 3 \delta + f(x_h) + \frac{1}{d+1} (f(x_f) - f(x_h)) \,, \label{eq:ts-ridge:1}
+            \end{align}
+            where \texttt{(a)} follows because $f$ is a Lipschitz ridge function and using Lemma~\ref{lem:lip} and the definition of $x_g'$ so that
+            $|\sip{x_g - x_g', \theta}| = \delta$.
+            \texttt{(b)} by definitions and the fact that $f(\cdot) = \ell(\ip{\cdot, \theta})$,
+            \texttt{(c)} by convexity of $f$,
+            \texttt{(d)} from \cref{eq:ts-ridge:rel} and because $f(x'_f) \leq f(x'_h)$.
+            \texttt{(e)} uses again that $f$ is a Lipschitz ridge function and Lemma~\ref{lem:lip} and that $|\sip{x_h' - x_h, \theta}| = \delta$.
+            Suppose that $f(x_h) \geq \bar f(x_h) + \delta$, then $(f(x_h) - \bar f(x_h))^2 \geq \delta^2$ and \ref{lem:ridge-ir-1:b} holds.
+            Otherwise $f(x_h) < \bar f(x_h) + \delta$ and so
+            \begin{align*}
+                f(x_g)
+                 & \explan{(a)}\leq 3 \delta + \frac{d}{d+1} f(x_h) + \frac{1}{d+1} f(x_f)
+                \explan{(b)}\leq 3 \delta + \frac{d}{d+1} (\bar f(x_h) + \delta) + \frac{1}{d+1} (\bar f(x_h) + \delta - \epsilon / 2) \\
+                 & \explan{(c)}\leq 4 \delta + \bar f(x_h) - \frac{\epsilon}{2(d+1)}
+                \explan{(d)}= \bar f(x_h) - 2\delta
+                \explan{(e)}\leq \bar f(x_g) - \delta \,,
+            \end{align*}
+            where \texttt{(a)} follows from \cref{eq:ts-ridge:1},
+            \texttt{(b)} follows from the assumption in the lemma statement that $f(x_f) \leq \bar f(x_f) - \epsilon/2 \leq \bar f(x_h) + \delta - \epsilon/2$
+            and $f(x_h) < \bar f(x_h) + \delta$.
+            \texttt{(c)} by naive simplification,
+            \texttt{(d)} by the definition of $\gamma$ and $\delta$
+            and \texttt{(e)} by the assumptions in the lemma.
+            Therefore $f(x_g) \leq \bar f(x_g) - \delta$,
+            which implies that $(f(x_g) - \bar f(x_g))^2 \geq \delta^2$ and again \ref{lem:ridge-ir-1:b} holds.
+        \end{enumcases}
+        Summarising, in \ref{lem:ir-ridge:c1}, \ref{lem:ridge-ir-1:a} holds while in \ref{lem:ir-ridge:c2}, \ref{lem:ridge-ir-1:b} holds.
+    \end{proof}
+
+    \begin{figure}[h!]
+        \centering
+        \begin{tikzpicture}[scale=0.75]
+
+            \node[anchor=south] at (0,0.1) {$x_f$};
+            \node[anchor=west] at (4.1,-1) {$x_g$};
+            \node[anchor=west] at (3.1,-4) {$x_h$};
+
+
+            \draw[] (0.048507, 0.194028) -- (4.048507, -0.805971)-- (4.1897366596, -1.0632455)
+            -- (3.1897366, -4.063245) -- (3,-4.2) -- (0,-4.2) -- (-0.2,-4) -- (-0.2,0) -- cycle;
+
+            \draw[fill=black!5!white] (0,0) circle (0.2);
+            \draw[fill=black!5!white] (4,-1) circle (0.2);
+            \draw[fill=black!5!white] (0,-4) circle (0.2);
+            \draw[fill=black!5!white] (3,-4) circle (0.2);
+            \draw[draw=none,fill=black!5!white] (0,0) circle (0.2);
+            \draw[draw=none,fill=black!5!white] (4,-1) circle (0.2);
+            \draw[draw=none,fill=black!5!white] (0,-4) circle (0.2);
+            \draw[draw=none,fill=black!5!white] (3,-4) circle (0.2);
+
+
+            \draw[draw=none,fill=black!5!white] (0.048507, 0.194028) -- (4.048507, -0.805971)-- (4.1897366596, -1.0632455)
+            -- (3.1897366, -4.063245) -- (3,-4.2) -- (0,-4.2) -- (-0.2,-4) -- (-0.2,0) -- cycle;
+
+            \draw[fill=black!10!white] (1.75,-2.245) circle (1.94);
+            \draw[fill=black] (0,0) circle (0.03);
+            \draw[fill=black] (4,-1) circle (0.03);
+            \draw[fill=black] (3,-4) circle (0.03);
+            \draw[fill=black] (0,-4) circle (0.03);
+
+            \node at (1.5,-1) {$E_\delta(\cC)$};
+            \node at (2,0.3) {$J_\delta(\cC)$};
+
+            \begin{scope}[shift={(1.75,-2.245)},rotate=35]
+                \draw[thick] (-3,0) -- (3,0);
+                \draw[thick,-latex] (0,0) -- (0,-0.5);
+                \node[anchor=west] at (0,-0.5) {$\theta$};
+            \end{scope}
+
+        \end{tikzpicture}
+        \hspace{1cm}
+        \begin{tikzpicture}[scale=0.75]
+
+            \node[anchor=south] at (0,0.1) {$x_f$};
+            \node[anchor=west] at (4.1,-1) {$x_g$};
+            \node[anchor=west] at (3.1,-4) {$x_h$};
+
+
+            \draw[] (0.048507, 0.194028) -- (4.048507, -0.805971)-- (4.1897366596, -1.0632455)
+            -- (3.1897366, -4.063245) -- (3,-4.2) -- (0,-4.2) -- (-0.2,-4) -- (-0.2,0) -- cycle;
+
+            \draw[fill=black!5!white] (0,0) circle (0.2);
+            \draw[fill=black!5!white] (4,-1) circle (0.2);
+            \draw[fill=black!5!white] (0,-4) circle (0.2);
+            \draw[fill=black!5!white] (3,-4) circle (0.2);
+            \draw[draw=none,fill=black!5!white] (0,0) circle (0.2);
+            \draw[draw=none,fill=black!5!white] (4,-1) circle (0.2);
+            \draw[draw=none,fill=black!5!white] (0,-4) circle (0.2);
+            \draw[draw=none,fill=black!5!white] (3,-4) circle (0.2);
+
+
+            \draw[draw=none,fill=black!5!white] (0.048507, 0.194028) -- (4.048507, -0.805971)-- (4.1897366596, -1.0632455)
+            -- (3.1897366, -4.063245) -- (3,-4.2) -- (0,-4.2) -- (-0.2,-4) -- (-0.2,0) -- cycle;
+
+            \draw[fill=black!10!white] (1.75,-2.245) circle (1.94);
+            \draw[fill=black] (0,0) circle (0.03);
+            \draw[fill=black] (4,-1) circle (0.03);
+            \draw[fill=black] (3,-4) circle (0.03);
+            \draw[fill=black] (0,-4) circle (0.03);
+
+
+
+            \node at (1.5,-1) {$E_\delta(\cC)$};
+            \node at (2,0.3) {$J_\delta(\cC)$};
+
+            \begin{scope}[shift={(1.75,-2.245)},rotate=0]
+                \draw[thick] (-3,0) -- (3,0);
+                \draw[thick,-latex] (0,0) -- (0,-0.5);
+                \node[anchor=west] at (0,-0.5) {$\theta$};
+            \end{scope}
+
+        \end{tikzpicture}
+
+        \caption{The two cases considered in the proof of Lemma~\ref{lem:ridge-ir-1}.
+            In the left figure, the situation is such that $E_\delta(\cC \setminus \{f\})$ is a constant fraction less volume than $E_\delta(\cC)$.
+            On the other hand, in the figure on the right one of $(f(x_h) - \bar f(x_h))^2$ or $(f(x_g) - \bar f(x_g))^2$ must be reasonably large.}
+        \label{fig:ir-ridge}
+    \end{figure}
+
+    \FloatBarrier
+
+    The next lemma uses an inductive argument to show that any suitably large set $\cC$ satisfying the conditions of the previous lemma necessarily
+    yields a large information gain.
+
+    \begin{lemma}\label{lem:ridge-ir-2}
+        Suppose that $\cC$ satisfies the conditions of Lemma~\ref{lem:ridge-ir-1} for some $\epsilon \geq \alpha$ and
+        $|\cC| = 1 + 2d + 8 d \ceil{\log\left(\frac{24d(d+1) \diam(K)}{\alpha}\right)}$. Then
+        \begin{align*}
+            \sum_{f,g \in \pair(\cC)} (f(x_g) - \bar f(x_g))^2 \geq d \delta^2 \,.
+        \end{align*}
+    \end{lemma}
+
+    \begin{proof}
+        Define a sequence $(\cC_k)$ of sets as follows.
+        Let $\cC_1 = \cC$ and $2m-1 \triangleq |\cC|$. Then, given $\cC_k$, define $\cC_{k+1} \subset \cC_k$ as a set such that one of two properties hold:
+        \begin{enumroman}
+            \item $|\cC_{k+1}| = |\cC_k| - 1$ and $\vol(E_\delta(\cC_{k+1})) \leq 0.85 \vol(E_\delta(\cC_k))$; or \label{item:lem-ridge:a}
+            \item $\cC_{k+1} = \cC_k \setminus \{f, g\}$ for some $f, g \in \pair(\cC_k)$ and $(f(x_g) - \bar f(x_g))^2 \geq \delta^2$. \label{item:lem-ridge:b}
+        \end{enumroman}
+        Such a sequence exists by Lemma~\ref{lem:ridge-ir-1}.
+        By definition $|\cC_1| = 2m-1$ and since $|\cC_{k+1}| \geq |\cC_k| - 2$, $|\cC_m| \geq |\cC_1| - 2(m-1) = 1$.
+        Recall that by John's theorem $E_\delta(\cC_m) \subset J_\delta(\cC_m) \subset E_{\delta,d}(\cC_m)$, which means that
+        \begin{align*}
+            \vol(E_\delta(\cC_m))
+            = \left(\frac{1}{d}\right)^d \vol(E_{\delta,d}(\cC_m))
+            \geq \left(\frac{1}{d}\right)^d \vol(J_\delta(\cC_m))
+            \geq \left(\frac{1}{d}\right)^d \vol(\ball_\delta) \,.
+        \end{align*}
+        Furthermore, $E_\delta(\cC_1) \subset K + \ball_\delta \subset \ball_{\diam(K) + \delta}$.
+        Let $\tau$ be the number of times \ref{item:lem-ridge:a} occurs. Then
+        \begin{align*}
+            \left(\frac{1}{d}\right)^d \vol(\ball_\delta) \leq \vol(E_\delta(\cC_m)) \leq (0.85)^\tau \vol(E_\delta(\cC_1)) \leq (0.85)^\tau \vol(\ball_{\diam(K)+\delta})\,.
+        \end{align*}
+        Therefore $(0.85)^\tau \geq \left(\frac{\delta}{d(\diam(K) + \delta)}\right)^d$,
+        which shows that
+        \begin{align*}
+            \tau
+            \leq \frac{d \log\left(\frac{\delta}{d(\diam(K) + \delta)}\right)}{\log(0.85)}
+            \leq 8 d \log\left(\frac{2d \diam(K)}{\delta}\right)
+            \leq |\cC| - 2d - 1\,.
+        \end{align*}
+        Therefore \ref{item:lem-ridge:b} happens at least $d$ times and the claim follows by the definition of \ref{item:lem-ridge:b}.
+    \end{proof}
+
+    The last step is to introduce a decomposition of the space of loss functions and show how to obtain finite sets satisfying
+    the conditions of Lemma~\ref{lem:ridge-ir-2}.
+    Let
+    \begin{align*}
+        k = (25d + 24)\left[1 + 2d + 8d\ceil{\log\left(\frac{24d(d+1) \diam(K)}{\alpha}\right)}\right] = O\left(d^2 \log\left(\frac{d \diam(K)}{\alpha}\right)\right) \,.
+    \end{align*}
+    For $0 \leq i \leq \ceil{\log_2(1/\alpha)}$ let
+    \begin{align*}
+        \sF_i = \begin{cases}
+                    \{f \in \sF : \bar f(x_f) - f_\star \in [\alpha 2^{|i|-1}, \alpha 2^{|i|})\} & \text{if } i > 0     \\
+                    \{f \in \sF : \bar f(x_f) - f_\star < \alpha\}                               & \text{if } i = 0 \,.
+                \end{cases}
+    \end{align*}
+    In order to apply Lemma~\ref{lem:decomp-big} we will show that for all $0 \leq i \leq \ceil{\log_2(1/\alpha)}$
+    and with $\epsilon = \alpha 2^i$ that for all $f_1,\ldots,f_k \in \sF_i$,
+    \begin{align}
+        \sup_{f \in \sF_i} \left(\bar f(x_f) - f_\star\right) \leq \epsilon \leq \alpha + \sqrt{512 \sum_{j, l \in \pair(k)} (f_j(x_{f_l}) - \bar f(x_{f_l}))^2}\,.
+        \label{eq:ridge:condition}
+    \end{align}
+    This implies that $(\alpha, 512k(k-1) (1 + \ceil{\log(1/\alpha)})) \in \IR(\sF)$ as required.
+    The first inequality in \cref{eq:ridge:condition} follows immediately from the definition of $\epsilon$ and $\sF_i$. The second is also immediate when $i = 0$ by the definition of $\sF_i$.
+    Suppose now that $i > 0$.
+    Let $f_1,\ldots,f_k \in \sF_i$ and
+    assume without loss of generality that $j \mapsto \bar f(x_{f_j})$ is nonincreasing.
+    The second inequality in \cref{eq:ridge:condition} holds immediately if $f_j = f_l$ for some $j,l \in \pair(k)$ since $f_j(x_{f_l}) = f_j(x_{f_j}) \leq \bar f(x_{f_j}) - \epsilon/2$.
+    Suppose this is not the case and consider two cases:
+    \begin{enumcases}
+        \item $\bar f(x_{f_1}) \geq \bar f(x_{f_k}) + 2\epsilon$. In this case
+        $f_1(x_{f_k}) \geq f_1(x_{f_1}) \geq \bar f(x_{f_1}) - \epsilon \geq \bar f(x_{f_k}) + \epsilon$,
+        which shows that $(f_1(x_{f_k}) - \bar f(x_{f_k}))^2 \geq \epsilon^2$ and the second inequality \cref{eq:ridge:condition} holds.
+        \item $\bar f(x_1) < \bar f(x_k) + 2\epsilon$. Let $\delta = \frac{\epsilon}{12(d+1)}$ as in Lemma~\ref{lem:ridge-ir-2}.
+        Let $b = 25d + 24$ and $\cC_1,\ldots,\cC_b$ be formed by dividing $\{f_1,\ldots,f_k\}$ in order into $b$ blocks of equal size.
+        Let $s_a = \max_{f,g \in \cC_a} |\bar f(x_f) - \bar f(x_g)|$.
+        Given the conditions of the case we have $2\epsilon > \sum_{a=1}^b s_a \geq \sum_{a=1}^b \delta \sind(s_a > \delta)$,
+        which means that $\sum_{a=1}^b \sind(s_a > \delta) \leq 2\epsilon / \delta \leq 24(d+1) = b - d$.
+        Hence there exist at least $d$ blocks $\cC_a$ for which $s_a \leq \delta$ and these blocks satisfy the conditions of Lemma~\ref{lem:ridge-ir-2} so that
+        $\sum_{j,l \in \pair(k)} (f_j(x_{f_l}) - \bar f(x_{f_l}))^2 \geq d^2 \delta^2 \geq \epsilon^2 / 512$ and again the
+        second inequality in \cref{eq:ridge:condition} holds.
+    \end{enumcases}
+    Hence \cref{eq:ridge:condition} holds and the claim follows from Lemma~\ref{lem:decomp-big} and the definitions of $k$ and $m$.
+\end{proof}
+
+\chapter{\ts Lower-Bound for general Convex Functions}
+We now prove that
+Thompson sampling has poor behaviour for general multi-dimensional convex functions and
+that the classical information-theoretic techniques cannot improve on the best known bound for general bandit convex optimisation
+of $\tilde O(d^{1.5} \sqrt{n})$. While these seem like quite different results, they are based on the same construction, which is
+based on finding a family of functions and prior that makes learning challenging.
+
+\begin{lemma}\label{lem:f-theta}
+    Let $\epsilon \in [0,1/2]$ and $\theta \in \sphere_1$ and define functions $f$ and $f_\theta$ by
+    \begin{align*}
+        f(x)        & = \epsilon + \frac{1}{2} \norm{x}^2                                                                                 &
+        f_\theta(x) & = \begin{cases}
+                            f(x)                                                        & \text{if } \norm{\theta - x}^2 \geq 1 + 2 \epsilon \\
+                            \ip{\theta, x} - 1 + \sqrt{1 + 2\epsilon} \norm{\theta - x} & \text{otherwise} \,.
+                        \end{cases}
+    \end{align*}
+    Then $f_\theta$ is convex and minimised at $\theta$ and $\lip_{\ball_1}(f_\theta) \leq \sqrt{2 + 2\epsilon}$.
+\end{lemma}
+The function $f_\theta$ arises naturally as the largest convex function for which both $f_\theta(\theta) = 0$ and $f_\theta(x) \leq f(x)$ for
+all $x \in \R^d$.
+Equivalently, its epigraph is the convex hull of the epigraphs of $f$ and the convex indicator function: $\infty \sind_\theta(\cdot)$.
+\begin{proof}[Proof of Lemma~\ref{lem:f-theta}] \label{app:proof:f-theta}
+    Recall that $\epsilon \in [0,1/2]$ and
+    \begin{align*}
+        f(x)        & = \epsilon + \frac{1}{2} \norm{x}^2                                                                                 &
+        f_\theta(x) & = \begin{cases}
+                            f(x)                                                         & \text{if } \norm{x - \theta}^2 \geq 1 + 2\epsilon \\
+                            \ip{\theta, x} - 1 + \sqrt{1 + 2 \epsilon} \norm{\theta - x} & \text{otherwise} \,.
+                        \end{cases}
+    \end{align*}
+    We need to prove that $f_\theta$ on $\ball_1$ is convex, Lipschitz and minimised at $\theta$.
+    Convexity follows because
+    \begin{align}
+        g_\theta(x)
+         & \triangleq \sup_{y \in \R^d} \left\{ f(y) + \ip{f'(y), x - y} : f(y) + \ip{f'(y), \theta - y} \leq 0\right\}  \nonumber                \\
+         & = \sup_{\substack{y \in \R^d                                                                                                           \\ r \leq 0}} \left\{ f(y) + \ip{f'(y), x - y} : f(y) + \ip{f'(y), \theta - y} = r \right\} \nonumber\\
+         & = \sup_{\substack{y \in \R^d                                                                                                           \\ r \leq 0}} \left\{ \ip{f'(y), x - \theta} + r : f(y) + \ip{f'(y), \theta - y} = r \right\} \nonumber\\
+         & = \sup_{\substack{y \in \R^d                                                                                                           \\ r \leq 0}} \left\{  \ip{y, x - \theta} + r : \norm{y - \theta}^2 = 1 + 2\epsilon - 2r \right\} \nonumber\\
+         & = \sup_{r \leq 0} \left\{  \ip{\theta, x - \theta} + r + \sqrt{1 + 2\epsilon - 2r} \norm{x - \theta} \right\} \nonumber                \\
+         & = \sup_{r \leq 0} \left\{  \ip{\theta, x} - 1 + r + \sqrt{1 + 2\epsilon - 2r} \norm{x - \theta} \right\}      \label{eq:f-lower-bound} \\
+         & = f_\theta(x) \,,\nonumber
+    \end{align}
+    where in the final inequality we note that the maximising $r$ is
+    \begin{align*}
+        r = \begin{cases}
+                \frac{1}{2} + \epsilon - \frac{1}{2}\norm{x - \theta}^2 & \text{if } \norm{x - \theta}^2 \geq 1 + 2\epsilon \\
+                0                                                       & \text{otherwise } \,.
+            \end{cases}
+    \end{align*}
+    Therefore $f_\theta$ is the supremum over a set of linear functions and hence convex.
+    That $f_\theta$ is minimised at $\theta$ follows directly from the first-order optimality conditions.
+    Let $\eta \in \sphere_1$. Then
+    \begin{align*}
+        Df_\theta(\theta)[\eta] = \ip{\theta, \eta} + \sqrt{1 + 2 \epsilon} \norm{\eta} > 0 \,,
+    \end{align*}
+    where $Df_\theta(\theta)[\cdot]$ is the directional derivative operator (noting that $f_\theta$ is not differentiable at $\theta$).
+    Lastly, for Lipschitzness. Since $f_\theta$ is continuous, it suffices to bound $\norm{f_\theta'(\cdot)}$ on $\interior(\ball_1)$ where $f_\theta$ is
+    differentiable.
+    When $\norm{x - \theta}^2 \geq 1 + 2 \epsilon$, then $\norm{f'_\theta(x)} = \norm{f'(x)} = \norm{x} \leq 1$.
+    On the other hand, if $\norm{x - \theta}^2 < 1 + 2 \epsilon$, then
+    \begin{align*}
+        \norm{f'_\theta(x)}^2
+         & = \norm{\theta + \sqrt{1 + 2\epsilon} \frac{x - \theta}{\norm{x - \theta}}}^2            \\
+         & = 2 + 2\epsilon + \sqrt{1 + 2\epsilon} \frac{\ip{\theta, x - \theta}}{\norm{x - \theta}} \\
+         & \leq 2 + 2\epsilon \,.
+    \end{align*}
+    Therefore $\lip_{\ball_1}(f) \leq \sqrt{2 + 2\epsilon}$.
+\end{proof}
+
+\begin{theorem}\label{thm:ts-lower}
+    When $K = \ball_1$ is the standard euclidean ball.
+    There exists a prior $\xi$ on $\sF_{\pb\pl}$ such that
+    \begin{align*}
+        \BReg_n(\ts, \xi) \geq \frac12 \min\left(n, \floor{\frac{1}{4} \exp(d/32)}\right)\,.
+    \end{align*}
+\end{theorem}
+
+\begin{proof}[sketch]
+    The idea is to construct a prior such that with high probability \ts{} obtains limited information while suffering high regret.
+    We assume there is no noise and let $f$ and $f_\theta$ be defined as in Lemma~\ref{lem:f-theta} with $\epsilon = 1/4$.
+    Let $\sigma$ be the uniform probability measure on $\sphere_1$ and
+    the prior $\xi$ be the law of $f_\theta$ when $\theta$ is sampled from $\sigma$.
+    By the definition of $f_\theta$ and the fact that $\epsilon = 1/4$, for any $x \in \sphere_1$
+    $\left(f(x) = f_\theta(x)\right) \Leftrightarrow \ip{x, \theta} \leq \frac{1}{4}$.
+    Since \ts{} plays the minimiser of some $f_\theta$ in every round, it follows that \ts{} always plays in $\sphere_1$.
+    Let $\cC_\theta = \{x \in \sphere_1 : \ip{x, \theta} > \frac{1}{4}\}$ and $\delta = \sigma(\cC_\theta)$.
+    Let $f_{\theta_\star}$ be the true loss function sampled from $\xi$.
+    Suppose that $X_1,\ldots,X_t \in \sphere_1 \setminus \cC_{\theta_\star}$,
+    which means that $Y_s = \frac{3}{4}$ for $1 \leq s \leq t$ and
+    the posterior is the uniform distribution on $\Theta_{t+1} = \sphere_1 \setminus \cup_{s=1}^t \cC_{X_s}$.
+    Provided that $t \delta \leq \frac{1}{2}$,
+    \begin{align*}
+        \bbP(X_{t+1} \in \cC_{\theta_\star}|X_1,\ldots,X_t \notin \cC_{\theta_\star})
+        = \frac{\sigma(\cC_{\theta_\star} \cap \Theta_{t+1})}{\sigma(\Theta_{t+1})}
+        \leq \frac{\delta}{1 - t \delta}
+        \leq 2\delta \,.
+    \end{align*}
+    Hence, with $n_0 = \min(n, \floor{1/(4\delta)})$,
+    \begin{align*}
+        \BReg_n(\ts, \xi)
+        \geq \BReg_{n_0}(\ts, \xi) \geq
+        \frac{3n_0}{4} \bbP(X_1,\ldots,X_{n_0} \notin \cC_{\theta_\star}) \geq \frac{3n_0}{4} \left(1 - 2n_0 \delta\right) \geq \frac{3n_0}{8} \,.
+    \end{align*}
+    The result is completed since $\delta \leq \exp(-d/32)$ follows from concentration of measure on the sphere \citep[Theorem B.1]{tkocz2018asymptotic}.
+\end{proof}
+\begin{definition}\label{def:C_theta}
+    For \(\theta \in \bS_1\) and $\epsilon \in [0,1/2]$, define
+    \begin{align*}
+        \cC_{\theta, \epsilon}
+         & = \left\{
+        x \in \bS_1 : \norm{\theta-x}^2 < 1 + 2\epsilon
+        \right\}
+        \,
+        % \\
+        % f_\theta(x)
+        % & =
+        % \sup_{y \in \cC_\theta} \paren{ f(y) + \nabla f(y)^\top(x-y)}\,.
+    \end{align*}
+    and $\bar{\cC}_{\theta, \epsilon} = \bS_1 \setminus \cC_{\theta, \epsilon}$.
+\end{definition}
+
+\begin{definition}\label{def:uniform-sphere}
+    Let $\sigma(\cdot)$ be the uniform distribution over the unit sphere $\bS_1$.
+    Moreover, let $\sigma_{S}(\cdot)$ be the uniform distribution over a set $S \subseteq \bS_1$
+    defined as $\sigma_S(\cdot) = \frac{\sigma(\cdot \cap S)}{\sigma(S)}$.
+\end{definition}
+
+We use the following theorem from \citep{tkocz2018asymptotic} to bound the surface area of spherical caps.
+\begin{theorem}\label{thm:spherical-cap}
+    [\citealp[Theorem B.1]{tkocz2018asymptotic}]
+    For all $\epsilon \in [0,1]$ and $\theta \sim \sigma$ we have
+    \begin{align*}
+        \mP\paren{
+            \ip{\theta, e_1} \geq \epsilon
+        }
+        \leq
+        \exp\paren{-\frac{d\epsilon^2}{2}}\,.
+    \end{align*}
+\end{theorem}
+\begin{proof}[Proof of \cref{thm:ts-lower}]
+    Define
+    $f$ and $f_\theta$ as in Lemma~\ref{lem:f-theta}
+    with $\epsilon = 1/4$,
+    which then using Definition~\ref{def:C_theta} can be written as
+    \begin{align*}
+        f_\theta(x) =
+        \begin{cases}
+            f(x)                                                 & \text{if } x \in \bar{\cC}_{\theta}, \\
+            \ip{\theta, x} - 1 + \sqrt{\frac32}\norm{\theta - x} & \text{if } x \in \cC_{\theta}\,,
+        \end{cases}
+    \end{align*}
+    where we drop the $\epsilon$ from $\cC_{\theta, \epsilon}$
+    and $\bar{\cC}_{\theta, \epsilon}$
+    in the notation for simplicity.
+    We define the bandit instance by
+    setting the prior $\xi_1$ to be the law of $f_\theta$
+    when $\theta$ has law $\sigma$,
+    and letting the observation noise to be zero, meaning that
+    \begin{align*}
+        Y_t = f_{\theta_*}(X_t)\,,
+    \end{align*}
+    where $X_t$ is the action played at round $t$,
+    $Y_t$ is the loss observed at round $t$,
+    and $f_{\theta_*}$ is the true function
+    that is secretly sampled from the prior $\xi_1$.
+    Also, define the random sets $\Theta_t \subseteq \bS_1$ as
+    \begin{align*}
+        \Theta_t & =
+        \left\{
+        \theta \in \bS_1:
+        f_\theta(X_s) = \frac34
+        ,
+        \forall s \in [t-1]
+        \right\}
+        \,.
+    \end{align*}
+    We also make extensive use of the fact that
+    for any two $\theta_1, \theta_2 \in \bS_1$, we have
+    \begin{align*}
+        f_{\theta_1}(\theta_2)
+        =
+        f_{\theta_2}(\theta_1)
+        =
+        \frac34\,,
+        \quad
+        \text{if and only if}
+        \quad
+        \theta_1 \in \bar{\cC}_{\theta_2}
+        \,\,
+        \Leftrightarrow
+        \,\,
+        \theta_2 \in \bar{\cC}_{\theta_1}
+        \,,
+    \end{align*}
+    which follows from the definition of $f_{\theta}$.
+    %    \todoa{Is this clear?}
+
+    \paragraph{Step 1:}
+    First we show that if the posterior distribution $\xi_t$ at round $t \in [T]$ is
+    uniform over $\Theta_t$, and the algorithm observes the loss
+    $Y_t = \frac34$ as a result of playing $X_t$,
+    then the posterior distribution $\xi_{t+1}$ at round $t+1$ is uniform over $\Theta_{t+1}$,
+    i.e., $\xi_{t+1} = \sigma_{\Theta_{t+1}}$.
+    To this end, observe that
+    if $Y_t = \frac34$ then
+    for any set $B \subseteq \Theta_t$,
+    \begin{align}
+        \xi_{t+1}(B)
+        =
+        \mP_{t-1}\paren{
+            \theta_\star \in B
+            |
+            Y_t = \frac34
+            ,
+            X_t
+        }
+         & =
+        \frac{
+            \mP_{t-1}(\theta_\star \in B, Y_t = \frac34| X_t)
+        }{
+            \mP_{t-1}(Y_t = \frac34| X_t)
+        }
+        \nonumber
+        \\
+         & =
+        \frac{
+            \mP_{t-1}(Y_t = \frac34| X_t, \theta_\star \in B)
+            \mP_{t-1}(\theta_\star \in B| X_t)
+        }{
+            \mP_{t-1}(Y_t = \frac34| X_t)
+        }
+        \nonumber
+        \\
+         & =
+        \frac{
+        \mP_{t-1}(f_{\theta_\star}(X_t) = \frac34| X_t, \theta_\star \in B)
+        \mP_{t-1}(\theta_\star \in B)
+        }{
+        \mP_{t-1}(f_{\theta_\star}(X_t) = \frac34| X_t)
+        }\,.
+        \label{eq:posterior-update}
+    \end{align}
+    Note that \ts{} samples $f_{\theta_t}$ from $\xi_t$,
+    and then plays the minimizer of $f_{\theta_t}$,
+    which from Lemma~\ref{lem:f-theta} is $\theta_{t}$, i.e. $X_{t} = \theta_{t}$.
+    Consequently,
+    continuing from \cref{eq:posterior-update}
+    with the assumption of this step
+    that $\theta_t, \theta_\star \sim \sigma_{\Theta_t}$
+    and the fact that $X_t = \theta_t$,
+    we have
+    \begin{align*}
+        \xi_{t+1}(B)
+         & =
+        \frac{
+        \mP_{t-1}(f_{\theta_\star}(X_t) = \frac34| X_t, \theta_\star \in B)
+        \mP_{t-1}(\theta_\star \in B)
+        }{
+        \mP_{t-1}(f_{\theta_\star}(X_t) = \frac34| X_t)
+        }
+        \\
+         & =
+        \frac{
+            \mP_{t-1}(\theta_\star \in \bar{\cC}_{\theta_t}| \theta_t, \theta_\star \in B)
+            \mP_{t-1}(\theta_\star \in B)
+        }{
+            \mP_{t-1}(\theta_\star \in \bar{\cC}_{\theta_t}| \theta_t)
+        }
+        \\
+         & =
+        \frac{
+            \frac{
+                \sigma(B \cap \bar{\cC}_{\theta_t})
+            }{
+                \sigma(B)
+            }
+            \cdot
+            \frac{
+                \sigma(B)
+            }{
+                \sigma(\Theta_t)
+            }
+        }{
+            \frac{
+                \sigma(\bar{\cC}_{\theta_t} \cap \Theta_t)
+            }{
+                \sigma(\Theta_t)
+            }
+        }
+        \\
+         & =
+        \frac{
+            \sigma(B \cap \bar{\cC}_{\theta_t})
+        }{
+            \sigma(\Theta_t \cap \bar{\cC}_{\theta_t})
+        }
+    \end{align*}
+    which implies that $\xi_{t+1}$ is uniform over
+    $\Theta_{t} \cap \bar{\cC}_{\theta_t}$.
+    Lastly, note that
+    \begin{align*}
+        \Theta_{t+1}
+        =
+        \left\{
+        \theta \in \bS_1:
+        f_\theta(X_s) = \frac34
+        ,
+        \forall s \in [t]
+        \right\}
+        =
+        \Theta_t
+        \cap
+        \left\{
+        \theta \in \bS_1:
+        f_\theta(\theta_t) = \frac34
+        \right\}
+        =
+        \Theta_t \cap \bar{\cC}_{\theta_t}\,,
+    \end{align*}
+    which means that $\xi_{t+1}$ is uniform over $\Theta_{t+1}$.
+
+    \paragraph{Step 2:}
+    Let $\delta = \sigma(\cC_{\theta_\star})$,
+    and note that $\sigma(\cC_{\theta}) = \delta$ for all $\theta \in \bS_1$
+    due to the shape of the $\cC_{\theta}$ which is a spherical cap with a
+    fixed radius.
+    Consider the event $\mathcal{E}_t$ where $X_1, \ldots, X_t \in \bar{\cC}_{\theta_\star}$,
+    which implies both that $Y_1, \ldots, Y_t = \frac34$, and
+    that $\xi_{t+1}$ is uniform over $\Theta_{t+1}$.
+    Conditioned on $\mathcal{E}_t$, we have
+    \begin{align*}
+        \sigma(\Theta_{t+1})
+         & =
+        \sigma\paren{
+            \left\{
+            \theta \in \bS_1:
+            f_\theta(X_s) = \frac34
+            ,
+            \forall s \in [t]
+            \right\}
+        }
+        \\
+         & =
+        \sigma\paren{
+            \left\{
+            \theta \in \bS_1:
+            f_\theta(\theta_s) = \frac34
+            ,
+            \forall s \in [t]
+            \right\}
+        }
+        \\
+         & =
+        \sigma\paren{
+            \left\{
+            \theta \in \bS_1:
+            \theta \in \bar{\cC}_{\theta_s}
+            ,
+            \forall s \in [t]
+            \right\}
+        }
+        \\
+         & =
+        \sigma\paren{
+            \left\{
+            \theta \in \bS_1:
+            \theta \notin
+            \cup_{s=1}^t
+            \cC_{\theta_t}
+            \right\}
+        }
+        \\
+         & \geq 1 - t \delta\,.
+    \end{align*}
+    Therefore, the probability of \ts{} playing $X_{t+1} \in \cC_{\theta_\star}$
+    is upper bounded by
+    \begin{align*}
+        \mP(X_{t+1} \in \cC_{\theta_\star} |\theta_\star, \mathcal{E}_t)
+        =
+        \frac{
+            \sigma(\cC_{\theta_\star} \cap \Theta_{t+1})
+        }{
+            \sigma(\Theta_{t+1})
+        }
+        \leq
+        \frac{
+            \delta
+        }{
+            1 - t \delta
+        }\,,
+    \end{align*}
+    which further implies that
+    \begin{align*}
+        \mP(\mathcal{E}_{t+1} | \mathcal{E}_t)
+        =
+        \mP\paren{Y_{t+1} = \frac34 | \mathcal{E}_t}
+        =
+        \mP(X_{t+1} \in \bar{\cC}_{\theta_\star} | \mathcal{E}_t)
+        \geq
+        1 - \frac{
+            \delta
+        }{
+            1 - t \delta
+        }
+        \,,
+    \end{align*}
+    and therefore
+    \begin{align*}
+        \mP(\mathcal{E}_{t+1})
+        =
+        \mP\paren{
+            \mathcal{E}_t
+        }
+        \mP\paren{
+            \mathcal{E}_{t+1} | \mathcal{E}_t
+        }
+        \geq
+        \mP\paren{
+            \mathcal{E}_t
+        }
+        \paren{
+            1
+            - \frac{
+                \delta
+            }{
+                1 - t \delta
+            }
+        }
+        \geq
+        \mP\paren{
+            \mathcal{E}_t
+        }
+        - \frac{
+            \delta
+        }{
+            1 - t \delta
+        }\,.
+    \end{align*}
+    Let $n_0 = \min(\floor{\frac{1}{4\delta}}, n)$,
+    then
+    \begin{align*}
+        \mP(
+        \mathcal{E}_{n_0}
+        )
+        \geq
+        \mP(
+        \mathcal{E}_{n_0 - 1}
+        )
+        - \frac{
+            \delta
+        }{
+            1 - (n_0-1) \delta
+        }
+        \geq
+        \mP(
+        \mathcal{E}_{1}
+        )
+        - \sum_{t=1}^{n_0-1}
+        \frac{
+            \delta
+        }{
+            1 - t \delta
+        }
+        =
+        1
+        -
+        \sum_{t=0}^{n_0-1}
+        \frac{
+            \delta
+        }{
+            1 - t \delta
+        }
+    \end{align*}
+    where the last equality follows from
+    $\mP(\mathcal{E}_1) = \mP(\theta_1 \in \bar{\cC}_{\theta_\star}) = 1-\delta$.
+    Since $t\delta \leq n_0\delta \leq 1/4$ for all $t < n_0$, we have
+    \begin{align*}
+        \mP(\mathcal{E}_{n_0})
+        \geq
+        1
+        -
+        \sum_{t=0}^{n_0-1}
+        \frac{
+            \delta
+        }{
+            1 - 1/4
+        }
+        =
+        1
+        -
+        \frac{4}{3}
+        n_0
+        \delta
+        \geq
+        \frac23.
+    \end{align*}
+    Therefore, the expected regret of \ts{} is lower bounded by
+    \begin{align*}
+        \BReg_n(\ts, \xi_1) \geq
+        \BReg_{n_0}(\ts, \xi_1) \geq
+        \frac{3}{4} n_0 \mP(\mathcal{E}_{n_0})
+        \geq
+        \frac{1}{2} n_0\,,
+    \end{align*}
+    since the algorithm incurs maximum regret of $\frac34$
+    in every round $s \in [n_0]$
+    given the event $\mathcal{E}_{n_0}$.
+    Finally, using \cref{thm:spherical-cap}, we have
+    \begin{align*}
+        \delta \leq \exp(-d/32),
+    \end{align*}
+    which implies that
+    \begin{align*}
+        \BReg_n(\ts, \xi_1) \geq
+        \frac{1}{2}
+        \min\paren{n, \floor{\frac14\exp(d/32)}}\,.
+    \end{align*}
+\end{proof}
+
+\chapter{ Lower-‌‌Bound for General Convex Functions}
+Theorem~\ref{thm:ts-lower} shows that Thompson sampling has large regret for general bandit convex optimisation.
+The next theorem shows there exist priors for which the information ratio for any policy is at least $\Omega(d^2)$.
+At least naively, this means that the information-theoretic machinery will not yield a bound on the regret for general bandit convex optimisation that
+is better than $\tilde O(d^{1.5} \sqrt{n})$
+%\todoa{add (with a "slightly better"/"different" constant)?}
+
+\begin{theorem}\label{thm:inf-lower}
+    Suppose that $K = \ball_1$ and $d>256$. Then there exists a prior $\xi$ on $\sF_{\pb\pl}$ such that for all probability measures $\pi$ on $K$,
+    $\Delta(\pi, \xi) \geq 2^{-19} \frac{d}{\log(d)} \sqrt{\I(\pi, \xi)}$. %\todot{probably want this in $(\alpha, \beta)$ format.}
+\end{theorem}
+
+The prior $\xi$ is the same as used in the proof of Theorem~\ref{thm:ts-lower} but with $\epsilon = \tilde \Theta(1/d)$.
+The argument is based on proving that for any policy the regret is $\Omega(\epsilon)$ while the information gain is $\tilde O(\epsilon^2)$.
+
+Throughout this section, we use the same construction as the one used in \cref{sec:ts-lower-proof}
+except with $\epsilon = \frac{8\log(d)}{d}$.
+Therefore, we have
+\begin{align*}
+    f(x)         = \frac12 \norm{x} + \frac{8\log(d)}{d}\,, \quad \text{and} \quad
+    f_\theta(x)  =
+    \begin{cases}
+        f(x)                                                                 & \text{if } x \in \bar{\cC}_{\theta}, \\
+        \ip{\theta, x} - 1 + \sqrt{1 + \frac{16\log(d)}{d}}\norm{\theta - x} & \text{if } x \in \cC_{\theta}\,.
+    \end{cases}
+\end{align*}
+Further, let $\xi$ be the law of $f_\theta$ where $\theta \sim \sigma$,
+and for $x \in \mathbb{B}_1$ define
+\begin{align*}
+    \Delta_x & = \E\brak{
+        f_\theta(x) - f_{\theta}(\theta)
+    }
+    = \E\brak{
+        f_\theta(x)
+    }\,, \quad \text{and} \quad
+    \I_x = \E\brak{
+        \paren{f_\theta(x) - \E\brak{f_\theta(x)}}^2
+    } \,,
+\end{align*}
+which should be thought of as the expected loss and the expected information gain at $x$.
+Therefore, for any policy $\pi$ we have
+\begin{align*}
+    \Delta(\pi, \xi) = \E[\Delta_X] \qquad \text{and } \qquad
+    \I(\pi, \xi) = \E[\I_X] \,,
+\end{align*}
+where $X \sim \pi$.
+The basic idea is to prove that $\Delta_x = \Omega(\log(d)/d)$ for all
+$x \in \ball_1$ and $\I_x = O(\log(d)^4 d^{-4})$ for all $x \in \ball_1$,
+which implies that $\Delta(\pi, \xi) = \Omega(\log(d)/d)$ and $\I(\pi, \xi) = \tilde O(\log(d)^4 d^{-4})$
+for any policy $\pi$, and hence the claimed lower bound.
+
+Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\log(d)/d}$ in the rest of this section.
+\begin{lemma}{\label{lem:inf-lower-large-r}}
+    For $\tau \leq r$, and $x \in \mathbb{B}_1$
+    with $\norm{x} = r$,
+    $\displaystyle \mP\paren{
+            f_\theta(x) = f(x)
+        }
+        \geq 1 - \frac{1}{d^4}$.
+\end{lemma}
+\begin{proof}
+    From Lemma~\ref{lem:f-theta},
+    $f_\theta(x) = f(x)$ if $\norm{\theta - x}^2 \geq 1 + 2\epsilon$.
+    Moreover, for $x \in \ball_1$ with $\norm{x} = r$,
+    \begin{align*}
+        \norm{\theta - x}^2
+        = \norm{\theta}^2 + r^2 - 2\ip{\theta, x}
+        = 1 + r^2 - 2\ip{\theta, x},
+    \end{align*}
+    which implies that $f(x) = f_\theta(x)$ if $\ip{\theta, x} \leq \frac{r^2}{2} - \epsilon$.
+    Since $\theta \sim \sigma$,
+    \begin{align*}
+        \mP\paren{
+            \ip{\theta, x} \leq \frac{r^2}{2} - \epsilon
+        }
+         & =
+        \mP\paren{
+            \ip{\theta, e_1} \leq \paren{\frac{r^2}{2} - \epsilon}\norm{x}^{-1}
+        }
+        \\
+         & =
+        1 -
+        \mP\paren{
+            \ip{\theta, e_1} > \paren{\frac{r}{2} - \frac{\epsilon}{r}}
+        }
+        \\
+         & \geq
+        1
+        -
+        \exp\paren{
+            -
+            \paren{\frac{r}{2} - \frac{\epsilon}{r}}^2
+            \frac{d}{2}
+        }
+        \\
+         & \geq
+        1
+        -
+        \exp\paren{
+            -
+            \paren{
+                4\sqrt{\frac{\log(d)}{d}}
+                -
+                \frac{\sqrt{d}\log(d)}{d\sqrt{\log(d)}}
+            }^2
+            \frac{d}{2}
+        }
+        \\
+         & =
+        1
+        -
+        \exp
+        \paren{
+            -
+            \frac{9\log(d)}{2}
+        }
+        \\
+         & \geq
+        1
+        -
+        \exp
+        \paren{-\log(d^{4})}
+        \\
+        %  & =
+        % 1
+        % -
+        % \exp\paren{
+        %     -
+        %     \paren{
+        %         2\sqrt{\log(d)}
+        %         -
+        %         \sqrt{\log(d)}
+        %         % \frac{\sqrt{2}}{\sqrt{\log(d^2)}}
+        %     }^2
+        % }
+        % \\
+        %  & =
+        % 1
+        % -
+        % \exp\paren{
+        %     -
+        %     \log(d^4)
+        %     -
+        %     \frac{2}{\log(d^2)}
+        %     +
+        %     4
+        % }
+        % \\
+        %  & \geq
+        % 1
+        % -
+        % \exp\paren{
+        %     -
+        %     \log(d^4)
+        %     +
+        %     4
+        % }
+        % =
+         & \geq
+        1 - \frac{1}{d^4}
+        ,
+    \end{align*}
+    where the first inequality follows from \cref{thm:spherical-cap},
+    and the second inequality follows from the fact that $r \geq \tau \geq \sqrt{2\epsilon}$.
+\end{proof}
+
+\begin{lemma}\label{lem:f-lower-bound}
+    For all $x \in \mathbb{B}_1$ and $\theta \in \bS_1$, we have
+    \begin{align*}
+        f_\theta(x) \geq \ip{\theta, x} - 1 + \sqrt{1 + 2\epsilon}\norm{\theta - x}.
+    \end{align*}
+\end{lemma}
+\begin{proof}
+    The proof follows by setting $r=0$ in Equation~\eqref{eq:f-lower-bound}.
+\end{proof}
+
+\begin{lemma}\label{lem:large-delta-anyr}
+    For $d \geq 2^8$ and $x \in \mathbb{B}_1$, we have $\Delta_x \geq 2\frac{\log(d)}{d}$.
+\end{lemma}
+\begin{proof}
+    Let $r = \norm{x}$.
+    We prove this result by considering two cases.
+    \begin{enumcases}
+        \item If $r \geq \tau$,
+        then
+        \begin{align*}
+            \E\brak{f_\theta(x)}
+            \geq
+            \mP\paren{f_\theta(x) = f(x)}f(x)
+            \explan{(a)}
+            \geq
+            \paren{
+                1- \frac{1}{d^4}
+            }
+            \paren{
+                \frac12 r^2
+                +
+                \epsilon
+            }
+            \geq
+            \frac12
+            \paren{
+                \frac{32\log(d)}{d}
+                +
+                \frac{8\log(d)}{d}
+            }
+            \geq
+            \frac{20\log(d)}{d}
+            \,,
+        \end{align*}
+        where \texttt{(a)} follows from Lemma~\ref{lem:inf-lower-large-r}.
+        \item If $r < \tau$,
+        using the lower bound on $f_\theta(x)$ from Lemma~\ref{lem:f-lower-bound},
+        \begin{align*}
+            \E\brak{
+                f_\theta(x)
+            }
+             & \geq
+            \E\brak{
+                \ip{\theta, x} - 1 + \sqrt{1 + 2\epsilon}\norm{\theta - x}
+            }       \\
+             &
+            \explan{(a)}
+            = \sqrt{1 + 2\epsilon}\E\brak{
+                \sqrt{
+                    1 + r^2 - 2\ip{\theta, x}
+                }
+            } - 1   \\
+             &
+            \explan{(b)}
+            \geq
+            \paren{
+                1 + \frac{2\epsilon - 4\epsilon^2}{2}
+            }
+            \E\brak{
+                1
+                +
+                \frac{
+                    r^2 - 2\ip{\theta, x}
+                    -
+                    (r^2 - 2\ip{\theta, x})^2
+                }{2}
+            }
+            - 1
+            \\
+             &
+            \explan{(c)}
+            =
+            \paren{
+                1 + \epsilon - 2\epsilon^2
+            }
+            \paren{
+                1
+                +
+                \frac{
+                    r^2
+                    -
+                    r^4
+                }{2}
+                -
+                \E\brak{
+                    2\ip{\theta, x}^2
+                }
+            }
+            - 1
+            \\
+             &
+            \explan{(d)}
+            =
+            \paren{
+                1 + \epsilon - 2\epsilon^2
+            }
+            \paren{
+                1
+                +
+                \frac{
+                    r^2
+                    -
+                    r^4
+                }{2}
+                -
+                \frac{2r^2}{16}
+            }
+            - 1
+            \\
+             &
+            =
+            \paren{
+                1 + \epsilon - 2\epsilon^2
+            }
+            \paren{
+                1
+                +
+                \frac{3r^2}{8}
+                -
+                \frac{r^4}{2}
+            }
+            - 1,
+        \end{align*}
+        where \texttt{(a)} follows from
+        $\E\brak{\ip{\theta, x}} = 0$,
+        \texttt{(b)} follows from the inequality
+        $\sqrt{1 + a} \geq 1 + \frac{a - a^2}{2}$ for $a \geq -1$,
+        \texttt{(c)} follows from
+        $\E\brak{\ip{\theta, x}} = 0$,
+        \texttt{(d)} follows from
+        $\E[\ip{\theta, x}^2] = \frac{r^2}{d}$
+        and $d>16$.
+        Note that $(1 + 3r^2/8 - r^4/2) \geq 1$
+        for $0\leq r \leq \sqrt{3/4}$,
+        and is decreasing in $r$
+        for $r \in [\sqrt{3/4}, 1]$.
+        Therefore,
+        \begin{align*}
+            1 + \frac{3r^2}{8} - \frac{r^4}{2}
+            \geq
+            \min(1, 1 + \frac{3\tau^2}{8} - \frac{\tau^4}{2})
+            =
+            1 + \min(0, 3\epsilon - 4\epsilon^2)
+            \,.
+        \end{align*}
+        This let us further lower bound $\E[f_\theta(x)]$ as
+        \begin{align*}
+            \E\brak{
+                f_\theta(x)
+            }
+             & \geq
+            \paren{
+                1 + \epsilon - 2\epsilon^2
+            }
+            \paren{
+                1 + \min(0, 3\epsilon - 4\epsilon^2)
+            }
+            - 1.
+        \end{align*}
+        Now, since we have $\epsilon\leq1/3$, we have $3\epsilon - 4\epsilon^2 \geq 0$,
+        which gives
+        \begin{align*}
+            \E\brak{
+                f_\theta(x)
+            }
+            \geq
+            1+ \epsilon - 2\epsilon^2 - 1
+            =
+            \epsilon - 2\epsilon^2
+            \geq
+            \epsilon - \frac23\epsilon
+            \geq
+            \frac{8\log(d)}{3d}
+            \,.
+        \end{align*}
+    \end{enumcases}
+\end{proof}
+
+\begin{lemma}\label{lem:small-I-anyr}
+    For all $x \in \mathbb{B}_1$ and $d > 256$,
+    $
+        \I_x \leq 2^{40} \frac{\log(d)^4}{d^4}$.
+\end{lemma}
+\begin{proof}
+    Let $x \in \ball_1$ and $r = \norm{x}$.
+    We prove this result by considering two cases.
+    \begin{enumcases}
+        \item If $r \geq \tau$, then we have
+        \begin{align}
+            \E\brak{
+                \paren{f_\theta(x) - \E\brak{f_\theta(x)}}^2
+            }
+             & \leq
+            \E\brak{
+                \paren{f_\theta(x) - f(x)}^2
+            }
+            \label{ineq:small-I-mean-min}
+            \\
+             & \leq
+            \mP\paren{f_\theta(x) = f(x)}
+            \paren{f(x) - f(x)}^2
+            +
+            \mP\paren{f_\theta(x) \neq f(x)}
+            \paren{\frac12 r^2 + \epsilon}^2
+            \nonumber
+            \\
+             & \leq
+            \frac{1}{d^4}\paren{\frac12 r^2 + \epsilon}^2
+            \leq
+            \frac{1}{d^4}\paren{\frac12 + \frac13}^2
+            \leq
+            \frac{25}{36d^4}
+            \, ,\nonumber
+        \end{align}
+        where the first inequality holds since the mean minimizes the squared deviation,
+        and the second inequality holds since $0 \leq f(x) - f_\theta(x) \leq \frac12 r^2 + \epsilon$.
+        \item Now suppose that $r < \tau$.
+        We have
+        \begin{align*}
+            0
+             &
+            \explan{(a)}
+            \leq
+            f(x) - f_\theta(x)
+            \\
+             &
+            \explan{(b)}
+            \leq
+            f(x)
+            - \ip{\theta, x} + 1 - \sqrt{1 + 2\epsilon}\norm{\theta - x}
+            \\
+             & =
+            f(x)
+            - \ip{\theta, x} + 1 - \sqrt{1 + 2\epsilon}\sqrt{1 + r^2 - 2\ip{\theta, x}}
+            \\
+             &
+            \explan{(c)}
+            \leq
+            \epsilon
+            +
+            \frac{r^2}{2}
+            - \ip{\theta, x} + 1 - \paren{1 + \epsilon - 2\epsilon^2}
+            \paren{
+                1 +
+                \frac{r^2}{2} - \ip{\theta, x}
+                -
+                \frac{
+                    (r^2 - 2\ip{\theta, x})^2
+                }{2}
+            }
+            \\
+             &
+            =
+            \frac{(r^2 - 2\ip{\theta, x})^2}{2}
+            +
+            2\epsilon^2
+            -
+            \paren{\epsilon - 2\epsilon^2}
+            \paren{\frac{r^2}{2} - \ip{\theta, x} - \frac{\paren{r^2 - \ip{\theta,x}}^2}{2}}
+            \\
+             &
+            =
+            \frac{r^4}{2} + 2\ip{\theta, x}^2 - 2\ip{\theta, x}r^2
+            +
+            2\epsilon^2
+            -
+            \paren{\epsilon - 2\epsilon^2}
+            \paren{\frac{r^2}{2} - \ip{\theta, x} -
+                \frac{r^4}{2} - 2\ip{\theta, x}^2 + 2\ip{\theta, x}r^2
+            }
+            \\
+             &
+            \explan{(d)}
+            \leq
+            30
+            \paren{r^2 + \abs{\ip{\theta, x}} + \epsilon}^2
+            ,
+        \end{align*}
+        where \texttt{(a)} follows from $f(x) \geq f_\theta(x)$,
+        the \texttt{(b)} follows from Lemma~\ref{lem:f-lower-bound},
+        \texttt{(c)} follows from $\sqrt{1 + x} \geq 1 + \frac{x}{2} - \frac{x^2}{2}$ for all $x\geq-1$,
+        and \texttt{(d)} follows from the fact that $r, \epsilon, \abs{\ip{\theta, x}} \leq 1$,
+        and the expression in the previous line a polynomial of
+        these terms with degree at least 2 and sum of coefficients at most 30.
+    \end{enumcases}
+    %\todoa{Clear?}
+    Next,
+    % using the facts $\E[\ip{\theta, x}^2] = \frac{r^2}{d}$
+    % and $\E[\ip{\theta, x}^4] = \frac{ 3r^4}{d(d+2)}< \frac{ 3r^4}{d^2}$,
+    starting from the right-hand side of \cref{ineq:small-I-mean-min},
+    we have
+    \begin{align*}
+        \E\brak{
+            \paren{
+                f(x)
+                -
+                f_\theta(x)
+            }^2
+        }
+         & \leq
+        \E\brak{
+            30^2
+            \paren{
+                r^2
+                +
+                \abs{\ip{\theta, x}}
+                +
+                \epsilon
+            }^4
+        }
+        \\
+         &
+        \explan{(a)}
+        \leq
+        30^2
+        \E\brak{
+            27
+            \paren{
+                r^8
+                +
+                \ip{\theta, x}^4
+                +
+                \epsilon^4
+            }
+        }
+        \\
+         & \leq
+        30^3
+        \paren{
+            r^8
+            +
+            \E\brak{
+                \ip{\theta, x}^4
+            }
+            +
+            \epsilon^4
+        }
+        \\
+         &
+        \explan{(b)}
+        \leq
+        30^3
+        \paren{
+            r^8
+            +
+            \frac{3r^4}{d^2}
+            +
+            \epsilon^4
+        }
+        \\
+         &
+        \explan{(c)}
+        \leq
+        30^3
+        \paren{
+            8^4 \epsilon^4
+            +
+            \frac{3 \cdot 8^2 \epsilon^2}{d^2}
+            +
+            \epsilon^4
+        }
+        \\
+         &
+        \leq
+        30^3
+        \paren{
+            8^4 \epsilon^4
+            +
+            3 \epsilon^4
+            +
+            \epsilon^4
+        }
+        \\
+         & \leq 2^{28} \epsilon^4 = 2^{40} \frac{\log(d)^4}{d^4}
+        \,,
+    \end{align*}
+    where \texttt{(a)} follows from $(a + b + c)^4 \leq 27(a^4 + b^4 + c^4)$,
+    \texttt{(b)} follows from the fact that $\E[\ip{\theta, x}^4] = \frac{3r^4}{d(d+2)} < \frac{3r^4}{d^2}$,
+    and \texttt{(c)} follows from $r < \tau = \sqrt{8\epsilon}$.
+    % \todot{Should be consistent with $\log$ vs $\log$. I suggest $\log$.}
+    % where \texttt{(a)} follows from the fact that $\sqrt{2\epsilon} \leq \tau \leq r$,
+    % and \texttt{(b)} follows from the fact that $\E[\ip{\theta, e_1}^4] = \frac{3}{d(d+2)}$
+    % and $\E[\ip{\theta, e_1}^2] = \frac{1}{d}$.\todot{Should be consistent with $\log$ vs $\log$. I suggest $\log$.}
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:inf-lower}]
+    Let $\xi$ be the law of $f_\theta$ when $\theta$ has law $\sigma$.
+    Then for any policy $\pi$, and $X \sim \pi$,
+    from Lemma~\ref{lem:large-delta-anyr} we have
+    \begin{align*}
+        \Delta(\pi, \xi)
+        =
+        \E\brak{\Delta_X}
+        \geq    \frac{\log(d)}{2d}\,,
+    \end{align*}
+    and from Lemma~\ref{lem:small-I-anyr} we have
+    \begin{align*}
+        \I(\pi, \xi) = \E[\I_X] \leq \frac{2^{40}\log(d)^4}{d^4} \,,
+    \end{align*}
+    which together imply
+    \begin{align*}
+        \frac{\Delta(\pi, \xi)}{\sqrt{\I(\pi, \xi)}}
+        \geq \frac{d}{2^{19}\log(d)}\,.
+    \end{align*}
+\end{proof}
+
+\chapter{Thompson Sampling for Adversarial Problems}
+In the Bayesian adversarial setting the prior is a probability measure on $\sF^n$ and a whole sequence of loss functions is sampled in secret
+by the environment.
+The natural generalisations of \ts{} in this setting are the following:
+\begin{enumerate}
+    \item Sample $(f_s)_{s=1}^n$ from the posterior and play $X_t = \argmin_{x \in K} f_t(x)$. \label{item:ts-adv:bad}
+    \item Sample $(f_s)_{s=1}^n$ from the posterior and play $X_t = \argmin_{x \in K} \sum_{s=1}^t f_s(x)$. \label{item:ts-adv:ok}
+\end{enumerate}
+The version in \ref{item:ts-adv:bad} suffers linear regret as the following example shows.
+Let $d = 1$ and $K = [-1,1]$ and $f(x) = \epsilon + \max(\epsilon x, (1 - \epsilon) x)$ and $g(x) = f(-x)$.
+Note that $f \in \sF_{\pb\pl}$ and is piecewise linear and minimised at $-1$ with $f(-1) = 0$ and $f(0) = \epsilon$ and $f(1) = 1$.
+The function $g$ is the mirror image of $f$.
+Now let $\nu$ be the uniform distribution on $\{f, g\}$ and $\xi = \nu^n$ be the product measure.
+\ts{} as defined in \ref{item:ts-adv:bad} plays uniformly on $\{1, -1\}$ and an elementary calculation shows that the regret
+is $\Omega(n)$.
+
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+                xlabel={$x$},
+                % ylabel={$f(x)$},
+                domain=-1:1,
+                samples=200,
+                width=7cm,
+                height=4cm,
+                % legend pos=north west,
+                % legend style={at={(0.5,-0.2)},anchor=north},
+                axis x line=middle,
+                axis y line=middle,
+                xtick={-1,0,0.25,1},
+                ytick={0,0.5,1,1.5,2},
+                xticklabels={$-1$,$0$,$0.25$,$1$},
+                yticklabels={$0$,$0.5$,$1$,$1.5$,$2$},
+                xmin=-1,
+                xmax=1,
+                ymin=0,
+                ymax=1.1,
+            ]
+            % Plot the original function f(x)=0.2+0.8*x^2 in blue.
+            \addplot [blue,  thick] {0.2+0.8*x^2 + 0.01};
+            % \addlegendentry{$f(x)=\epsilon+(1-\epsilon)x^2,\; \epsilon=0.2$};
+
+            % For theta=0.25, we have sqrt(epsilon/(1-epsilon))=sqrt(0.2/0.8)=0.5.
+            % f_{0.25}(x) is defined as follows:
+            % For x in [-0.25,0.25]:
+            %   f_{0.25}(x)= (1-\epsilon)\Bigl(\theta^2 + 2\,(x-\theta)(\theta-\sqrt{\epsilon/(1-\epsilon)})\Bigr)
+            %             = 0.8*(0.0625 - 0.5*(x-0.25))
+            \addplot [red,  thick, domain=-0.25:0.25] {0.8*(0.0625 - 0.5*(x-0.25)) -0.01};
+
+            % For x in [0.25,0.75]:
+            %   f_{0.25}(x)= (1-\epsilon)\Bigl(\theta^2 + 2\,(x-\theta)(\theta+\sqrt{\epsilon/(1-\epsilon)})\Bigr)
+            %             = 0.8*(0.0625 + 1.5*(x-0.25))
+            \addplot [red,  thick, domain=0.25:0.75] {0.8*(0.0625 + 1.5*(x-0.25)) -0.01};
+
+            % For x outside [-0.25,0.75], f_{0.25}(x) equals f(x).
+            \addplot [red,  thick, domain=-1:-0.25] {0.2+0.8*x^2 - 0.01};
+            \addplot [red,  thick, domain=0.75:1] {0.2+0.8*x^2 - 0.01};
+            % \addlegendentry{$f_{0.25}(x)$, $\theta=0.25,\ \epsilon=0.2$};
+
+            % Optional: Add dashed vertical lines to mark the breakpoints.
+            \draw[dashed] (axis cs:-0.25,0) -- (axis cs:-0.25,{0.2+0.8*(-0.25)^2});
+            \draw[dashed] (axis cs:0.75,0) -- (axis cs:0.75,{0.2+0.8*(0.75)^2});
+
+            % add a vertical line at theta=0.25 to mark the value of theta.
+            \draw[dashed] (axis cs:0.25,0) -- (axis cs:0.25,{0.8*(0.25)^2});
+
+            \node [blue] at (axis cs:0.7,0.9) {$f(x)$};
+            \node [red] at (axis cs:-0.7,0.3) {$f_{0.25}(x)$};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{
+        The function $f(x) = 0.2 + 0.8 x^2$ and the function $f_{0.25}$ with $\epsilon = 0.2$.
+        The function $f_{0.25}$ is the largest convex function that is smaller than $f$ and has $f_{0.25}(0.25) = f(0.25) - 0.2$.
+    }
+    \label{fig:adversarial-lower-bound}
+\end{figure}
+We do not know if the version of \ts{} defined in \ref{item:ts-adv:ok} has $\tilde O(\sqrt{n})$ Bayesian regret.
+% But \cite{BDKP15} note that at least naively the information-theoretic machinery is not suitable for analysing this algorithm.
+However, the following example shows that in general the adversarial version of the information ratio is not bounded.
+Because the loss function changes from round to round, the action $X_t$ may not minimise $f_t$. This must be reflected in the definition of the information
+ratio. Let $\xi$ be a probability measure on $\sF \times K$ and $\pi$ be a probability measure on $K$ and let
+\begin{align*}
+    \Delta(\pi, \xi) = \E[f(X) - f(X_\star)]  \qquad \text{ and } \qquad
+    \I(\pi, \xi) = \E[(f(X) - \E[f(X)|X])^2]\,,
+\end{align*}
+where $(f, X_\star, X)$ has law $\xi \otimes \pi$.
+Thompson sampling as in \cref{item:ts-adv:ok} is the policy $\pi$ with the same law as $X_\star$. The claim is that in general it does not hold
+that
+\begin{align*}
+    \Delta(\pi, \xi) \leq \alpha + \sqrt{\beta \I(\pi, \xi)}\,,
+\end{align*}
+unless $\alpha$ is unreasonably large.
+Let $d = 1, \epsilon \in (0, 2^{-7}), K = [-1,1]$, and $f(x) = \epsilon + (1 - \epsilon) x^2$.
+Given $\theta \in [-1,1]$ let $f_\theta(x)$ be defined as
+\begin{align*}
+    f_\theta(x) = \begin{cases}
+                      (1-\epsilon) (\theta^2 + 2 (x - \theta)(\theta + \sqrt{\frac{\epsilon}{1-\epsilon}}))
+                           & \theta \leq x \leq \theta + \sqrt{\frac{\epsilon}{1-\epsilon}} \\
+                      (1-\epsilon) (\theta^2 + 2 (x - \theta)(\theta - \sqrt{\frac{\epsilon}{1-\epsilon}}))
+                           & \theta - \sqrt{\frac{\epsilon}{1-\epsilon}} \leq x < \theta    \\
+                      f(x) & \text{otherwise},
+                  \end{cases}
+\end{align*}
+which is convex and smaller than $f$ for all $x \in K$.
+Essentially, $f_\theta$ should be thought of as the largest convex function
+that is smaller than $f$ and has $f_\theta(\theta) = f(\theta) - \epsilon$
+(see \cref{fig:adversarial-lower-bound}).
+Moreover, an elementary calculation shows that $\max_{x \in K} |f(x) - f_\theta(x)| = \epsilon$ for all $\theta \in [-1,1]$.
+Let $\xi$ be the law of $(f_\theta, \theta)$ when $\theta$ is sampled uniformly from $[-1,1]$ and $\pi$ be uniform on $[-1,1]$ which is the \ts{}
+policy as defined in \ref{item:ts-adv:ok}.
+Then, by letting $\theta'$ be an i.i.d. copy of $\theta$ we have
+\begin{align*}
+    \Delta(\pi, \xi)
+     & =
+    \E\brak{
+        f_{\theta}(\theta') - f_\theta(\theta)
+    }
+    =
+    \E\brak{
+        f_{\theta}(\theta') - f(\theta)
+    } + \epsilon
+    =
+    \E\brak{
+        f_{\theta'}(\theta) - f(\theta)
+    } + \epsilon
+\end{align*}
+where the second equality follows from the definition of $f_\theta$ and the third equality follows from $f_\theta(\theta) = f(\theta) - \epsilon$.
+Next, we have
+\begin{align*}
+    \E\brak{
+        f_{\theta'}(\theta) - f(\theta)
+    }
+     & =
+    \E\brak{
+        \sind_{
+            \left\{
+            |\theta - \theta'| \leq \sqrt{\frac{\epsilon}{1-\epsilon}}
+            \right\}
+        }
+        \paren{
+            f_{\theta'}(\theta) - f(\theta)
+        }
+        +
+        \sind_{
+            \left\{
+            |\theta - \theta'| \geq \sqrt{\frac{\epsilon}{1-\epsilon}}
+            \right\}
+        }
+        \paren{
+            f_{\theta'}(\theta) - f(\theta)
+        }
+    }    \\
+     &
+    \explan{(a)}
+    =
+    \E\brak{
+        \sind_{
+            \left\{
+            |\theta - \theta'| \leq \sqrt{\frac{\epsilon}{1-\epsilon}}
+            \right\}
+        }
+        \paren{
+            f_{\theta'}(\theta) - f(\theta)
+        }
+    }
+    \\
+     &
+    \explan{(b)}
+    \geq
+    -
+    \mathbb{P}\paren{
+        |\theta - \theta'| \leq \sqrt{\frac{\epsilon}{1-\epsilon}}
+    }
+    \epsilon
+    \\
+     &
+    \explan{(c)}
+    \geq
+    -
+    2 \sqrt{\frac{\epsilon}{1-\epsilon}}
+    \epsilon\,,
+\end{align*}
+where \texttt{(a)} follows from the fact that $f_{\theta'}(\theta) = f(\theta)$
+if $|\theta - \theta'| \geq \sqrt{\frac{\epsilon}{1-\epsilon}}$;
+\texttt{(b)} follows from the fact that $f_{\theta'} \leq f(\theta)$
+and the fact that $\max_{x \in K} |f(x) - f_\theta(x)| = \epsilon$;
+and \texttt{(c)} follows from the fact that $\theta$ and $\theta'$ are i.i.d. on $[-1,1]$.
+Therefore,
+\begin{align*}
+    \Delta(\pi, \xi)
+    \geq
+    \epsilon \paren{1 - 2 \sqrt{\frac{\epsilon}{1-\epsilon}}}\,.
+\end{align*}
+Next, we turn our attention to $\I(\pi, \xi)$, which can be upper bounded as
+\begin{align*}
+    \I(\pi, \xi)
+     & =
+    \E\brak{
+        \paren{
+            f_{\theta'}(\theta) - \E\brak{f_{\theta'}(\theta)|\theta}
+        }^2
+    }
+    \\
+     &
+    \explan{(a)}
+    \leq
+    \E\brak{
+        \paren{
+            f_{\theta'}(\theta) - f(\theta)
+        }^2
+    }
+    \\
+     &
+    \explan{(b)}
+    \leq
+    \mathbb{P}\paren{
+        |\theta - \theta'| \leq \sqrt{\frac{\epsilon}{1-\epsilon}}
+    }
+    \epsilon^2
+    \\
+     &
+    \explan{(c)}
+    \leq
+    2 \epsilon^2\sqrt{\frac{\epsilon}{1-\epsilon}}\,,
+\end{align*}
+where \texttt{(a)} follows from the fact that the mean minimizes the squared deviation;
+\texttt{(b)} follows from the fact that $f_{\theta'}(\theta) = f(\theta)$
+if $|\theta - \theta'| \geq \sqrt{\frac{\epsilon}{1-\epsilon}}$;
+and \texttt{(c)} follows from the fact that $\theta$ and $\theta'$ are i.i.d. on $[-1,1]$.
+Therefore, by putting the two inequalities together we have
+\begin{align*}
+    \frac{
+        \Delta(\pi, \xi)
+    }{
+        \sqrt{\I(\pi, \xi)}
+    }
+    \geq
+    \frac{
+        \epsilon \paren{1 - 2 \sqrt{\frac{\epsilon}{1-\epsilon}}}
+    }{
+        \sqrt{2 \epsilon^2\sqrt{\frac{\epsilon}{1-\epsilon}}}
+    }
+    =
+    \frac{
+        1 - \sqrt{\frac{4\epsilon}{1-\epsilon}}
+    }{
+        \sqrt[4]{\frac{4\epsilon}{1-\epsilon}}
+    }
+    =
+    \sqrt[4]{\frac{1-\epsilon}{4\epsilon}}
+    -
+    \sqrt[4]{\frac{4\epsilon}{1-\epsilon}}\,,
+\end{align*}
+which can be further lower bounded by
+\begin{align*}
+    \frac{
+        \Delta(\pi, \xi)
+    }{
+        \sqrt{\I(\pi, \xi)}
+    }
+    \geq
+    \sqrt[4]{\frac{1-\epsilon}{4\epsilon}}
+    -
+    \sqrt[4]{\frac{4\epsilon}{1-\epsilon}}
+    \geq
+    \sqrt[4]{\frac{1}{4\epsilon} - \frac{1}{4}}
+    -
+    \sqrt[4]{8\epsilon}
+    \geq
+    \sqrt[4]{\frac{1}{8\epsilon}}
+    -
+    \sqrt[4]{8\epsilon}
+    \geq
+    \frac{1}{4}\epsilon^{-\frac14}\,,
+\end{align*}
+where the all inequalities follow from $\epsilon \in (0,2^{-7})$.
+Therefore, the information ratio is unbounded as $\epsilon \to 0$.
+
+\chapter{Discussion}
+\section{Adversarial setup} In the Bayesian adverarial setting a sequence of loss functions $f_1,\ldots,f_n$ are sampled from a joint distribution on $\sF^n$.
+The learner plays $X_t$ and observes $Y_t = f_t(X_t)$ and the Bayesian regret is
+$\BReg(\sA, \xi) = \E[\sup_{x \in K} \sum_{t=1}^n (f_t(X_t) - f_t(x))]$.
+One can envisage two possible definitions of Thompson sampling in this setting. One samples $g_t$ from the marginal of the posterior and plays $X_t = x_{g_t}$.
+The second samples $g_1,\ldots,g_n$ from the posterior and plays $X_t$ as the minimiser of $\sum_{t=1}^n g_t$.
+The former has linear regret, while \cite{BDKP15} notes
+that the latter has an unbounded information ratio. More details are in \cref{sec:adv}.
+\section{Tightness of bounds} At present we are uncertain whether or not the monotonicity assumption is needed in the ridge setting. Our best guess is that it is not.
+One may also wonder if the bound on the information ratio in \cref{thm:ridge-ir} can be improved. We are cautiously believe
+that when the loss has the form $f(x) = \ell(\ip{x, \theta})$ for \textit{known} convex link function $\ell : \R \to \R$, then the information ratio is at most $d$.
+This would mean that convex generalised linear bandits are no harder than linear bandits.
+
+\section{\ts{} vs \IDS} \cref{thm:ts-lower} shows that \ts{} can have more-or-less linear regret in high-dimensional problems. On the other hand,
+\cite{BE18} and \cite{Lat20-cvx} show that \IDS{} has a well-controlled information ratio, but is much harder to compute.
+An obvious question is whether some simple adaptation of Thompson sampling has a well-controlled information ratio.
+\section{Applications} Many problems are reasonably modelled as $1$-dimensional convex bandits, with the classical example being dynamic pricing
+where $K$ is a set of prices and convexity is a reasonable assumption based on the response of demand to price.
+The monotone ridge function class is a natural model for resource allocation problems where a single resource (e.g., money) is allocated to $d$ locations.
+The success of some global task increases as more resources are allocated, but with diminishing returns. Problems like this can reasonably be modelled
+by convex monotone ridge functions with $K = \{x \geq \zeros : \norm{x}_1 \leq 1\}$.
+\section{Lipschitz assumption} Our bounds depend logarithmically on the Lipschitz constant associated with the class of loss functions.
+There is a standard trick to relax this assumption based on the observation that bounded convex functions must be Lipschitz on a suitably defined
+interior of the constraint set $K$.
+Concretely, suppose that $K$ is a convex body and $f : K \to [0,1]$ is convex and $\ball_r \subset K$ and $K_\epsilon = (1 - \epsilon) K$.
+Then $\min_{x \in K_\epsilon} f(x) \leq \inf_{x \in K} f(x) + \epsilon$ and $f$ is $1/(r\epsilon)$-Lipschitz on $K_\epsilon$ \citep[Chapter 3]{lat24book}.
+Hence, you can run \ts{} on $K_\epsilon$ with $\epsilon = 1/n$ and the Lipschitz constant is at most $n/r$.
+Moreover, if $K$ is in (approximate) isotropic or John's position, then $\ball_1 \subset K \subset \ball_{2d}$ by \cite{kannan1995isoperimetric}
+and John's theorem, respectively.
+
+\section{Frequentist regret}
+An ambitious goal would be to prove a bound on the frequentist regret of \ts{} for some well-chosen prior.
+This is already quite a difficult problem in multi-armed \citep{KKM12,AG12b} and linear bandits \citep{AG13} and is out of reach of the techniques developed here.
+On the other hand, the Bayesian algorithm has the advantage of being able to specify a prior that makes use of background knowledge and the theoretical guarantees
+for \ts{} provide a degree of comfort.
+
+\section{Choice of prior} The choice of the prior depends on the application. A variety of authors of constructed priors supported on non-parametric
+classes of $1$-dimensional convex functions
+using a variety of methods \citep{ramgopal1993nonparametric,chang2007shape,shively2011nonparametric}.
+In many cases you may know the loss belongs to a simple parametric class, in which case the prior and posterior computations may simplify dramatically.
+
+\renewcommand{\bibname}{References}
+\bibliography{ref}
+\bibliographystyle{alpha}
+
+\end{document}

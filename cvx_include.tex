@@ -1,0 +1,150 @@
+\newcommand{\IDS}{\textsc{ids}}
+\setlist[itemize,1]{label={$\circ$},itemsep=0pt,labelindent=0pt,labelwidth=!,leftmargin=14pt}
+\newlist{enumroman}{enumerate}{1}
+\newlist{enumsteps}{enumerate}{1}
+\newlist{enumcases}{enumerate}{1}
+\setlist[enumcases,1]{label={\normalfont\sffamily\textbf{\textsc{\color{dkblue}case \arabic*}}},itemsep=0pt,wide,labelwidth=!,labelindent=0pt,itemsep=0pt}
+
+\setlist[enumerate,1]{label={\normalfont\texttt{(\alph*)}},itemsep=0pt,wide,labelwidth=!,labelindent=0pt,itemsep=0pt}
+\setlist[enumroman,1]{label={\normalfont\texttt{\color{dkblue}(\uline{\roman*})}},itemsep=0pt,wide,labelwidth=!,labelindent=0pt,itemsep=0pt}
+\setlist[enumsteps,1]{label={\normalfont\sffamily\textbf{\textsc{\color{dkblue}step \arabic*}}},itemsep=0pt,wide,labelwidth=!,labelindent=0pt,itemsep=0pt}
+
+%\setlist[description]{itemsep=0pt,labelwidth=!,labelindent=0pt,wide,leftmargin=0pt}
+\setlist[description]{itemsep=0pt,wide,labelwidth=!,labelindent=0pt,itemsep=0pt,format={\normalfont \textit}}
+
+\let\epsilon\varepsilon
+\crefname{lemma}{Lemma}{Lemmas}
+\crefname{item}{case}{cases}
+
+\ifcolt
+    \newtheorem{assumption}[theorem]{Assumption}
+\else
+    \theoremstyle{plain}
+    \newtheorem{theorem}{Theorem}
+    \newtheorem{optprob}[theorem]{Optimisation Problem}
+    \newtheorem{lemma}[theorem]{Lemma}
+    \newtheorem{proposition}[theorem]{Proposition}
+    \newtheorem{corollary}[theorem]{Corollary}
+    \newtheorem{claim}[theorem]{Claim}
+    \theoremstyle{definition}
+    \newtheorem{definition}[theorem]{Definition}
+    \newtheorem{assumption}[theorem]{Assumption}
+    \newtheorem{example}[theorem]{Example}
+    \newtheorem{remark}[theorem]{Remark}
+    \theoremstyle{remark}
+\fi
+
+\newcommand{\epsF}{{\epsilon_{\text{\tiny \textsc{f}}}}}
+\newcommand{\epsR}{{\epsilon_R}}
+\newcommand{\epsO}{{\epsilon_O}}
+\newcommand{\opt}{\operatorname{\textsc{optr}}}
+\newcommand{\opte}{\operatorname{\textsc{opt}}}
+\newcommand{\hopt}{\operatorname{\widetilde{\textsc{optr}}}}
+
+
+\newcommand{\pr}{\text{\tiny\texttt{r}}}
+\newcommand{\pb}{\text{\tiny\texttt{b}}}
+\newcommand{\pl}{\text{\tiny\texttt{l}}}
+\renewcommand{\pm}{\text{\tiny\texttt{m}}}
+
+\newcommand{\ceil}[1]{\left\lceil #1 \right\rceil}
+\newcommand{\floor}[1]{\left\lfloor #1 \right\rfloor}
+
+\newcommand{\pair}{\operatorname{\textsc{pair}}}
+\newcommand{\spt}{\operatorname{spt}}
+\newcommand{\R}{\mathbb R}
+\newcommand{\esssup}{\operatorname{ess\,sup}}
+\newcommand{\essinf}{\operatorname{ess\,inf}}
+\newcommand{\argmin}{\operatornamewithlimits{arg\,min}}
+\newcommand{\argmax}{\operatornamewithlimits{arg\,max}}
+\newcommand{\explan}[1]{\stackrel{\text{\tiny \texttt{#1}}}}
+\newcommand{\ip}[1]{\left \langle #1 \right \rangle}
+\newcommand{\bip}[1]{\left\langle #1 \right\rangle}
+\newcommand{\sip}[1]{\langle #1 \rangle}
+\newcommand{\Reg}{\textup{\textrm{Reg}}}
+\newcommand{\esup}{\operatorname{ess\,sup}}
+\newcommand{\uReg}{\overline{\textrm{Reg}}}
+\newcommand{\BReg}{\textrm{BReg}}
+\newcommand{\Breg}{\operatorname{D}}
+\newcommand{\Fmax}{\textup{\textrm{F}}_{\max}}
+\newcommand{\Hmax}{\textrm{H}_{\max}}
+\newcommand{\Bmax}{\textrm{B}_{\max}}
+\newcommand{\Rmax}{\textrm{R}_{\max}}
+\newcommand{\Rmin}{\textrm{R}_{\min}}
+\newcommand{\Kmax}{\textrm{K}_{\max}}
+\newcommand{\sphere}{\mathbb{S}}
+\newcommand{\logs}{L}
+\newcommand{\KL}{\operatorname{KL}}
+\newcommand{\ball}{\mathbb{B}}
+\newcommand{\paren}[1]{\left( #1 \right)}
+\newcommand{\abs}[1]{\left| #1 \right|}
+\newcommand{\brak}[1]{\left[ #1 \right]}
+\newcommand{\sett}[1]{\left\{ #1 \right\}}
+\newcommand{\norm}[1]{\left \Vert  #1 \right \Vert}
+\newcommand{\snorm}[1]{ \Vert  #1 \Vert}
+\newcommand{\Lsnorm}[1]{ \Vert  #1 \Vert_{\text{\scriptsize \textrm{L2}}}}
+\newcommand{\sS}{\mathscr S}
+\newcommand\half[1]{\textstyle{\frac{#1}{2}}}
+\newcommand{\ext}{\operatorname{e}}
+\newcommand{\psd}{\mathbb S^+}
+\newcommand{\cond}{\operatorname{cond}}
+\newcommand{\normt}[2]{\Vert #2 \Vert_{#1}}
+\newcommand{\bnorm}[1]{\left\Vert #1 \right\Vert}
+\newcommand{\barnorm}[1]{\bar \Vert #1 \bar \Vert}
+\newcommand{\bignorm}[1]{\bigl\Vert #1 \bigr\Vert}
+\newcommand{\E}{\mathbb E}
+\newcommand{\Var}{\mathbb V}
+\newcommand{\err}[1]{\operatorname{err}_{\ref{#1}}}
+\newcommand{\cE}{\mathcal E}
+\newcommand{\Cnst}{\textrm{C}}
+\newcommand{\cnst}{\textrm{c}}
+\newcommand{\cK}{\mathcal K}
+\newcommand{\cH}{\mathcal H}
+\newcommand{\cF}{\mathcal F}
+\newcommand{\cC}{\mathcal C}
+\newcommand{\cT}{\mathcal T}
+\newcommand{\sG}{\mathscr G}
+\newcommand{\sF}{\mathscr F}
+\newcommand{\cL}{\mathcal L}
+\newcommand{\cI}{\mathcal I}
+\newcommand{\cS}{\mathcal S}
+\newcommand{\cD}{\mathcal D}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\cN}{\mathcal N}
+\newcommand{\sB}{\mathscr B}
+\newcommand{\sA}{\mathscr A}
+\newcommand{\sP}{\mathscr P}
+\newcommand{\cX}{\mathcal X}
+\newcommand{\bS}{\mathbb S}
+\newcommand{\bB}{\mathbb B}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\cHb}{\mathcal H_{\circ}}
+\newcommand{\zeros}{ \bm 0}
+\newcommand{\ones}{ \bm 1}
+\newcommand{\bbP}{\mathbb P}
+\newcommand{\N}{\mathbb N}
+\newcommand{\lip}{\operatorname{Lip}}
+\newcommand{\vol}{\operatorname{vol}}
+\newcommand{\polylog}{\operatorname{polylog}}
+\newcommand{\const}{\operatorname{const}}
+\newcommand{\interior}{\operatorname{int}}
+\newcommand{\conv}{\operatorname{conv}}
+\newcommand{\diam}{\operatorname{diam}}
+\newcommand{\poly}{\operatorname{poly}}
+\newcommand{\sind}{\bm{1}}
+\renewcommand{\d}[1]{\operatorname{d}\!#1}
+\newcommand{\id}{\mathds{1}}
+\newcommand{\I}{\mathcal{I}}
+\newcommand{\1}{\mathbf{1}}
+\newcommand{\ts}{\textsc{ts}}
+\newcommand{\ats}{\textsc{ats}}
+\newcommand{\cY}{\mathcal{Y}}
+\newcommand{\mP}{\mathbb{P}}
+\newcommand{\mI}{\mathbb{I}}
+\newcommand{\IR}{\operatorname{\textsc{ir}}}
+
+\ifcolt
+    \newcommand{\qedhere}{\tag*{$\blacksquare$}}
+\fi
+
+\newtheorem{fact}[theorem]{Fact}
