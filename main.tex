@@ -523,12 +523,12 @@ in a way that the Lipschitzness of the original function $f$ is preserved.
 \begin{lemma}\label{lem:lip}
     Suppose that $K$ is a convex body and $f \in \sF_{\pl\pr}$ is a Lipschitz convex ridge function.
     Then there exists a $\theta \in \sphere_1$ and a convex $\ell : \R \to \R$
-    such that $f(x) = \ell(\ip{x, \theta})$ and $\lip_K(\ell) \leq \lip(f)$.
+    such that $f(x) = \ell(\ip{x, \theta})$ and $\lip(\ell) \leq \lip_K(f)$.
 \end{lemma}
 
 \begin{proof}
     By assumption there exists a convex function $\ell : \R \to \R$ and $\theta \in \sphere_1$ such that $f(x) = \ell(\ip{x, \theta})$.
-    What remains to show that $\ell$ can be chosen so that $\lip(\ell) \leq \lip_K(f)$.
+    It remains to show that $\ell$ can be chosen so that $\lip(\ell) \leq \lip_K(f)$.
     Let $h_K$ be the support function associated with $K$, given by $h_K(v) = \sup_{x \in K} \ip{v, x}$.
     Therefore $\ell$ is uniquely defined on $I = [-h_K(-\theta), h_K(\theta)]$ and can be defined in any way that preserves convexity outside.
     Let $Dg(x)[v]$ be the directional derivative of $g$ at $x$ in direction $v$, which for convex $g$ exists for all $x$ in the interior of the domain of $g$.
@@ -578,16 +578,13 @@ so we defer the proof to \cref{sec:ir-general}.
 At a high level the argument is based on similar results by \cite{BDKP15} and \cite{BE18}.
 Also note that the space of ridge functions is not closed under convex combinations, which introduces certain challenges also
 noticed by \cite{lattimore2021minimax}.
-The main takeaway is that bounding the information ratio $\IR(\sF)$ is sufficient to bound the regret of \ts.
-Also note that the space of ridge functions is not closed under convex combinations, which introduces certain challenges also
-noticed by \cite{lattimore2021minimax}.
 To address this last issue, we introduce a cover in \cref{sec:cover} that let us
 work with subsets of $\sF$ that are closed under convex combinations,
 and also satisfy some other properties.
 
 \section{Decomposition lemma}
-We also introduce a new mechanism for bounding $\IR(\sF)$.
-The rough idea is to decompose the function class $\sF$ into disjoint subsets $\sF_i$ such that the information ratio (not exactly) can be bounded for each subset.
+We also introduce a new mechanism for deriving information ratio bounds specially for \ts.
+The rough idea is to partition the function class $\sF$ into disjoint subsets $\sF_i$ such that an inequality similar to that of general information ratio holds for each partition.
 \begin{lemma}\label{lem:decomp-big}
     Suppose there exist natural numbers $k$ and $m$ such that for all $\bar f \in \conv(\sF)$ there exists a disjoint union $\sF = \cup_{i=1}^m \sF_i$ of measurable sets
     for which
@@ -609,7 +606,7 @@ of the information ratio for finite-armed bandits \citep{RV14} and in the inform
         \label{eq:decomp:1}
     \end{align}
     which exists by the assumptions in the lemma.
-    When $\xi(\sF_i)$ define $\nu_i$ as an arbitrary probability measure on $\sF$ and otherwise let
+    When $\xi(\sF_i)=0$ define $\nu_i$ as an arbitrary probability measure on $\sF$ and otherwise let
     $\nu_i(\cdot) = \xi(\cdot \cap \sF_i) / \xi(\sF_i)$ and $w_i = \xi(\sF_i)$.
     Therefore
     \begin{align}
@@ -643,9 +640,11 @@ of the information ratio for finite-armed bandits \citep{RV14} and in the inform
 \chapter{Approximate Thompson Sampling}\label{ch:ats}
 Often \textit{exact} minimization a convex function is computationally expensive.
 Therefore, it is natural to consider approximate minimization.
-In this chapter we study approximate Thompson sampling (\ats), which is a variant of \ts that
-only approximately minimizes the sampled loss function.
-
+In fact, we analyze this approximate version of \ts,
+which is a strict generalization of the exact version.
+Later, we specialize the analysis of this approximate version,
+which we call approximate Thompson sampling (\ats{}),
+to get regret bounds for the exact version of \ts.
 \begin{algorithm}[h!]
     \begin{minipage}{12cm}
         \begin{mdframed}
@@ -660,8 +659,8 @@ for $t = 1$ to $\infty$:
         \end{mdframed}
     \end{minipage}
 \end{algorithm}
-\ats{} is defined in \cref{alg:ats} and is similar to \ts except that it only approximately minimizes the sampled loss function.
-$X_t$ only needs to approximately minimize $f_t$.
+\ats{} is defined in \cref{alg:ats} and is similar to \ts except that it only approximately minimizes the sampled loss function,
+i.e. $X_t$ only needs to approximately minimize $f_t$.
 The analysis of this algorithm is surprisingly subtle,
 and indeed, we were only able to analyze an approximate version of \ts that uses a small amount of regularization.
 
@@ -686,15 +685,18 @@ for suitably small $\epsilon \geq 0$.
 We suspect the answer is yes but do not currently have a proof.
 The regularization ensures that $\bar x_f$ has small diameter, which need not be true in general for $\{x : f(x) \leq f_\star + \epsilon\}$,
 even if $\epsilon$ is arbitrarily small.
+\begin{remark}
+    It's also important to note that $x_f$ is not $\bar{x}_f$ necessarily.
+\end{remark}
 
 \section{A Convex Cover}\label{sec:cover}
 We start by defining a kind of cover of a set of convex functions $\sF$.
 In the standard analysis introduced by \cite{BDKP15} and \cite{BE18}, this cover was defined purely in terms of the optimal action.
 As noticed by \cite{lattimore2021minimax}, this argument relies on $\sF$ being closed under convex combinations, which is not true
-for the space of ridge functions. Here we introduce a new definition notion of cover for function classes $\sF$ that are not closed
+for the space of ridge functions. Here we introduce a new notion of cover for function classes $\sF$ that are not closed
 under convex combinations.
 \begin{definition}\label{def:cover}
-    Let $\sF$ be a set of convex functions from $K$ to $\R$ and $\epsilon > 0$.
+    Let $\sF$ be a set of convex functions from $\cK$ to $\R$ and $\epsilon > 0$.
     Define $N(\sF, \epsilon)$ to be the smallest number $N$ such that there exists $\{\sF_1,\ldots,\sF_N\}$ such that for all $k \in [N]$:
     \begin{itemize}
         \item \textit{Closure:} $\sF_k$ is a subset of $\sF$ and $\conv(\sF_k) \subset \sF$.
@@ -761,9 +763,9 @@ The former class is closed under convex combinations, which somewhat simplifies 
 
 
 \section{Continuity of Regret and Information Gain}
-In order to bound the information ratio $\IR(\sF)$, we need to bound the regret $\Delta(\pi, \xi)$
+In order to find a pair $(\alpha, \beta)$ in $\IR(\sF)$, we need to bound the regret $\Delta(\pi, \xi)$
 in terms of the information gain $I(\pi, \xi)$ for a prior $\xi \in \sP(\sF)$ and policy $\pi \in \sP(K)$.
-It turns out useful to prove continuitity (Lipschitzness) properties of these quantities
+It turns out useful to prove continuity (Lipschitzness) properties of these quantities
 in terms of the distance between two different priors $\xi, \nu \in \sP(\sF)$ and the distance between two different policies $\pi, \rho \in \sP(K)$.
 Of course, the proper \textit{distance} metric on $\sP(\sF)$ and $\sP(K)$ needs to be specified to make this precise.
 \begin{lemma}\label{lem:cont:I}
@@ -798,10 +800,22 @@ Of course, the proper \textit{distance} metric on $\sP(\sF)$ and $\sP(K)$ needs 
 \end{lemma}
 
 \begin{proof}
-    Let $g(x) = \max(f(x), f(X))$ and $\xi$ be the law of $g$, which means that $\pi \in \ts$. %\todot{fix notation here}
+    Let $g(x) = \max(f(x), f(X))$ and $\xi$ be the law of $g$, which means that $\pi \in \ts(\xi)$. %\todot{fix notation here}
     % \todot{here I am using that $\max(f, u) \in \sF$ whenever $f \in \sF$.}
     As usual, let $\bar f = \E[f]$ and $\bar g = \E[g]$.
-    By construction $\norm{f - g}_\infty \leq \epsilon$ and therefore
+    By construction
+    \begin{align*}
+        \norm{f - g}_\infty
+         & =
+        \sup_{x \in \cK} |\max(f(x), f(X)) - f(x)|          \\
+         & =
+        \sup_{x \in \cK} \max(f(x), f(X)) - f(x)            \\
+         & \leq
+        \sup_{x \in \cK} \max(f(x), f(x) + \epsilon) - f(x) \\
+         & \leq \epsilon\,,
+    \end{align*}
+    almost surely.
+    Therefore
     \begin{align*}
         \Delta(\pi, \nu)
         = \E[\bar f(X) - f_\star]
@@ -850,11 +864,11 @@ The approximation error in the definition of $\bar x_f$ is $\epsO$, which can be
 We can now state a general theorem from which Theorem~\ref{thm:ts-ir-regret} follows.
 
 \begin{theorem}\label{thm:ir-general}
-    Suppose that $\epsilon \in (0,1)$ and $\frac{1}{2} \epsR \diam(K)^2 \leq \epsilon2$ and $2\epsO/\epsR \leq \epsilon^2$
+    Suppose that $\epsilon \in (0,1)$ and $\frac{1}{2} \epsR \diam(K)^2 \leq \epsilon$ and $2\epsO/\epsR \leq \epsilon^2$
     and let $\sF$ be a set of convex functions from $K$ to $[0,1]$ and $(\alpha, \beta) \in \IR(\sF)$.
     Then the Bayesian regret of \ats{} for any prior $\xi$ is at most
     \begin{align*}
-        \BReg_n(\ats, \xi) \leq n \alpha + n\epsilon[6 + 2 \sqrt{\beta}] + \sqrt{\frac{\beta n}{2} \log\left(N\left(\sF, 1/\epsilon\right)\right)} \,.
+        \BReg_n(\ats, \xi) \leq n \alpha + 3n\epsilon[1 + \sqrt{\beta}] + \sqrt{\frac{\beta n}{2} \log\left(N\left(\sF, 1/\epsilon\right)\right)} \,.
     \end{align*}
 \end{theorem}
 
@@ -873,8 +887,6 @@ Proposition~\ref{prop:N} and Proposition~\ref{prop:N-ridge} to bound the coverin
     and $Y$ be a random variable such that $\E[Y|f, X] = f(X)$ and $Y \in [0,1]$ almost surely.
     By Definition~\ref{def:cover} there exists an $[N]$-valued random variable $\kappa$ such that:
     \begin{enumroman}
-        \item There exists a random function $f_\kappa \in \sF_\kappa$ with $\norm{f - f_\kappa} \leq \epsilon$; and
-        \item $\norm{\tilde x_f - x_\kappa} \leq \epsilon$.
         \item There exists a random function $f_\kappa \in \sF_\kappa$ with $\norm{f - f_\kappa}_\infty \leq \epsilon$; and \label{proof:ir:i}
         \item $\norm{\tilde x_f - x_\kappa} \leq \epsilon$. \label{proof:ir:ii}
     \end{enumroman}
@@ -883,11 +895,9 @@ Proposition~\ref{prop:N} and Proposition~\ref{prop:N-ridge} to bound the coverin
     \begin{lemma}\label{lem:ir}
         The following holds:
         \begin{align*}
-            \Delta(\pi, \xi) \leq \alpha + \sqrt{\beta I(\kappa ; X, Y)} + \epsilon \poly(\diam(K), \beta) \,,
-            \Delta(\pi, \xi) \leq \alpha + \sqrt{\beta I(\kappa ; X, Y)} + \epsilon [6 + 2 \sqrt{\beta}] \,,
+            % \Delta(\pi, \xi) \leq \alpha + \sqrt{\beta I(\kappa ; X, Y)} + \epsilon \poly(\diam(K), \beta) \,,
+            \Delta(\pi, \xi) \leq \alpha + \sqrt{\beta I(\kappa ; X, Y)} + 3\epsilon[1 + \sqrt{\beta}] \,,
         \end{align*}
-        where $I(\kappa ; X, Y)$ is the mutual information
-        between $\kappa$ and the pair $(X, Y)$.
         where $I(\kappa ; X, Y)$ is the mutual information between $\kappa$ and the pair $(X, Y)$.
     \end{lemma}
 
@@ -898,15 +908,15 @@ Proposition~\ref{prop:N} and Proposition~\ref{prop:N-ridge} to bound the coverin
         Then
         \begin{align*}
             \Delta(\pi, \xi)
-             & = \E[\bar f(X) - f_\star]                                                                            \\
-             & \explan{(a)}= \E[\bar f(X) - \E[f_\star|\kappa]]                                                     \\
-             & \explan{(b)}\leq \E[\bar f_\kappa(X) - \E[f_\star|\kappa]] + \epsilon                                \\
-             & \explan{(c)}\leq \E[\bar f_\kappa(x_\kappa) - \E[f_\kappa|\kappa]_\star] + 6 \epsilon                \\
-             & \explan{(d)}= \Delta(\pi_\kappa, \nu_\kappa) + 6 \epsilon                                            \\
-             & \explan{(e)}\leq \alpha + \sqrt{\beta I(\pi_\kappa, \nu_\kappa)} + 6 \epsilon                        \\
-             & \explan{(f)}\leq \alpha + \sqrt{\beta I(\pi_\kappa, \nu)} + \epsilon[6 + \sqrt{\beta}]               \\
-             & \explan{(g)}\leq \alpha + \sqrt{\beta I(\pi, \nu)} + \epsilon [6 + 2 \sqrt{\beta}]                   \\
-             & \explan{(h)}\leq \alpha + \sqrt{\frac{\beta I(\kappa ; X, Y)}{2}} + \epsilon[6 + 2 \sqrt{\beta}] \,,
+             & = \E[\bar f(X) - f_\star]                                                                           \\
+             & \explan{(a)}= \E[\bar f(X) - \E[f_\star|\kappa]]                                                    \\
+             & \explan{(b)}\leq \E[\bar f_\kappa(X) - \E[f_\star|\kappa]] + \epsilon                               \\
+             & \explan{(c)}\leq \E[\bar f_\kappa(x_\kappa) - \E[f_\kappa|\kappa]_\star] + 3 \epsilon               \\
+             & \explan{(d)}= \Delta(\pi_\kappa, \nu_\kappa) + 3 \epsilon                                           \\
+             & \explan{(e)}\leq \alpha + \sqrt{\beta I(\pi_\kappa, \nu_\kappa)} + 3 \epsilon                       \\
+             & \explan{(f)}\leq \alpha + \sqrt{\beta I(\pi_\kappa, \nu)} + \epsilon[3 + \sqrt{\beta}]              \\
+             & \explan{(g)}\leq \alpha + \sqrt{\beta I(\pi, \nu)} + 3\epsilon[1 + \sqrt{\beta}]                    \\
+             & \explan{(h)}\leq \alpha + \sqrt{\frac{\beta I(\kappa ; X, Y)}{2}} + 3\epsilon[1 + \sqrt{\beta}] \,,
         \end{align*}
         where
         \begin{enumerate}
@@ -923,23 +933,13 @@ Proposition~\ref{prop:N} and Proposition~\ref{prop:N-ridge} to bound the coverin
                   \begin{align*}
                       \E[f_\star|\kappa]
                        & = \E[f(x_f)|\kappa]                                        \\
-                       & \geq \E[f(\tilde x_f)|\kappa] - \frac{\epsR}{2} \diam(K)^2 \\
-                       & \geq \E[f(x_\kappa)|\kappa] - 2\epsilon                    \\
-                       & \geq \E[f_\kappa(x_\kappa)|\kappa] - 3\epsilon             \\
-                       & \geq \E[f_\kappa|\kappa]_\star - 3\epsilon \,.
-                      \E[f_\star|\kappa]
-                       & = \E[f(x_f)|\kappa]                                        \\
                       \tag*{by Lemma~\ref{lem:sc}\ref{lem:sc:min}}
                        & \geq \E[f(\tilde x_f)|\kappa] - \frac{\epsR}{2} \diam(K)^2 \\
                       \tag*{by the assumption on $\epsR$ and \ref{proof:ir:ii}}
                        & \geq \E[f(x_\kappa)|\kappa] - 2\epsilon                    \\
                       \tag*{by \ref{proof:ir:i}}
                        & \geq \E[f_\kappa(x_\kappa)|\kappa] - 3\epsilon             \\
-                       & \geq \E[f_\kappa|\kappa]_\star - 3\epsilon \,.
-                  \end{align*}
-                  And because $\snorm{X_\star - x_\kappa} \leq \snorm{X_\star - \tilde x_f} + \snorm{\tilde x_f - x_\kappa} \leq 2 \epsilon$ so that
-                  \begin{align*}
-                      \E[\bar f_\kappa(X)] = \E[\bar f_\kappa(X_\star)] \leq \E[\bar f_\kappa(x_\kappa)] + 2 \epsilon \,.
+                       & = \E[f_\kappa|\kappa]_\star - 3\epsilon \,.
                   \end{align*}
                   And because by the triangle inequality, the definition of $X_\star$ and Lemma~\ref{lem:sc}\ref{lem:sc:approx-close},
                   \begin{align}
@@ -951,33 +951,12 @@ Proposition~\ref{prop:N} and Proposition~\ref{prop:N-ridge} to bound the coverin
                   \end{align}
                   which implies that $\E[\bar f_\kappa(X)] = \E[\bar f_\kappa(X_\star)] \leq \E[\bar f_\kappa(x_\kappa)] + 2 \epsilon$.
             \item follows by definition.
-            \item follows because
-                  \begin{align*}
-                      \E[f_\kappa|\kappa](x_\kappa)
-                      = \E[f_\kappa(x_\kappa)|\kappa]
-                      \leq \E[f_{\kappa \star}|\kappa] + \epsilon
-                      \leq \E[f_\kappa|\kappa]_\star + \epsilon
-                  \end{align*}
-                  Then use Lemma~\ref{lem:ts-eps}.
-                  $\E[f_\kappa|\kappa](x_\kappa)
-                      = \E[f_\kappa(x_\kappa)|\kappa]
-                      \leq \E[f_{\kappa \star}|\kappa] + \epsilon
-                      \leq \E[f_\kappa|\kappa]_\star + \epsilon$
-                  and Lemma~\ref{lem:ts-eps}.
+            \item follows by $(\alpha, \beta) \in \IR(\cF)$.
             \item follows from Lemma~\ref{lem:cont:I} and because
                   \begin{align*}
                       \snorm{\E[f_\kappa|\kappa] - \E[f|\kappa]}_\infty
                        & \leq \E[\snorm{f_\kappa - f}_\infty] \leq \epsilon \,.
                   \end{align*}
-            \item follows from Lemma~\ref{lem:cont:I} and because
-                  \begin{align*}
-                      \snorm{X_\star - x_\kappa}
-                      \leq \snorm{X_\star - \tilde x_f} + \snorm{\tilde x_f - x_\kappa}
-                      \leq \sqrt{2\epsO / \epsR} + \epsilon
-                      \leq 2\epsilon \,.
-                  \end{align*}
-                  $\snorm{\E[f_\kappa|\kappa] - \E[f|\kappa]}_\infty
-                      \leq \E[\snorm{f_\kappa - f}_\infty] \leq \epsilon$.
             \item follows from Lemma~\ref{lem:cont:I} and \cref{eq:ir:3}.
             \item follows from Pinsker's inequality. Let $\KL(\cdot, \cdot)$ be the relative entropy. Then
                   \begin{align*}
@@ -985,14 +964,7 @@ Proposition~\ref{prop:N} and Proposition~\ref{prop:N-ridge} to bound the coverin
                        & = \E[(\E[f(X)|X] - \E[f(X)|\kappa,X])^2]                 \\
                        & = \E[(\E[Y|X] - \E[Y|\kappa,X])^2]                       \\
                        & \leq \frac{1}{2} \E[ \KL(\bbP_{Y|X}, \bbP_{Y|X,\kappa})] \\
-                       & = \frac{1}{2} I(\kappa | X, Y)
-                  \end{align*}
-                  \begin{align*}
-                      \I(\pi, \nu)
-                       & = \E[(\E[f(X)|X] - \E[f(X)|\kappa,X])^2]                 \\
-                       & = \E[(\E[Y|X] - \E[Y|\kappa,X])^2]                       \\
-                       & \leq \frac{1}{2} \E[ \KL(\bbP_{Y|X}, \bbP_{Y|X,\kappa})] \\
-                       & = \frac{1}{2} I(\kappa | X, Y) \,.
+                       & = \frac{1}{2} I(\kappa ; X, Y)
                   \end{align*}
         \end{enumerate}
         This concludes the explanation of the steps and so the proof of the lemma.
@@ -1002,19 +974,15 @@ Proposition~\ref{prop:N} and Proposition~\ref{prop:N-ridge} to bound the coverin
     Let $\pi_t$ be the law of $X_t$ under $\bbP_{t-1}$ and $\xi_t$ be the law of $f$ under $\bbP_{t-1}$.
     By Lemma~\ref{lem:ir},
     \begin{align*}
-        \Delta(\pi_t, \xi_t) \leq \alpha + \sqrt{\beta I_t(\kappa ; X_t, Y_t)} + \epsilon[6 + 2 \sqrt{\beta}]\,.
+        \Delta(\pi_t, \xi_t) \leq \alpha + \sqrt{\beta I_t(\kappa ; X_t, Y_t)} + 3\epsilon[1 + \sqrt{\beta}]\,.
     \end{align*}
     Hence, letting $I_t$ be the mutual information with respect to probability measure $\bbP_t$,
     \begin{align*}
-        \BReg_n(\ts, \xi)
-         & = \E\left[\sum_{t=1}^n \Delta(\pi_t, \xi_t)\right]                                                                         \\
-         & \leq n \alpha + \E\left[\sum_{t=1}^n \sqrt{\beta I_{t-1}(\kappa ; X_t, f(X_t))}\right] + n \epsilon[6 + 2 \sqrt{\beta}]    \\
-         & \leq n \alpha + \sqrt{\beta n \E\left[\sum_{t=1}^n I_{t-1}(\kappa ; X_t, f(X_t))\right]} + n \epsilon [6 + 2 \sqrt{\beta}] \\
         \BReg_n(\ats, \xi)
-         & = \E\left[\sum_{t=1}^n \Delta(\pi_t, \xi_t)\right]                                                                         \\
-         & \leq n \alpha + \E\left[\sum_{t=1}^n \sqrt{\beta I_{t-1}(\kappa ; X_t, Y_t)}\right] + n \epsilon[6 + 2 \sqrt{\beta}]       \\
-         & \leq n \alpha + \sqrt{\beta n \E\left[\sum_{t=1}^n I_{t-1}(\kappa ; X_t, Y_t)\right]} + n \epsilon [6 + 2 \sqrt{\beta}]    \\
-         & \leq n \alpha + \sqrt{\beta n \log(N)} + n \epsilon [6 + 2 \sqrt{\beta}] \,,
+         & = \E\left[\sum_{t=1}^n \Delta(\pi_t, \xi_t)\right]                                                                     \\
+         & \leq n \alpha + \E\left[\sum_{t=1}^n \sqrt{\beta I_{t-1}(\kappa ; X_t, Y_t)}\right] + 3n \epsilon[1 + \sqrt{\beta}]    \\
+         & \leq n \alpha + \sqrt{\beta n \E\left[\sum_{t=1}^n I_{t-1}(\kappa ; X_t, Y_t)\right]} + 3n \epsilon [1 + \sqrt{\beta}] \\
+         & \leq n \alpha + \sqrt{\beta n \log(N)} + 3n \epsilon [1 + \sqrt{\beta}] \,,
     \end{align*}
     where the final inequality holds by the chain rule for the mutual information and because $\kappa \in [N]$ and hence its entropy is at most $\log(N)$.
 \end{proof}
