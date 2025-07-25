@@ -1169,7 +1169,7 @@ Like \cref{thm:ts-1d}, \cref{thm:ts-ridge} is established by combining a bound o
 \begin{theorem}\label{thm:ridge-ir}
     $(\alpha, \beta \ceil{\log(1/\alpha)}) \in \IR(\sF_{\pb\pl\pr\pm})$ whenever $\alpha \in (0,1)$ and
     \begin{align*}
-        \beta = \Omega\left(d^4 \log\left(\frac{d \diam(K)}{\alpha}\right)^2\right) \,.
+        \beta = O\left(d^4 \log\left(\frac{d \diam(K)}{\alpha}\right)^2\right) \,.
     \end{align*}
     with the Big-O hiding only a universal constant.
 \end{theorem}
@@ -1200,7 +1200,7 @@ Like \cref{thm:ts-1d}, \cref{thm:ts-ridge} is established by combining a bound o
 
     \begin{proof}
         Let $\mu \in \R^d$ and $\Sigma$ be positive definite such that $E_{\delta}(\cC) = \{x : \norm{x - \mu}_{\Sigma^{-1}} \leq 1 \}$ and for $r > 0$,
-        let $E_{\delta,r} = \{x : \norm{x - \mu}_{\Sigma^{-1}} \leq r\}$.
+        let $E_{\delta,r}(\cC) = \{x : \norm{x - \mu}_{\Sigma^{-1}} \leq r\}$.
         By John's theorem \citep[Remark 2.1.17]{ASG15}, $E_{\delta}(\cC) \subset J_\delta(\cC) \subset E_{\delta,d}(\cC)$.
         Let $f \in \cC$ be arbitrary.
         By assumption there exists a convex monotone increasing $\ell$ and $\theta \in \sphere_1$ such that
@@ -1221,9 +1221,9 @@ Like \cref{thm:ts-1d}, \cref{thm:ts-ridge} is established by combining a bound o
             Let $x_h' = x_h + \delta \theta$ and $x_g' = x_g - \delta \theta$ and $x_f' = x_f - \delta \theta$.
             Collecting the above facts, we have
             \begin{align}
-                \sip{x_f', \theta} & \geq \ip{\mu, \theta} - d \norm{\theta}_\Sigma                           &
-                \sip{x_g', \theta} & \leq \ip{\mu, \theta}                                                    &
-                \sip{x_h', \theta} & \geq \ip{\mu, \theta} + \norm{\theta}_\Sigma \,. \label{eq:ts-ridge:rel}
+                \sip{x_f', \theta} & \geq \ip{\mu, \theta} - d \norm{\theta}_\Sigma                           & (\text{since } J_\delta(\cC) \subset E_{\delta, d}(\cC)) \\
+                \sip{x_g', \theta} & \leq \ip{\mu, \theta}                                                                                                               \\
+                \sip{x_h', \theta} & \geq \ip{\mu, \theta} + \norm{\theta}_\Sigma \,. \label{eq:ts-ridge:rel} & (\text{since }  E_{\delta}(\cC) \subset J_\delta(\cC))
             \end{align}
             Since $\ell$ is nondecreasing and $f(x_f) \leq f(x_g)$ it follows that $\sip{x_f', \theta} \leq \sip{x_g', \theta} \leq \sip{x_h', \theta}$.
             Therefore,
@@ -1255,7 +1255,7 @@ Like \cref{thm:ts-1d}, \cref{thm:ts-ridge} is established by combining a bound o
             \texttt{(b)} follows from the assumption in the lemma statement that $f(x_f) \leq \bar f(x_f) - \epsilon/2 \leq \bar f(x_h) + \delta - \epsilon/2$
             and $f(x_h) < \bar f(x_h) + \delta$.
             \texttt{(c)} by naive simplification,
-            \texttt{(d)} by the definition of $\gamma$ and $\delta$
+            \texttt{(d)} by the definition of $\epsilon$ and $\delta$
             and \texttt{(e)} by the assumptions in the lemma.
             Therefore $f(x_g) \leq \bar f(x_g) - \delta$,
             which implies that $(f(x_g) - \bar f(x_g))^2 \geq \delta^2$ and again \ref{lem:ridge-ir-1:b} holds.
@@ -1441,6 +1441,7 @@ Like \cref{thm:ts-1d}, \cref{thm:ts-ridge} is established by combining a bound o
 \end{proof}
 
 \chapter{\ts Lower-Bound for general Convex Functions}
+\label{chp:ts-lower-proof}
 We now prove that
 Thompson sampling has poor behaviour for general multi-dimensional convex functions and
 that the classical information-theoretic techniques cannot improve on the best known bound for general bandit convex optimisation
@@ -1959,7 +1960,7 @@ We use the following theorem from \citep{tkocz2018asymptotic} to bound the surfa
     \end{align*}
 \end{proof}
 
-\chapter{ Lower-‌‌Bound for General Convex Functions}
+\chapter{$\IR$ Lower-‌‌Bound for General Convex Functions}
 Theorem~\ref{thm:ts-lower} shows that Thompson sampling has large regret for general bandit convex optimisation.
 The next theorem shows there exist priors for which the information ratio for any policy is at least $\Omega(d^2)$.
 At least naively, this means that the information-theoretic machinery will not yield a bound on the regret for general bandit convex optimisation that
@@ -1974,7 +1975,7 @@ is better than $\tilde O(d^{1.5} \sqrt{n})$
 The prior $\xi$ is the same as used in the proof of Theorem~\ref{thm:ts-lower} but with $\epsilon = \tilde \Theta(1/d)$.
 The argument is based on proving that for any policy the regret is $\Omega(\epsilon)$ while the information gain is $\tilde O(\epsilon^2)$.
 
-Throughout this section, we use the same construction as the one used in \cref{sec:ts-lower-proof}
+Throughout this section, we use the same construction as the one used in \cref{chp:ts-lower-proof}
 except with $\epsilon = \frac{8\log(d)}{d}$.
 Therefore, we have
 \begin{align*}
