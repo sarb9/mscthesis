@@ -62,6 +62,7 @@
 \usepackage{bm}
 \usepackage[bf]{caption}
 \usepackage{graphicx}
+\usepackage{subcaption}
 \usepackage[capitalize]{cleveref}
 \usepackage{natbib}
 \hypersetup{
@@ -187,6 +188,12 @@
 \newcommand{\ts}{\textsc{TS}\xspace}
 \newcommand{\ats}{\textsc{ATS}}
 \newcommand{\IDS}{\textsc{IDS}}
+% Math/algorithm helpers
+\newcommand{\prop}{\mathrm{prop}}
+\newcommand{\Normal}{\mathcal{N}}
+\newcommand{\diag}{\mathrm{diag}}
+\newcommand{\ESS}{\textsc{ESS}}
+\DeclareMathOperator{\Log}{Log}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%     stuff      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2542,7 +2549,189 @@ Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\l
     \end{align*}
 \end{proof}
 
+\chapter{Empirical Performance of \ts}
+In this chapter we study the empirical performance of \ts
+for 1-dimensional \bco problems.
+The main challenge for bringing \ts to life
+for \bco is designing a prior $\xi$ on $\sF_{\pb\pl}$
+and a posterior $\xi_t$ which can be sampled from efficiently.
+We design such a modelling but only for the 1-dimensional case.
+We don't provide any theoretical guarantees for our sampling
+scheme, but instead we show that it works well in practice.
+
+\section{A Probability Distribution on $\sF_{\pb\pl}$}
+\label{sec:ts-empirical}
+We consider the case where $\cK = [-1, 1]$ and $d = 1$.
+We define a prior $\xi$ on $\sF_{\pb\pl}$ as follows.
+Let
+\begin{align*}
+    \phi_{y}(x) = \abs{x - y},
+\end{align*}
+which is a convex function.
+We use $\phi_y$s as building blocks for making convex functions.
+Let $\epsilon > 0$ be a small constant, which specify the level of discretization of convex functions.
+Now let
+\begin{align}
+    \Phi = \{ \phi_{\epsilon y} : \epsilon y \in \cK, y \in \mathbb{Z}\}\,.
+\end{align}
+Let $d = \|\Phi\|$, and $\R_+$ as the set of non-negative reals.
+Then for any $\theta \in \R_+^d$,
+\begin{align*}
+    f_\theta(x) = \sum_{i=1}^d \theta_i \phi_{y_i}(x)\,,
+\end{align*}
+where $y_i$ is the $i$-th element of $\Phi$.
+Since $\theta \in \R_+^d$, the function $f_\theta$ is convex and non-negative.
+This construction allows us to define a probability distribution over the space of convex functions,
+by defining a probability measure on $\R_+^d$.
+
+We suppose that $f_\star$, the true loss function, has the form
+\begin{align}
+    f_\star(x) = f_{\theta_\star}(x) = \sum_{i=1}^d \theta_{\star,i} \phi_{y_i}(x)\,,
+\end{align}
+and we assume that $\theta_\star$ is sampled from
+a $\R_+-$truncated multivariate Gaussian distribution
+with mean $\mu$ and covariance matrix $\Sigma$.
+We denote the law of $\theta_\star$ by $\xi_\theta$,
+and the law of $f_\star$ by $\xi$.
+Further, we assume that
+\begin{align}
+    Y_t = f_{\theta_\star}(X_t) + \sigma \varepsilon_t\,,
+\end{align}
+where $\varepsilon_t$ is a standard Gaussian noise,
+and $\sigma$ is a positive constant.
+The posterior $\xi_t$ is defined as the law of $\theta_\star$ given the
+observations $(X_s, Y_s)_{s=1}^t$.
+
+\subsection{Hit-and-Run Samplers}
+\label{sec:hit-and-run}
+We use Hit-and-run (HAR) methods to sample from the posterior $\xi_t$.
+HAR methods generate proposals by first choosing a random direction and
+then moving along that line according to the target density restricted to the line.
+Originally developed for uniform sampling from convex bodies \citep[e.g.][]{smith1984efficient,lovasz1999hit}, they extend naturally to general log-concave (and even non log-concave) densities by sampling from the one-dimensional conditional along each line.
+
+Let $\pi(\theta)\propto \tilde\pi(\theta)$ be the target on a convex subset $\mathcal{X}\subseteq\R^d$ (here $\mathcal{X}=\R_+^d$).
+Given the current state $\theta^{(m)}$, HAR proceeds by
+\begin{enumerate}
+    \item Draw a direction $v$ from a spherically symmetric distribution (commonly $v \sim \Normal(0,I_d)$ then normalise $v\leftarrow v/\|v\|$).
+    \item Determine the feasible interval
+          \[
+              I(\theta^{(m)},v) = \{ t\in\R : \theta^{(m)} + t v \in \mathcal{X}\}.
+          \]
+          In the positive orthant this is simply
+          \[
+              t_{\min} = \max_{i:v_i<0} \frac{-\theta^{(m)}_i}{v_i},\qquad
+              t_{\max} = \min_{i:v_i>0} \frac{-\theta^{(m)}_i}{v_i},\qquad
+              I=[t_{\min},t_{\max}]\,.
+          \]
+    \item Sample $t$ from the one-dimensional density proportional to $\tilde\pi(\theta^{(m)} + t v)$ on $I$.
+    \item Set $\theta^{(m+1)} = \theta^{(m)} + t v$.
+\end{enumerate}
+
+The only non-trivial step is the one-dimensional draw in Step~3;
+different variants of HAR use different inner samplers.
+In our setting, we can sample from the truncated Gaussian posterior
+restricted to $I$.
+
+\section{Bayesian Regret}
+\label{sec:ts-empirical-results-bayesian}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/bayesian_regret.png}
+    \caption{Bayesian regret for 1-dimensional bandit convex optimization.
+        The plot shows the cumulative regret over $n = 100$ rounds, averaged over 10 independent runs.
+        The loss functions are sampled from a multivariate Gaussian prior with $d = 100$ basis functions,
+        and observations are corrupted with Gaussian noise $\mathcal{N}(0, 0.1^2)$.}
+    \label{fig:bayesian-regret}
+\end{figure}
+First we study Bayesian regret.
+We first sample $\theta_\star$ from a multivariate Gaussian distribution
+that is known to the learner.
+We set the observation noise $\mathcal{N}(0, \sigma^2)$
+with $\sigma = 0.1$.
+The number of basis functions is set to $d = 100$.
+We run the experiment for $n = 100$ rounds,
+and report the average performance over $10$ runs in Figure~\ref{fig:bayesian-regret}.
+The performance is compared to the Bisection Method \citep{agarwal2010optimal},
+the Exponential Weights with kernel estimation \citep{BEL16}, and
+Online Newton Step \citep{LFMV24-improved}.
+The superiority of \ts can be explained by the fact that
+it is able to use the knowledge of prior, and also the fact that
+most of the other algorithms are designed for the adversarial setting primarily.
+
+\section{Regret Against Specific Losses}
+\label{sec:ts-empirical-results-regret}
+One might wonder how well \ts will perform if the
+loss function is not sampled from the prior $\xi$,
+and is instead fixed to a specific function $f_\star$.
+We study three loss functions:
+\begin{enumerate}
+    \item Absolute loss: $f_\star(x) = m\abs{x - c}$, for some $c \in [-1, 1]$ and $m > 0$.
+    \item Quadratic loss: $f_\star(x) = m(x - c)^2$, for some $c \in [-1, 1]$ and $m > 0$.
+    \item Linear loss: $f_\star(x) = mx + b$, such that $\inf_{x \in [-1, 1]} f_\star(x) \geq 0$.
+\end{enumerate}
+We show the behavior of \ts alongside other algorithms in Fig~\ref{fig:specific-losses}.
+The dashed lines are functions $f_t$ that are sampled from
+$\xi_t$ for $t \in [100]$, with newer samples been drawn
+with higher color density.
+The circles are the actions taken by different algorithms
+(the color specify the algorithm) with bigger circles
+showing more recent actions.
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{figures/absolute.png}
+
+    \vspace{0.5em}
+    \includegraphics[width=\textwidth]{figures/quadratic.png}
+
+    \vspace{0.5em}
+    \includegraphics[width=\textwidth]{figures/linear.png}
+
+    \caption{
+        Performance of \bco algorithms against specific loss functions.
+        Top: Absolute loss $f_\star(x) = m|x - c|$.
+        Middle: Quadratic loss $f_\star(x) = m(x - c)^2$.
+        Bottom: Linear loss $f_\star(x) = mx + b$.
+        Solid line shows $f_\star$, dashed lines show \ts sampled functions,
+        and circles show actions taken by different algorithms.
+    }
+    \label{fig:specific-losses}
+\end{figure}
+
+The regret of different algorithms against these losses is pictured
+in Fig~\ref{fig:specific-losses-reg}.
+It can be seen that \ts remains highly competitive even when
+the losses are chosen in an arbitrary way.
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}{10cm}
+        \centering
+        \includegraphics[width=\textwidth]{figures/absolute_reg.png}
+        \caption{Average regret against absolute loss: $f_\star(x) = m|x - c|$}
+        \label{fig:absolute-loss-regret}
+    \end{subfigure}
+
+    \vspace{0.5em}
+    \begin{subfigure}{10cm}
+        \centering
+        \includegraphics[width=\textwidth]{figures/quad_reg.png}
+        \caption{Average regret against quadratic loss: $f_\star(x) = m(x - c)^2$}
+        \label{fig:quadratic-loss-regret}
+    \end{subfigure}
+
+    \vspace{0.5em}
+    \begin{subfigure}{10cm}
+        \centering
+        \includegraphics[width=\textwidth]{figures/linear_reg.png}
+        \caption{Average regret against linear loss: $f_\star(x) = mx + b$}
+        \label{fig:linear-loss-regret}
+    \end{subfigure}
+    \caption{Average regret of \ts and other algorithms against specific loss functions.}
+    \label{fig:specific-losses-reg}
+\end{figure}
+
+
 \chapter{Thompson Sampling for Adversarial Problems}
+\label{ch:ts-adv}
 In the Bayesian adversarial setting the prior is a probability measure on $\sF^n$ and a whole sequence of loss functions is sampled in secret
 by the environment.
 The natural generalisations of \ts{} in this setting are the following:
@@ -2822,13 +3011,26 @@ where the all inequalities follow from $\epsilon \in (0,2^{-7})$.
 Therefore, the information ratio is unbounded as $\epsilon \to 0$.
 
 \chapter{Discussion}
+In this thesis, we explored the performance of Thompson sampling (\ts) for Bayesian bandit convex optimization (\bco), revealing a nuanced picture of its capabilities.
+We established its near-optimal performance in one-dimensional
+settings and for the class of monotone ridge functions,
+demonstrating its efficacy in structured scenarios.
+In stark contrast, we also showed that \ts can fail dramatically
+in general high-dimensional problems and that standard analytical tools
+face fundamental limitations.
+This chapter synthesizes these findings, discusses their broader implications
+for algorithm design in online optimization,
+and explores the structural properties that determine the success or
+failure of \ts.
+
+
 \section{Adversarial setup} In the Bayesian adverarial setting a sequence of loss functions $f_1,\ldots,f_n$ are sampled from a joint distribution on $\sF^n$.
 The learner plays $X_t$ and observes $Y_t = f_t(X_t)$ and the Bayesian regret is
 $\BReg(\sA, \xi) = \E[\sup_{x \in K} \sum_{t=1}^n (f_t(X_t) - f_t(x))]$.
 One can envisage two possible definitions of Thompson sampling in this setting. One samples $g_t$ from the marginal of the posterior and plays $X_t = x_{g_t}$.
 The second samples $g_1,\ldots,g_n$ from the posterior and plays $X_t$ as the minimiser of $\sum_{t=1}^n g_t$.
 The former has linear regret, while \cite{BDKP15} notes
-that the latter has an unbounded information ratio. More details are in \cref{sec:adv}.
+that the latter has an unbounded information ratio. The situation was discussed in more details in \cref{ch:ts-adv}.
 \section{Tightness of bounds} At present we are uncertain whether or not the monotonicity assumption is needed in the ridge setting. Our best guess is that it is not.
 One may also wonder if the bound on the information ratio in \cref{thm:ridge-ir} can be improved. We are cautiously believe
 that when the loss has the form $f(x) = \ell(\ip{x, \theta})$ for \textit{known} convex link function $\ell : \R \to \R$, then the information ratio is at most $d$.
@@ -2857,7 +3059,7 @@ This is already quite a difficult problem in multi-armed \citep{KKM12,AG12b} and
 On the other hand, the Bayesian algorithm has the advantage of being able to specify a prior that makes use of background knowledge and the theoretical guarantees
 for \ts{} provide a degree of comfort.
 
-\section{Choice of prior} The choice of the prior depends on the application. A variety of authors of constructed priors supported on non-parametric
+\section{Choice of prior} The choice of the prior depends on the application. A variety of authors constructed priors supported on non-parametric
 classes of $1$-dimensional convex functions
 using a variety of methods \citep{ramgopal1993nonparametric,chang2007shape,shively2011nonparametric}.
 In many cases you may know the loss belongs to a simple parametric class, in which case the prior and posterior computations may simplify dramatically.
