@@ -269,9 +269,36 @@ Finally, we prove a fundamental limitation of current analysis techniques: we sh
 
 \onehalfspacing
 \chapter*{Preface} \addcontentsline{toc}{chapter}{Preface}
-TODO.
+The majority of this thesis has been published as Alireza Bakhtiari,
+Tor Lattimore, and Csaba Szepesv\'ari.
+Thompson Sampling for Bandit Convex Optimization.
+In International Conference on Learning Theory, 2025.
+
+
 \chapter*{Acknowledgements} \addcontentsline{toc}{chapter}{Acknowledgements}
-TODO.
+I would like to sincerely thank my supervisor, Csaba,
+for his time, support, guidance, and patience throughout my studies.
+Csaba gave me the opportunity to pursue what I love most and
+provided me with unconditional intellectual freedom.
+I would also like to thank Tor Lattimore for his time and for teaching me
+the ways of research.
+His insights and perspective have greatly influenced my thinking and approach.
+Special thanks go to Dave Janz and Johannes Krishner for closely guiding with me,
+pointing out my mistakes, and helping shape my research.
+Moreover, I am deeply grateful to my labmates—listed
+in alphabetical order as Alex prefers—Alex Ayoub, Kushagra Chandak,
+Shuai Liu, Samuel Robertson, and Vlad Tkachuk, for patiently
+listening to my ideas, providing valuable feedback,
+and assisting me in my research.
+This journey would have been far less enjoyable without
+their presence.
+I am also thankful to my friends for always being there when
+needed, and to my special other for the unwavering patience,
+joy, and support throughout these years.
+Lastly, I feel incredibly fortunate to have my parents,
+whose love and support have been my greatest motivation in
+life, and my brother, Amin, whose presence makes
+life much more meaningful and joyful.
 
 \tableofcontents
 \listoftables
@@ -2547,6 +2574,664 @@ Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\l
         \frac{\Delta(\pi, \xi)}{\sqrt{\I(\pi, \xi)}}
         \geq \frac{d}{2^{19}\log(d)}\,.
     \end{align*}
+\end{proof}
+
+\chapter{$\ts$ for Known Link Function}
+In this chapter we provide a tighter $d$ upper bound for the
+information ratio of $\ts$ in $d$ dimensions, when the link function
+$\ell$ is known and the action set is the unit ball.
+
+\begin{restatable}{lemma}{KnownRidgeLemma}\label{thm:ridge-known-ir}
+    $(0, d) \in \IR(\sF_{\pb\pl\pr\pm})$ whenever $\cK = \ball_1^d$ and
+    the link function $\ell$ is known to the learner.
+\end{restatable}
+We let $\alpha=0$ in this chapter, which leads to the alternate definition
+of the $\IR$ set,
+\begin{align}
+    \IR(\sF)
+     & = \left\{(\alpha, \beta) \in \R_+^2 : \sup_{\xi \in \sP(\sF)} \left[\Delta(\pi^\xi_\ts, \xi) - \alpha - \sqrt{\beta \I(\pi^\xi_\ts, \xi)}\right] \leq 0 \right\} \nonumber \\
+     & \explan{(a)}= \left\{(0, \beta) \in \R_+^2 : \Delta(\pi^\xi_\ts, \xi) - \sqrt{\beta \I(\pi^\xi_\ts, \xi)} \leq 0, \forall \xi \in \sP(\sF) \right\}              \nonumber \\
+     & \explan{(b)}= \left\{(0, \beta) \in \R_+^2 : \frac{\Delta(\pi^\xi_\ts, \xi)^2}{\I(\pi^\xi_\ts, \xi)} \leq \beta, \forall \xi \in \sP(\sF) \right\}\,, \nonumber
+\end{align}
+where \texttt{(a)} follows from setting $\alpha=0$ and
+replacing $\sup$ with a universal quantifier,
+and \texttt{(b)} follows from algebra.
+Therefore, to prove that $(0, \beta) \in \IR(\sF)$, it suffices to show that
+\begin{align}
+    \Psi(\xi) \triangleq
+    \frac{\Delta(\pi^\xi_\ts, \xi)^2}{\I(\pi^\xi_\ts, \xi)} \leq \beta\,,\qquad \forall \xi \in \sP(\sF)
+    \label{eq:IR-alpha-0}
+\end{align}
+The proof is followed from different techniques compared to
+the proof of \cref{thm:ridge-ir}, which is mainly reducing the analysis
+to the analysis of the linear setting, i.e. $\ell$ is the identity function.
+Hence we start by presenting the analysis of the linear setting
+which is by \cite{RV16}, and is included for completeness.
+
+\section{Linear \ts}
+\begin{theorem}
+    For $\ell(x) = x$, $\psi(\xi) \leq d$ for all $\xi \in \sP(\sF)$.
+    \label{thm:ir-ts-linear}
+\end{theorem}
+\begin{proof}
+    First, we have
+    \begin{align*}
+        \bar f(\cdot) = \E[f(\cdot)] = \E[\langle \cdot, \theta \rangle] = \langle \cdot, \E[\theta]\rangle\,,
+    \end{align*}
+    from which we define $\bar{\theta} = \E[\theta]$.
+    Moreover, for $X \sim \pi_\ts^\xi$ let
+    \begin{align*}
+        V = \E[X X^\top].
+    \end{align*}
+    For the remainder of the proof we suppose that $V$ is invertible,
+    which holds as long $X$ is not supported on any subspace of $\R^d$.
+    If $X$ was supported on such a subspace, the proof can be adapted
+    to a basis of that subspace.
+
+    Let $\theta \sim \xi$, and
+    $X = \argmin_{x \in \cC} \langle x, \theta\rangle$,
+    and $X'$ be an i.i.d copy of $X$, which is equivalent
+    to $X' \sim \pi_\ts^\xi$. Also let $\theta' \sim \xi$,
+    be an i.i.d. copy of $\theta$. We have
+    \begin{align*}
+        \Delta(\pi^\xi_\ts, \xi)
+         & =
+        \E[
+            \ell({X'}^\top \theta) - \ell(X^\top \theta)
+        ]    \\
+         &
+        \explan{(a)}
+        =
+        \E[
+            {X'}^\top \theta - X^\top \theta
+        ]    \\
+         &
+        \explan{(b)}
+        =\E[
+            X^\top \theta' - X^\top \theta
+        ]    \\
+         &
+        =\E[
+            X^\top (\bar{\theta} - \theta)
+        ]    \\
+         &
+        \explan{(c)}
+        \leq
+        \E[
+        \|X\|_{V^{-1}} \|\bar{\theta} - \theta\|_{V}
+        ]
+        \\
+         &
+        \explan{(d)}
+        \leq
+        \sqrt{
+        \E[\|X\|^2_{V^{-1}}]
+        \E[\|\bar{\theta} - \theta\|^2_{V}]
+        }\,,
+    \end{align*}
+    where \texttt{(a)} is by $\ell$ being identity,
+    \texttt{(b)} is by $X'$ and $\theta'$ being i.i.d.
+    copies of $X$ and $\theta$,
+    and \texttt{(c)} and \texttt{(d)} are by Cauchy-Schwarz.
+    Further, we have
+    \begin{align*}
+        \E\left[\|X\|_{V^{-1}}^2\right]
+                                                    & =
+        \E\left[X^\top \E[XX^\top]^{-1} X\right]                                                  \\
+                                                    & =
+        \E\left[\text{trace}(X^\top \E[XX^\top]^{-1} X)\right]                                    \\
+                                                    & =
+        \E\left[\text{trace}(X X^\top \E[XX^\top]^{-1})\right]                                    \\
+                                                    & =
+        \text{trace}(\E[X X^\top] \E[XX^\top]^{-1}) & \text{(linearity of trace and expectation)} \\
+                                                    & =d.
+    \end{align*}
+    Moreover, we have
+    \begin{align*}
+        \I(\pi_\ts^\xi, \xi)
+         & =
+        E[(f(X) - \bar{f}(X))^2]                                            \\
+         & =
+        \E[(\ell(X^\top \theta') - \E[\ell(X^\top \theta')|X])^2]           \\
+         & =
+        \E[(X^\top (\theta' - \bar{\theta}))^2]                             \\
+         & =
+        \E[(\theta' - \bar{\theta})^\top X X^\top (\theta' - \bar{\theta})] \\
+         &
+        \explan{(a)}
+        =
+        \E[(\theta' - \bar{\theta})^\top V (\theta' - \bar{\theta})]        \\
+         & =
+        \E[\|\theta' - \bar{\theta}\|_V^2]\,,
+    \end{align*}
+    where \texttt{(a)} follows from tower rule.
+    Putting these together, we have
+    \begin{align*}
+        \Psi(\xi)
+         & =
+        \frac{\Delta(\pi^\xi_\ts, \xi)^2}{\I(\pi^\xi_\ts, \xi)}
+        \\
+         & \leq
+        \frac{
+        \E[\|X\|^2_{V^{-1}}]
+        \E[\|\bar{\theta} - \theta\|^2_{V}]
+        }{
+        \E[\|\bar{\theta} - \theta\|^2_{V}]
+        }
+        \\
+        =
+        \E[\|X\|^2_{V^{-1}}]
+        =d\,,
+    \end{align*}
+    and the proof terminates.
+\end{proof}
+
+\section{An Inequality for Convex Functions}
+To prove \cref{thm:ridge-known-ir}, we first provide two
+lemmas about convex functions,
+the first of which is only used to prove the second one.
+\begin{lemma}
+    \label{lem:concave}
+    Assume that $g: \R \to \R$ is a convex and non-decreasing function
+    such that $g(0) = 0$.
+    Then for any random variable $X$ supported on $\R_+$
+    it holds that
+    \begin{align*}
+        \frac{
+            \E[g(X)^2]
+        }{
+            \E[g(X)]^2
+        }
+         & \geq
+        \frac{
+            \E[X^2]
+        }{
+            \E[X]^2
+        }.
+    \end{align*}
+    \begin{proof}
+        Define the function
+        $h(x) = \frac{\E[g(x)]}{\E[x]}g(x)$,
+        and observe that
+        \begin{align*}
+            \frac{
+                \E[g(X)^2]
+            }{
+                \E[g(X)]^2
+            }
+            =
+            \frac{
+                \E[h(X)^2]
+            }{
+                \E[h(X)]^2
+            },
+        \end{align*}
+        therefore it suffices to show the inequality
+        for the function $h$.
+        Note that $\E[h(X)] = \E[X]$
+        and the desired inequality is equivalent to
+        \begin{align*}
+            \E[h(X)^2]
+            \geq
+            \E[X^2].
+        \end{align*}
+        Also, since $h$ is convex there exists a
+        point $x_0$ such that $h(x) \geq x_0$
+        for all $x \geq x_0$ and $h(x) \leq  x_0$
+        for all $x \leq x_0$.
+        We have
+        \begin{align*}
+            \E\left[
+                (h(X) - X)
+                \mI_{\{h(X) \geq X\}}
+                \right]
+             & =
+            \E\left[
+                (h(X) - X)
+                (1 - \mI_{\{h(X) \leq X\}})
+                \right]
+            \\
+             & =
+            \E\left[
+                -
+                (h(X) - X)
+                \mI_{\{h(X) \leq X\}}
+                \right]
+            \\
+             & =
+            \E\left[
+                (X - h(X))
+                \mI_{\{h(X) \leq X\}}
+                \right].
+        \end{align*}
+        Further, by the properties of $x_0$ we get
+        \begin{align*}
+            \E\left[
+                \left(
+                h(X)^2 - X^2
+                \right)
+                \mI_{\{h(X) \geq X\}}
+                \right]
+             & =
+            \E\left[
+                \left(
+                h(X) - X
+                \right)
+                \left(
+                h(X) + X
+                \right)
+                \mI_{\{h(X) \geq X\}}
+                \right]
+            \\
+             & \geq
+            \E\left[
+                2 x_0
+                \left(
+                h(X) - X
+                \right)
+                \mI_{\{h(X) \geq X\}}
+                \right]
+            \\
+             & =
+            \E\left[
+                2 x_0
+                \left(
+                X - h(X)
+                \right)
+                \mI_{\{h(X) \leq X\}}
+                \right]
+            \\
+             & \geq
+            \E\left[
+                \left(
+                X + h(X)
+                \right)
+                \left(
+                X - h(X)
+                \right)
+                \mI_{\{h(X) \leq X\}}
+                \right]
+            \\
+             & =
+            \E\left[
+                \left(
+                X^2 - h(X)^2
+                \right)
+                \mI_{\{h(X) \leq X\}}
+                \right],
+        \end{align*}
+        which by rearranging gives
+        \begin{align*}
+            0 & \geq
+            -
+            \E\left[
+                \left(
+                h(X)^2 - X^2
+                \right)
+                \mI_{\{h(X) \leq X\}}
+                \right]
+            +
+            \E\left[
+                \left(
+                X^2 - h(X)^2
+                \right)
+                \mI_{\{h(X) \geq X\}}
+                \right]
+            \\
+              & =
+            \E[X^2] - \E[h(X)^2]
+        \end{align*}
+        proving the desired inequality.
+    \end{proof}
+\end{lemma}
+
+\begin{lemma}
+    \label{lem:key-convex-ineq}
+    Assume that $f: \R \to \R$ is a convex and non-decreasing function.
+    Further, let $X$ be a random variable supported on $\R$
+    and $x_1 = \essinf X$.
+    Then the following inequality holds
+    \begin{align*}
+        \frac{
+            \E[f(X)] - f(x_1)
+        }{
+            \sqrt{
+                \E\left[
+                    \left(f(X) - \E[f(X)]\right)^2
+                    \right]
+            }
+        }
+         & \leq
+        \frac{
+            \E[X] - x_1
+        }{
+            \sqrt{
+                \E\left[
+                    \left(X - \E[X]\right)^2
+                    \right]
+            }
+        }
+    \end{align*}
+\end{lemma}
+\begin{proof}
+    First let $X' = X - x_1$,
+    and observe that
+    \begin{align*}
+        \frac{
+            \E[X] - x_1
+        }{
+            \sqrt{
+                \E\left[
+                    \left(X - \E[X]\right)^2
+                    \right]
+            }
+        }
+        =
+        \frac{
+            \E[X']
+        }{
+            \sqrt{
+                \E\left[
+                    \left(X' - \E[X']\right)^2
+                    \right]
+            }
+        }.
+    \end{align*}
+    Next define $g(x')=f(x' + x_1) - f(x_1)$ so that
+    $g(X') = f(X) - f(x_1)$, and observe that
+    \begin{align*}
+        \frac{
+            \E[f(X)] - f(x_1)
+        }{
+            \sqrt{
+                \E\left[
+                    \left(f(X) - \E[f(X)]\right)^2
+                    \right]
+            }
+        }
+        =
+        \frac{
+            \E[g(X')]
+        }{
+            \sqrt{
+                \E\left[
+                    \left(g(X')
+                    - \E[g(X')]\right)^2
+                    \right]
+            }
+        }.
+    \end{align*}
+    Therefore, the desired inequality is
+    proved once we show
+    \begin{align*}
+        \frac{
+            \E[g(X')]
+        }{
+            \sqrt{
+                \E\left[
+                    \left(g(X')
+                    - \E[g(X')]\right)^2
+                    \right]
+            }
+        }
+        \geq
+        \frac{
+            \E[X']
+        }{
+            \sqrt{
+                \E\left[
+                    \left(X' - \E[X']\right)^2
+                    \right]
+            }
+        }.
+        % \tag{Alternative Inequality}.
+        % \label{ineq:alternative}
+    \end{align*}
+    Note that $g$ is convex and non-decreasing.
+    Also, we know that $\essinf X' = \essinf X - x_1 = 0$,
+    and $g(0) = f(x_1) - f(x_1) = 0$,
+    which implies that both $\E[X']$, $\E[g(X')]$ are positive,
+    Therefore, we may further simplify the
+    inequality by squaring and rearranging as
+    \begin{align}
+        \frac{
+            \E[g(X')]^2
+        }{
+            \E\left[
+                \left(g(X')
+                - \E[g(X')]\right)^2
+                \right]
+        }
+         & \geq
+        \frac{
+            \E[X']^2
+        }{
+            \E\left[
+                \left(X' - \E[X']\right)^2
+                \right]
+        }
+        \nonumber
+        \\
+        \Leftrightarrow
+        \frac{
+            \E[g(X')^2]
+            -
+            \E[g(X')]^2
+        }{
+            \E[g(X')]^2
+        }
+         & \leq
+        \frac{
+            \E[X'^2]
+            -
+            \E[X']^2
+        }{
+            \E[X']^2
+        }
+        \nonumber
+        \\
+        \Leftrightarrow
+        \frac{
+            \E[g(X')^2]
+        }{
+            \E[g(X')]^2
+        }
+         & \geq
+        \frac{
+            \E[X'^2]
+        }{
+            \E[X']^2
+        }
+        \tag{Alternative Inequality},
+        \label{ineq:alternative}
+    \end{align}
+    which holds by \cref{lem:concave}
+    and the fact that $X'$ is supported on $\R_+$.
+\end{proof}
+
+\section{Information Ratio of \ts for Known Ridge}
+We are now in position to prove \cref{thm:ridge-known-ir}.
+\KnownRidgeLemma
+\begin{proof}
+    Similar to the proof of \cref{thm:ir-ts-linear},
+    let $X,X' \sim_{\text{i.i.d.}} \pi_\ts^\xi$
+    and $\theta, \theta' \sim_{\text{i.i.d.}} \xi$,
+    with $X = \argmin_{x \in \cK} \ell(\langle x, \theta\rangle)$.
+
+    Also note that since $\cK = \ball_1^d$, we have both
+    \begin{align}
+        X = \argmin_{x \in \cK} \ell(\langle \theta, x \rangle),\quad \text{and} \quad
+        \theta = \argmin_{y \in \Theta} \ell(\langle y, X \rangle)\,.
+        \label{eq:double-greedy}
+    \end{align}
+
+    Define
+    \begin{align*}
+        \phi(X) = \frac{
+            \ell(X^\top \theta) - \E[\ell(X^\top \theta')|X]
+        }{
+            X^\top \theta - \E[X^\top \theta'|X]
+        },
+    \end{align*}
+    and write
+    \begin{align*}
+        % \Psi(\xi)
+        %  & =
+        % \frac{\Delta(\pi^\xi_\ts, \xi)^2}{\I(\pi^\xi_\ts, \xi)}
+        % \\
+        %  & =
+        \frac{
+            \ell(X^\top \theta) - \E[\ell(X^\top \theta')|X]
+        }{
+            \sqrt{
+                \E\left[
+                    \left(\ell(X^\top \theta) - \E[\ell(X^\top \theta')|X]\right)^2
+                    |X
+                    \right]
+            }
+        }
+         &
+        \explan{(a)}
+        \leq
+        \frac{
+            X^\top \theta - \E[X^\top \theta'|X]
+        }{
+            \sqrt{
+                \E\left[
+                    \left(X^\top \theta' - \E[X^\top \theta'|X]\right)^2
+                    |X
+                    \right]
+            }
+        }
+        \\
+         &
+        \explan{(b)}
+        =
+        \frac{
+            \phi(X) X^\top \theta - \E[\phi(X)X^\top \theta'|X]
+        }{
+            \sqrt{
+                \E\left[
+                    \left(\phi(X) X^\top \theta' - \E[\phi(X)X^\top \theta'|X]\right)^2
+                    |X
+                    \right]
+            }
+        }
+        \\
+         &
+        \explan{(c)}
+        =
+        \frac{
+            \ell(X^\top \theta) - \E[\ell(X^\top \theta')|X]
+        }{
+            \sqrt{
+                \E\left[
+                    \left(\phi(X) X^\top \theta' - \E[\phi(X)X^\top \theta'|X]\right)^2
+                    |X
+                    \right]
+            }
+        },
+    \end{align*}
+    where \texttt{(a)} follows from \cref{lem:key-convex-ineq},
+    \texttt{(b)} follows from multiplying both
+    numerator and denominator by $\phi(X)$,
+    and \texttt{(c)} follows from the definition of $\phi(X)$.
+    Thus, we have
+    \begin{align}
+        \E\left[
+            \left(
+            \ell(X^\top \theta') - \E[\ell(X^\top \theta')|X]
+            \right)^2
+            | X
+            \right]
+        \geq
+        \E\left[
+            \left(
+            \phi(X) X^\top \theta' - \E[\phi(X)X^\top \theta'|X]
+            \right)^2
+            | X
+            \right].
+        \label{ineq:i1}
+    \end{align}
+    Using this inequality, we can write
+    \begin{align*}
+        \frac{
+            \E\left[
+                \ell(X^\top \theta) - \E[\ell(X^\top \theta')|X]
+                \right]
+        }{
+            \sqrt{
+                \E\left[
+                    \left(\ell(X^\top \theta') - \E[\ell(X^\top \theta')|X]\right)^2
+                    \right]
+            }
+        }
+         & =
+        \frac{
+            \E\left[
+                \phi(X)X^\top \theta - \E[\phi(X)X^\top \theta'|X]
+                \right]
+        }{
+            \sqrt{
+                \E\left[
+                    \E\left[
+                        \left(\ell(X^\top \theta') - \E[\ell(X^\top \theta')|X]\right)^2
+                        |X
+                        \right]
+                    \right]
+            }
+        }
+        \\
+         & \leq
+        \frac{
+            \E\left[
+                \phi(X)X^\top \theta - \E[\phi(X)X^\top \theta'|X]
+                \right]
+        }{
+            \sqrt{
+                \E\left[
+                    \E\left[
+                        \left(\phi(X)X^\top \theta' -
+                        \E[\phi(X)X^\top \theta'|X]\right)^2
+                        |X
+                        \right]
+                    \right]
+            }
+        }
+    \end{align*}
+    where the first equality follows from the
+    definition of $\phi(X)$ and the second inequality follows from \ref{ineq:i1}.
+    Further, define $\tilde{X} = \phi(X)X$ and
+    rewrite the inequality as
+    \begin{align*}
+        \frac{
+            \E\left[
+                \ell(X^\top \theta) - \E[\ell(X^\top \theta')|X]
+                \right]
+        }{
+            \sqrt{
+                \E\left[
+                    \left(\ell(X^\top \theta') - \E[\ell(X^\top \theta')|X]\right)^2
+                    \right]
+            }
+        }
+         & \leq
+        \frac{
+            \E\left[
+                \tilde{X}^\top \theta - \E[\tilde{X}^\top \theta'|X]
+                \right]
+        }{
+            \sqrt{
+                \E\left[
+                    \left(\tilde{X}^\top \theta' -
+                    \E[\tilde{X}^\top \theta'|X]\right)^2
+                    \right]
+            }
+        }
+         & \leq
+        \sqrt{d}\,,
+    \end{align*}
+    where the $\sqrt{d}$ upper bound follows from \cref{thm:ir-ts-linear}.
 \end{proof}
 
 \chapter{Empirical Performance of \ts}
