@@ -38,8 +38,8 @@
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.17}
 \usepackage{tikz}
-\usetikzlibrary{calc}
 \usetikzlibrary{3d}
+\usetikzlibrary{arrows.meta,calc,positioning,shapes.callouts}
 \setlength{\marginparwidth}{2cm}
 \usepackage[colorinlistoftodos,prependcaption,textsize=tiny,disable]{todonotes}
 \newcommand{\todoc}[2][]{\todo[size=\scriptsize,color=blue!20!white,#1]{Csb: #2}}
@@ -354,6 +354,16 @@ Compared to classical convex optimization and \emph{zeroth-order} optimization, 
     \item \textcolor{dkblue}{Cumulative Cost:} The goal is to minimize the cumulative cost of these evaluations over time, rather than to identify the function’s minimizer.
 \end{enumroman}
 
+\begin{wrapfigure}[14]{r}{0.48\textwidth} % [lines]{placement}{width}
+    \vspace{-8pt}                           % pull figure up a bit (optional)
+    \centering
+    % If you compiled the standalone TikZ file to PDF:
+    \includegraphics[width=\linewidth]{figures/dprice.pdf}
+    % Or include the standalone TikZ source directly:
+    %   \includestandalone[width=\linewidth]{convex_dynamic_pricing}
+    \caption{Convex property of dynamic pricing (\(x=\) price, \(y=-\)profit).}
+    \vspace{-6pt}                           % tighten space below (optional)
+\end{wrapfigure}
 A representative example of \bco is dynamic pricing, where a seller selects a price (the input) and observes the resulting negative-profit (the output), which is often modeled as a convex function of the price.
 The seller cannot directly observe the profit function itself, but only noisy feedback through customer purchases at chosen prices. Each evaluation corresponds to a real transaction and thus incurs a potentially significant cost. In such cases, the objective is not to eventually find the best price at any expense, but rather to make pricing decisions that yield high cumulative profit over time.
 
