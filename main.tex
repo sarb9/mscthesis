@@ -618,27 +618,58 @@ in a way that the Lipschitzness of the original function $f$ is preserved.
     Then define $\ell$ on all of $\R$ via the smallest convex extension \citep[Proposition 3.18, for example]{lat24book}.
 \end{proof}
 
-\chapter{Generalized Information Ratio}\label{ch:gir}
-The main theoretical tool is a version of the information ratio, which was introduced by \cite{RV16} as a means to bound the Bayesian regret of
-\ts for finite-armed and linear bandits.
-Given a distribution $\xi \in \sP(\sF)$ and policy $\pi \in \sP(\cK)$, let $(X, f)$ have law $\pi \otimes \xi$ and with $\bar f = \E[f]$ define
-\begin{align*}
-    \Delta(\pi, \xi) = \E\left[\bar f(X) - f_\star\right] \quad \text{and} \quad
-    \I(\pi, \xi) = \E\left[(f(X) - \bar f(X))^2\right]\,,
-\end{align*}
-which are both non-negative.
-The quantity $\Delta(\pi, \xi)$ is the regret suffered by $\pi$ when the loss function is sampled from $\xi$, while $\I(\pi, \xi)$ is a measure of the observed variation
-of the loss function. Intuitively, if $\I(\pi, \xi)$ is large, then the learner is gaining information.
-A classical version of the information ratio is $\Delta(\pi, \xi)^2 / \I(\pi, \xi)$, though the most standard version replaces $\I(\pi, \xi)$ with
-an expected relative entropy term that is never smaller than $\I(\pi, \xi)$ \citep{RV16}.
-Given a distribution $\xi$ and a random function $f$ with law $\xi$, we let $\pi^\xi_\ts \in \sP(\cK)$ be the law of $x_f$, which is the minimiser of $f$.
-The minimax generalised information ratio associated with \ts on class of loss functions $\sF$ is
-\begin{align*}
-    \IR(\sF) = \left\{(\alpha, \beta) \in \R_+^2 : \sup_{\xi \in \sP(\sF)} \left[\Delta(\pi^\xi_\ts, \xi) - \alpha - \sqrt{\beta \I(\pi^\xi_\ts, \xi)}\right] \leq 0 \right\} \,.
-\end{align*}
-Note that $(0, \beta) \in \IR(\sF)$ is equivalent to $\Delta(\pi_\ts^\xi, \xi)^2 / \I(\pi_\ts^\xi, \xi) \leq \beta$ for all $\xi \in \sP(\sF)$.
-The $\alpha$ term is used to allow a small amount of slack that eases analysis and may even be essential in non-parametric and/or infinite-action settings.
+\chapter{Information Ratio}\label{ch:gir}
+Information ratio is a now classical tool in the analysis of Bayesian regret for bandit problems \citep{RV16}.
+It can be thought of as a complexity measure for Bayesian decision-making problems---the regret of any Bayesian algorithm can be bounded in terms of its worst-case information ratio.
+In this chapter we introduce our notion of information ratio which is a generalization of the information ratio introduced by \cite{RV16}.
+Next, we move on to one of our main results, which provides a way to bound the generalized information ratio for \ts{}, by partitioning the function class $\sF$ into disjoint subsets.
 
+\section{Generalized Information Ratio}
+Recall that in the Bayesian setting, the true function $F$ is unknown, but the learner has access to a prior distribution $\xi \in \sP(\sF)$ over the class of functions $\sF$.
+The prior $\xi$ naturally induces a prior over the optimal action $X_F = \argmin_{x \in \cK} F(x)$, where the ties are broken in a deterministic measurable way.
+Therefore, from the information-theoretic perspective, there is only finite amount of information that the learner can gain about the optimal action $X_F$, which is equal to the entropy of $\Pr(X_f=\cdot)$.
+By taking actions $X \in \cK$ and observing the loss $F(X)$, the learner can gain information about the function $F$ and the optimal action $X_F$.
+The main idea of the information ratio is to quantify the amount of information gained by the learner compared to the regret suffered by the learner in each round.
+More accurately, if the learner can upper bound its per-round regret by its information gain (either multiplicatively or additively), then its total regret can be bounded in terms of this upper bound and the entropy of the prior.
+Nevertheless, the actual measure of information gain needs to be carefully defined.
+
+A policy $\pi \in \sP(\cK)$ is a distribution over actions $X \in \cK$.
+Given a distribution $\xi \in \sP(\sF)$ and a policy $\pi \in \sP(\cK)$, let $F \sim \xi$ and $X \sim \pi$, then with $\bar F = \E[F]$ define the gap (expected instantaneous regret) as
+\begin{align*}
+    \Delta(\pi, \xi)
+    = \E\left[F(X) - F_\star\right]
+    = \E\left[\bar F(X) - F_\star\right]\,
+\end{align*}
+where $F_\star = \inf_{x \in \cK} F(x)$ is the optimal value of $F$.
+The classical information ratio \citep{RV16} uses the mutual information as the measure of information gain,
+\begin{align*}
+    \I_{KL}(\pi, \xi) & = I\left(X_F; (X, F(X))\right)\,,
+\end{align*}
+where $I\left( X_F; (X, F(X)) \right) = H(X_F) - H(X_F| (X, F(X)))$ is the mutual information between the optimal action $X_F$ and the pair $(X, F(X))$.
+So to summaries, the quantity $\Delta(\pi, \xi)$ is the regret suffered by $\pi$ when the loss function is sampled from $\xi$, while $\I(\pi, \xi)$ is a measure of the observed variation
+of the loss function.
+The classical version of the information ratio is multiplicative and defined as
+\begin{align*}
+    \frac{\Delta(\pi, \xi)^2}{\I_{KL}(\pi, \xi)}\,.
+\end{align*}
+An upper bound on this ratio for all $\xi \in \sP(\sF)$, often implies an upper bound on the Bayesian regret of the learner \cite{RV16}.
+Intuitively, this ratio stays the same if the learner suffers a large regret but also gains a lot of information, or if the learner suffers a small regret but gains little information.
+
+Compared to the classical information ratio, our generalization is additive and uses a different measure of information gain.
+Firstly, we use variance based measure of information, which lower bounds the mutual information (up to constant factors), but is easier to work with, defined as
+\begin{align*}
+    \I(\pi, \xi) = \E\left[(F(X) - \bar F(X))^2\right]\,.
+\end{align*}
+Secondly, given a distribution $\xi$ and a random function $F$ with law $\xi$, we let $\pi^\xi_\ts \in \sP(\cK)$ be the law of $x_f$, which is the minimiser of $F$.
+The generalised information ratio associated with \ts on class of loss functions $\sF$ is the set
+\begin{align*}
+    \IR_\ts(\sF) = \left\{(\alpha, \beta) \in \R_+^2 : \sup_{\xi \in \sP(\sF)} \left[\Delta(\pi^\xi_\ts, \xi) - \alpha - \sqrt{\beta \I(\pi^\xi_\ts, \xi)}\right] \leq 0 \right\} \,.
+\end{align*}
+To see why this is a generalization of the classical information ratio, note
+that $(0, \beta) \in \IR(\sF)$ is equivalent to $\Delta(\pi_\ts^\xi, \xi)^2 / \I(\pi_\ts^\xi, \xi) \leq \beta$ for all $\xi \in \sP(\sF)$, which is the classical information ratio of \ts{}.
+The $\alpha$ term is used to allow a small amount of slack that eases analysis and may even be essential in non-parametric and/or infinite-action settings---it allows the learner to suffer a small amount of regret ($\alpha = O(1/\sqrt{n})$) without gaining any information.
+
+The following theorem shows that finding a pair $(\alpha, \beta) \in \IR(\sF)$ is sufficient to bound the Bayesian regret of \ts{}.
 \begin{theorem}\label{thm:ts-ir-regret}
     Suppose that $\sF \in \{\sF_{\pb\pl}, \sF_{\pb\pl\pr\pm}\}$ and $(\alpha, \beta) \in \IR(\sF)$.
     Then, for any prior $\xi \in \sP(\sF)$, the regret of \ts{} (Algorithm~\ref{alg:ts}) is at most
@@ -647,61 +678,65 @@ The $\alpha$ term is used to allow a small amount of slack that eases analysis a
     \end{align*}
     where the Big-O hides only a universal constant.
 \end{theorem}
-This theorem is a direct consequence of \cref{thm:ir-general},
-so we defer the proof to \cref{sec:ir-general}.
+This theorem is a direct consequence of \cref{thm:ir-general}, so to avoid repetition we kindly refer the reader to \cref{sec:ir-general}.
 At a high level the argument is based on similar results by \cite{BDKP15} and \cite{BE18}.
-Also note that the space of ridge functions is not closed under convex combinations, which introduces certain challenges also
-noticed by \cite{lattimore2021minimax}.
-To address this last issue, we introduce a cover in \cref{sec:cover} that let us
-work with subsets of $\sF$ that are closed under convex combinations,
-and also satisfy some other properties.
+% Also note that the space of ridge functions is not closed under convex combinations, which introduces certain challenges also
+% noticed by \cite{lattimore2021minimax}.
+% To address this last issue, we introduce a cover in \cref{sec:cover} that let us
+% work with subsets of $\sF$ that are closed under convex combinations,
+% and also satisfy some other properties.
 
 \section{Decomposition Lemma}
-We also introduce a new mechanism for deriving information ratio bounds specially for \ts.
-The rough idea is to partition the function class $\sF$ into disjoint subsets $\sF_i$ such that an inequality similar to that of general information ratio holds for each partition.
+\cref{thm:ts-ir-regret} proves that if $(\alpha, \beta) \in \IR_\ts(\sF)$, then the Bayesian regret of \ts{} is bounded in terms of $\alpha$ and $\beta$.
+Note that the generalized information ratio associated with \ts{}, i.e. $\IR_\ts(\sF)$, is only a function of the class of functions $\sF$.
+We introduce a mechanism for deriving information ratio bounds for \ts{}
+through partitioning the function class $\sF$ into disjoint subsets,
+and in later chapters we will use this mechanism to derive information ratio bounds for various classes of convex functions.
+Precisely, if we partition the function class $\sF$ into disjoint subsets $\sF_i$ such that an inequality similar to that of general information ratio holds for each partition, then we can find a pair $(\alpha, \beta) \in \IR_\ts(\sF)$.
 \begin{lemma}\label{lem:decomp-big}
-    Suppose there exist natural numbers $k$ and $m$ such that for all $\bar f \in \conv(\sF)$ there exists a disjoint union $\sF = \cup_{i=1}^m \sF_i$ of measurable sets
+    Suppose there exist natural numbers $k$ and $m$ such that for all $\tilde f \in \conv(\sF)$ there exists a disjoint union $\sF = \cup_{i=1}^m \sF_i$ of measurable sets
     for which
     \begin{align*}
-        \max_{i \in [m]} \left[\sup_{f \in \sF_i} (\bar f(x_f) - f_\star) - \alpha - \sqrt{\beta \inf_{f_1,\ldots,f_k \in \sF_i} \sum_{j,l \in \pair(k)} (f_j(x_{f_l}) - \bar f(x_{f_l}))^2} \right] \leq 0 \,.
+        \max_{i \in [m]} \left[\sup_{f \in \sF_i} (\tilde f(x_f) - f_\star) - \alpha - \sqrt{\beta \inf_{f_1,\ldots,f_k \in \sF_i} \sum_{j,l \in \pair(k)} (f_j(x_{f_l}) - \tilde f(x_{f_l}))^2} \right] \leq 0 \,.
     \end{align*}
     Then $(\alpha, k(k-1)m\beta) \in \IR(\sF)$.
 \end{lemma}
-Let us pause for a moment to provide some intuition.
-The supremum term is the worst possible regret within $\sF_i$ while the infimum represents a kind of bound on the minimum amount of information obtained by \ts{}.
+To build intution, note that the supremum term is the worst possible regret within $\sF_i$ while the infimum represents a kind of bound on the minimum amount of information obtained by \ts{}.
 In particular, \ts{} plays the optimal action for some sampled loss and gains information when there is variation of the losses at that point.
-The appearance of $m$ in the information ratio bound arises from a Cauchy-Schwarz (what else?) that is somehow the `same' Cauchy-Schwarz used in the analysis
-of the information ratio for finite-armed bandits \citep{RV14} and in the information ratio decomposition by \cite{Lat20-cvx}.
+% The appearance of $m$ in the information ratio bound arises from a Cauchy-Schwarz (what else?) that is somehow the `same' Cauchy-Schwarz used in the analysis of the information ratio for finite-armed bandits \citep{RV14} and in the information ratio decomposition by \cite{Lat20-cvx}.
 \begin{proof}[Proof of \cref{lem:decomp-big}]
-    Let $\xi \in \sP(\sF)$ and $\bar f = \E[f]$ and
-    $\sF_1,\ldots,\sF_m$ be disjoint subsets of $\sF$ such that $\sF = \cup_{i=1}^m \sF_i$ and
+    Let $\xi \in \sP(\sF)$ and $\tilde{f} = \bar{F} = \E[F]$ be the expected loss function sampled from $\xi$.
+    Then from the assumption of the lemma, there exist disjoint
+    $\sF_1,\ldots,\sF_m$ subsets of $\sF$ such that $\sF = \cup_{i=1}^m \sF_i$ and
     \begin{align}
-        \max_{i \in [m]} \left[\sup_{f \in \sF_i} \left(\bar f(x_f) - f_\star\right) - \alpha - \sqrt{\beta \inf_{f_1,\ldots,f_k \in \sF_i} \sum_{j, l \in \pair(k)} (\bar f_j(x_{f_l}) - f(x_{f_l}))^2}\right] \leq 0 \,,
+        \sup_{f \in \sF_i} \left(\bar F(x_f) - f_\star\right) \leq \alpha + \sqrt{\beta \inf_{f_1,\ldots,f_k \in \sF_i} \sum_{j, l \in \pair(k)} (f_j(x_{f_l}) - \bar F(x_{f_l}))^2}  \,,\,\, \forall i \in [m] \,.
         \label{eq:decomp:1}
     \end{align}
-    which exists by the assumptions in the lemma.
     When $\xi(\sF_i)=0$ define $\nu_i$ as an arbitrary probability measure on $\sF$ and otherwise let
     $\nu_i(\cdot) = \xi(\cdot \cap \sF_i) / \xi(\sF_i)$ and $w_i = \xi(\sF_i)$.
-    Therefore
+    Therefore, we have
     \begin{align}
         \Delta(\pi, \xi)
-         & = \int_\sF \left(\bar f(x_f) - f_\star\right) \d{\xi}(f) \nonumber                                                                                               \\
-         & = \sum_{i=1}^m w_i \int_\sF \left(\bar f(x_f) - f_\star\right) \d{\nu_i}(f) \nonumber                                                                            \\
-         & \explan{(a)}\leq \sum_{i=1}^m w_i \sup_{f \in \sF_i} (\bar f(x_f) - f_\star) \nonumber                                                                           \\
-         & \explan{(b)}\leq \alpha + \sum_{i=1}^m w_i \sqrt{\beta \inf_{f_1,\ldots,f_k \subset \sF_i} \sum_{j,l \in \pair(k)} (f_j(x_{f_l}) - \bar f(x_{f_l}))^2} \nonumber \\
-         & \explan{(c)}\leq \alpha + \sum_{i=1}^m w_i \sqrt{\beta k(k-1) \int_\sF \int_\sF (\bar f(x_g) - f(x_g))^2 \d{\nu_i}(f) \d{\nu_i}(g)} \nonumber                    \\
-         & \explan{(d)}\leq \alpha + \sqrt{\beta m k(k-1) \sum_{i=1}^m w_i^2 \int_\sF \int_\sF (\bar f(x_g) - f(x_g))^2 \d{\nu_i}(f) \d{\nu_i}(g)} \nonumber                \\
-         & \explan{(e)}\leq \alpha + \sqrt{\beta m k(k-1) \sum_{i=1}^m \sum_{j=1}^m w_i w_j \int_\sF \int_\sF (\bar f(x_g) - f(x_g))^2 \d{\nu_i}(f) \d{\nu_j}(g)} \nonumber \\
-         & = \alpha + \sqrt{\beta m k(k-1) \int_\sF \int_\sF (\bar f(x_g) - f(x_g))^2 \d{\xi}(f) \d{\xi}(g)} \nonumber                                                      \\
+         & = \int_\sF \left(\bar F(x_F) - F_\star\right) \d{\xi}(F)
+        \nonumber                                                                                                                                                                   \\
+         & = \sum_{i=1}^m w_i \int_{\sF_i} \left(\bar F(x_F) - F_\star\right) \d{\nu_i}(F)
+        \nonumber                                                                                                                                                                   \\
+         & \explan{(a)}\leq \sum_{i=1}^m w_i \sup_{f \in \sF_i} (\bar F(x_F) - F_\star) \nonumber                                                                                   \\
+         & \explan{(b)}\leq \alpha + \sum_{i=1}^m w_i \sqrt{\beta \inf_{f_1,\ldots,f_k \in \sF_i} \sum_{j,l \in \pair(k)} (f_j(x_{f_l}) - \bar F(x_{f_l}))^2} \nonumber             \\
+         & \explan{(c)}\leq \alpha + \sum_{i=1}^m w_i \sqrt{\beta k(k-1) \int_{\sF_i} \int_{\sF_i} (\bar F(x_G) - F(x_G))^2 \d{\nu_i}(F) \d{\nu_i}(G)} \nonumber                    \\
+         & \explan{(d)}\leq \alpha + \sqrt{\beta m k(k-1) \sum_{i=1}^m w_i^2 \int_{\sF_i} \int_{\sF_i} (\bar F(x_G) - F(x_G))^2 \d{\nu_i}(F) \d{\nu_i}(G)} \nonumber                \\
+         & \explan{(e)}\leq \alpha + \sqrt{\beta m k(k-1) \sum_{i=1}^m \sum_{j=1}^m w_i w_j \int_{\sF_i} \int_{\sF_j} (\bar F(x_G) - F(x_G))^2 \d{\nu_i}(F) \d{\nu_j}(G)} \nonumber \\
+         & = \alpha + \sqrt{\beta m k(k-1) \int_\sF \int_\sF (\bar F(x_G) - F(x_G))^2 \d{\xi}(F) \d{\xi}(G)} \nonumber                                                              \\
          & = \alpha + \sqrt{\beta m k(k-1) \I(\pi, \xi)} \,, \label{eq:decomp:2}
     \end{align}
-    where \texttt{(a)} is immediate from the definition of the integral.
-    \texttt{(b)} follows from \cref{eq:decomp:1}.
-    \texttt{(c)} is true because if $f_1,\ldots,f_k$ are sampled independently from $\nu_i$, then
+    where \texttt{(a)} is immediate from the definition of the integral,
+    \texttt{(b)} follows from \cref{eq:decomp:1},
+    \texttt{(c)} is true because if $F_1,\ldots,F_k$ are sampled independently from $\nu_i$, then
     \begin{align*}
-        \int_\sF \int_\sF (\bar f(x_g) - f(x_g)) \d{\nu_i}(f) \d{\nu_i}(g)
-         & = \frac{1}{k(k-1)} \E\left[\sum_{j,l \in \pair(k)} (\bar f(x_{f_l}) - f_j(x_{f_l}))^2 \right]                            \\
-         & \geq \frac{1}{k(k-1)} \inf_{f_1,\ldots,f_k \subset \sF_i} \sum_{j,l \in \pair(k)} (\bar f(x_{f_l}) - f_j(x_{f_l}))^2 \,.
+        \int_\sF \int_\sF (\bar F(x_G) - F(x_G))^2 \d{\nu_i}(F) \d{\nu_i}(G)
+         & =
+        \frac{1}{k(k-1)} \E\left[\sum_{j,l \in \pair(k)} (\bar F(x_{F_l}) - F_j(x_{F_l}))^2 \right]                                 \\
+         & \geq \frac{1}{k(k-1)} \inf_{f_1,\ldots,f_k \subset \sF_i} \sum_{j,l \in \pair(k)} (\bar F(x_{f_l}) - f_j(x_{f_l}))^2 \,.
     \end{align*}
     \texttt{(d)} follows from Cauchy-Schwarz and \texttt{(e)} by introducing additional non-negative terms.
     Since \cref{eq:decomp:2} holds for all $\xi \in \sP(\sF)$ it follows that
