@@ -129,7 +129,7 @@
 \newcommand{\sett}[1]{\left\{ #1 \right\}}
 \newcommand{\norm}[1]{\left \Vert  #1 \right \Vert}
 \newcommand{\snorm}[1]{ \Vert  #1 \Vert}
-\newcommand{\Lsnorm}[1]{ \Vert  #1 \Vert_{\text{\scriptsize \textrm{L2}}}}
+\newcommand{\Lsnorm}[1]{ \Vert  #1 \Vert_{\text{\scriptsize \textrm{L}$^2$}}}
 \newcommand{\sS}{\mathscr S}
 \newcommand\half[1]{\textstyle{\frac{#1}{2}}}
 \newcommand{\ext}{\operatorname{e}}
@@ -502,8 +502,8 @@ In every round it samples $f_t$ from the posterior and plays $X_t$ as the minimi
             \begin{lstlisting}
 args: prior $\xi$
 for $t = 1$ to $\infty$:
-  sample $f_t$ from $\bbP(f = \cdot| X_1,Y_1,\ldots,X_{t-1},Y_{t-1})$
-  play $X_t \in \argmin_{x \in \cK} f_t(x)$ and observe $Y_t$
+  sample $F_t$ from $\bbP(F = \cdot| X_1,Y_1,\ldots,X_{t-1},Y_{t-1})$
+  play $X_t \in \argmin_{x \in \cK} F_t(x)$ and observe $Y_t$
 \end{lstlisting}
             \caption{Thompson sampling}\label{alg:ts}
         \end{mdframed}
@@ -625,6 +625,7 @@ In this chapter we introduce our notion of information ratio which is a generali
 Next, we move on to one of our main results, which provides a way to bound the generalized information ratio for \ts{}, by partitioning the function class $\sF$ into disjoint subsets.
 
 \section{Generalized Information Ratio}
+\label{sec:gen-inf-ratio}
 Recall that in the Bayesian setting, the true function $F$ is unknown, but the learner has access to a prior distribution $\xi \in \sP(\sF)$ over the class of functions $\sF$.
 The prior $\xi$ naturally induces a prior over the optimal action $X_F = \argmin_{x \in \cK} F(x)$, where the ties are broken in a deterministic measurable way.
 Therefore, from the information-theoretic perspective, there is only finite amount of information that the learner can gain about the optimal action $X_F$, which is equal to the entropy of $\Pr(X_f=\cdot)$.
@@ -747,6 +748,11 @@ In particular, \ts{} plays the optimal action for some sampled loss and gains in
 \end{proof}
 
 \chapter{Approximate Thompson Sampling}\label{ch:ats}
+The goal of this chapter is to prove \cref{thm:ir-general},
+which shows that the regret of \ts{} can be bounded using the generalized information ratio $\IR_\ts(\sF)$.
+Along the way, we introduce approximate Thompson sampling (\ats{}), which is a generalization of \ts{}, and show that our results hold for \ats{}.
+
+\section{Approximate Minimization}
 Often \textit{exact} minimization a convex function is computationally expensive.
 Therefore, it is natural to consider approximate minimization.
 In fact, we analyze this approximate version of \ts,
@@ -760,8 +766,8 @@ to get regret bounds for the exact version of \ts.
             \begin{lstlisting}
 args: prior $\xi$
 for $t = 1$ to $\infty$:
-  sample $f_t$ from $\bbP(f = \cdot| X_1,Y_1,\ldots,X_{t-1},Y_{t-1})$
-  play $X_t \in \bar x_{f_t}$
+  sample $F_t$ from $\bbP(F = \cdot| X_1,Y_1,\ldots,X_{t-1},Y_{t-1})$
+  play $X_t \in \bar X_{F_t}$
   observe $Y_t$
 \end{lstlisting}
             \caption{Approximate Thompson sampling}\label{alg:ats}
@@ -769,7 +775,7 @@ for $t = 1$ to $\infty$:
     \end{minipage}
 \end{algorithm}
 \ats{} is defined in \cref{alg:ats} and is similar to \ts except that it only approximately minimizes the sampled loss function,
-i.e. $X_t$ only needs to approximately minimize $f_t$.
+i.e. $X_t$ only needs to approximately minimize $F_t$.
 The analysis of this algorithm is surprisingly subtle,
 and indeed, we were only able to analyze an approximate version of \ts that uses a small amount of regularization.
 
@@ -777,44 +783,44 @@ and indeed, we were only able to analyze an approximate version of \ts that uses
     Let $\epsO \leq \epsR$ be non-negative constants called the optimization accuracy and regularization parameter, respectively.
     Given $f \in \sF_{\pl}$ let $\tilde f(x) = f(x) + \frac{\epsR}{2} \norm{x}^2$ when $\epsR > 0$ define
     \begin{align*}
-        \tilde x_f & = \argmin_{x \in \cK} \tilde f(x)                                              &
-        \bar x_f   & = \left\{x : \tilde f(x) \leq \min_{y \in \cK} \tilde f(y) + \epsO\right\} \,.
+        \tilde x_f & = \argmin_{x \in \cK} \tilde f(x)\,,\,\,\text{and}                             &
+        \bar X_f   & = \left\{x : \tilde f(x) \leq \min_{y \in \cK} \tilde f(y) + \epsO\right\} \,.
     \end{align*}
     When the regularization parameter $\epsR = 0$, define
     $\tilde x_f = x_f$
-    and $\bar x_f = \{x_f\}$.
+    and $\bar X_f = \{x_f\}$.
 \end{definition}
 
 When $\epsR = \epsO = 0$, then \ats{} and \ts{} are equivalent, though we note the importance in our analysis
-that the ties in \ts{} are broken in a consistent fashion.
-The regularization in the definition of $\tilde f$ ensures that all points in $\bar x_f$ are reasonably close to $\tilde x_f$ and introduces
+that the ties in \ts{} are broken in a consistent fashion---the optimization algorithm used to compute $\tilde x_f$ from $f$ must be deterministic.
+The regularization in the definition of $\tilde f$ ensures that all points in $\bar X_f$ are reasonably close to $\tilde x_f$ and introduces
 a degree of stability into \ats{}.
-An obvious question is whether or not you could do away with the regularization and define $\bar x_f$ by  $\{x : f_t(x) \leq f_{t\star} + \epsilon\}$
+An obvious question is whether or not you could do away with the regularization and define $\bar X_f$ by  $\{x : f_t(x) \leq f_{t\star} + \epsilon\}$
 for suitably small $\epsilon \geq 0$.
 We suspect the answer is yes but do not currently have a proof.
-The regularization ensures that $\bar x_f$ has small diameter, which need not be true in general for $\{x : f(x) \leq f_\star + \epsilon\}$,
+The regularization ensures that $\bar X_f$ has small diameter, which need not be true in general for $\{x : f(x) \leq f_\star + \epsilon\}$,
 even if $\epsilon$ is arbitrarily small.
-\begin{remark}
-    It's also important to note that $x_f$ is not $\bar{x}_f$ necessarily.
-\end{remark}
 
 \section{A Convex Cover}\label{sec:cover}
+The need for the cover in this section is subtle, and would be clear later in the proof of \cref{thm:ir-general}.
+% , but we build a bit of motivation here.
+% It is helpful to review how the information ratio analysis works: (a) the expected per-round regret is bounded in terms of the expected per-round information gain, and (b) the total information gain is bounded in terms of the prior entropy.
 We start by defining a kind of cover of a set of convex functions $\sF$.
 In the standard analysis introduced by \cite{BDKP15} and \cite{BE18}, this cover was defined purely in terms of the optimal action.
 As noticed by \cite{lattimore2021minimax}, this argument relies on $\sF$ being closed under convex combinations, which is not true
-for the space of ridge functions. Here we introduce a new notion of cover for function classes $\sF$ that are not closed
+for some subsets of convex functions such as the space of convex ridge functions.
+Here we introduce a new notion of cover for function classes $\sF$ that are not closed
 under convex combinations.
 \begin{definition}\label{def:cover}
     Let $\sF$ be a set of convex functions from $\cK$ to $\R$ and $\epsilon > 0$.
-    Define $N(\sF, \epsilon)$ to be the smallest number $N$ such that there exists $\{\sF_1,\ldots,\sF_N\}$ such that for all $k \in [N]$:
+    Define $N(\sF, \epsilon)$ to be the smallest number $N$ such that there exists $\{\sF_1,\ldots,\sF_N\}$ and points
+    $\{
+        x_1, \ldots, x_N
+        \} \subset \cK$, such that the following properties hold:
     \begin{itemize}
-        \item \textit{Closure:} $\sF_k$ is a subset of $\sF$ and $\conv(\sF_k) \subset \sF$.
-        \item \textit{Common near-minimiser:} There exists an $x_k \in \cK$ such that $\norm{\tilde x_f - x_k} \leq \epsilon$ for all $f \in \sF_k$.
-    \end{itemize}
-    Moreover:
-    \begin{itemize}
-        \item \textit{Approximation:} For all $f \in \sF$ there exists a $k \in [N]$ and $g \in \sF_k$ such that $\norm{f - g}_\infty \leq \epsilon$
-              and $\norm{\tilde x_f - x_k} \leq \epsilon$.
+        \item \textit{Closure:} For all $k \in [N]$, $\conv(\sF_k) \subset \sF$.
+              % \item \textit{Common near-minimiser:} $x_k$ is close to all the points in $\{\tilde{x}_f: f \in \sF_k\}$: $\sup_{f \in \sF_k} \norm{\tilde x_f - x_k} \leq \epsilon$.
+        \item \textit{Approximation:} For all $f \in \sF$, there exists a $k \in [N]$ such that $\norm{\tilde{x}_f - x_k} \leq \epsilon$, and $\inf_{g \in \sF_k} \norm{f - g}_\infty \leq \epsilon$.
     \end{itemize}
 \end{definition}
 We now bound the covering number $N(\sF, \epsilon)$ for function classes $\sF_{\pb\pl}$ and $\sF_{\pb\pl\pr\pm}$.
@@ -824,16 +830,17 @@ The former class is closed under convex combinations, which somewhat simplifies 
     Suppose that $\sF = \sF_{\pb\pl}$. Then $\log N(\sF, \epsilon) = O\left(d \log\left(\frac{\diam(\cK)}{\epsilon}\right)\right)$.
 \end{proposition}
 \begin{proof}
-    Let $\cC_K$ be a finite subset of $\cK$ such that for all $x \in \cK$ there exists a $y \in \cC_K$ with $\norm{x - y} \leq \epsilon$.
+    Let $\cC_K={x_1, \ldots, x_N}$ be a finite subset of $\cK$ such that for all $x \in \cK$ there exists a $y \in \cC_K$ with $\norm{x - y} \leq \epsilon$.
     Standard bounds on covering numbers \citep[\S4]{ASG15} show that $\cC_K$ can be chosen so that
     \begin{align*}
         |\cC_K| \leq \left(1 + \frac{2\diam(\cK)}{\epsilon}\right)^d \,.
     \end{align*}
     Given $x \in \cC_K$ define $\sF_x = \{f \in \sF : \norm{\tilde x_f - x} \leq \epsilon\}$.
+    We let $\sF_i = \sF_{x_i}, i \in [N]$,
+    and show that the properties of \cref{def:cover} hold for $\{\sF_1,\ldots,\sF_N\}$ and $\{x_1, \ldots, x_N\}$.
     Since $\conv(\sF) = \sF$ it follows trivially that $\conv(\sF_x) \subset \conv(\sF) = \sF$.
-    The common near minimiser property is satisfied automatically by definition.
-    Suppose that $f \in \sF$ is arbitrary and let $x \in \cC_K$ be such that $\norm{x - \tilde x_f} \leq \epsilon$, which exists by construction.
-    Therefore $f \in \sF_x$ and the approximation property also holds.
+    Suppose that $f \in \sF$ is arbitrary and let $x_i \in \cC_K$ be such that $\norm{x_i - \tilde x_f} \leq \epsilon$, where $i\in[N]$ exists by construction.
+    Therefore, $f \in \sF_i$ and the approximation property also holds.
 \end{proof}
 
 \begin{proposition}\label{prop:N-ridge}
@@ -847,7 +854,7 @@ The former class is closed under convex combinations, which somewhat simplifies 
     \begin{align*}
         \sF_{x,\theta} = \{f \in \sF : \norm{\tilde x_f - x} \leq \epsilon \text{ and } \theta_f = \theta\} \,.
     \end{align*}
-    Note that $\{f \in \sF : f_\theta = \theta\}$ is convex and hence $\conv(\sF_{x,\theta}) \subset \sF$ holds.
+    Note that $\{f \in \sF : \theta_f = \theta\}$ is convex and hence $\conv(\sF_{x,\theta}) \subset \sF$ holds.
     Let $\cC_{\mathbb S}$ be a finite subset of $\sphere_1$ such that for all $\theta \in \sphere_1$ there exists an $\eta \in \cC_{\mathbb S}$
     for which $\norm{\theta - \eta} \leq \epsilon_{\mathbb S}$.
     Similarly, let $\cC_K$ be a finite subset of $\cK$ such that for all $x \in \cK$ there exists a $y \in \cC_K$ with $\norm{x - y} \leq \epsilon$.
@@ -872,76 +879,155 @@ The former class is closed under convex combinations, which somewhat simplifies 
 
 
 \section{Continuity of Regret and Information Gain}
-In order to find a pair $(\alpha, \beta)$ in $\IR(\sF)$, we need to bound the regret $\Delta(\pi, \xi)$
-in terms of the information gain $I(\pi, \xi)$ for a prior $\xi \in \sP(\sF)$ and policy $\pi \in \sP(\cK)$.
-It turns out useful to prove continuity (Lipschitzness) properties of these quantities
-in terms of the distance between two different priors $\xi, \nu \in \sP(\sF)$ and the distance between two different policies $\pi, \rho \in \sP(\cK)$.
-Of course, the proper \textit{distance} metric on $\sP(\sF)$ and $\sP(\cK)$ needs to be specified to make this precise.
+In order to find a pair $(\alpha, \beta)$ in $\IR(\sF)$, we need to bound the regret $\Delta(\pi, \xi)$ in terms of the information measure $\cI(\pi, \xi)$ for a prior $\xi \in \sP(\sF)$ and policy $\pi \in \sP(\cK)$.
+It turns out useful to prove the Lipschitzness properties of these quantities with respect to both arguments.
+% in terms of the distance between two different priors $\xi, \nu \in \sP(\sF)$ and the distance between two different policies $\pi, \rho \in \sP(\cK)$.
+To make this precise, we choose an appropriate \textit{distance} metric both for $\sP(\sF)$ and $\sP(\cK)$.
 \begin{lemma}\label{lem:cont:I}
-    Suppose $f$ and $g$ are random elements in $\sF$ with laws $\xi$ and $\nu$
-    and that $X, Y \in \cK$ are independent of $f$ and $g$ and have laws $\pi$ and $\rho$.
-    Suppose that
-    $\norm{f - g}_\infty \leq \epsilon$ almost surely and $\norm{X - Y} \leq \epsilon$ almost surely.
+    Suppose $F, G$ are random elements in $\sF$ with laws $\xi$ and $\nu$, respectively,
+    and that $X, Y \in \cK$ are independent of $F$ and $G$ and have laws $\pi$ and $\rho$, respectively, all jointly distributed.
+    Further, suppose that
+    $\norm{F - G}_\infty \leq \epsilon$ and $\norm{X - Y} \leq \epsilon$ hold almost surely.
     Then
     \begin{enumerate}
-        \item $I(\pi, \nu)^{1/2} \leq I(\pi, \xi)^{1/2} + \epsilon$.
-        \item $I(\pi, \nu)^{1/2} \leq I(\rho, \nu)^{1/2} + \epsilon$.
+        \item $I(\pi, \nu)^{1/2} \leq I(\pi, \xi)^{1/2} + 2\epsilon$.
+        \item $I(\pi, \xi)^{1/2} \leq I(\rho, \xi)^{1/2} + 2\epsilon$.
     \end{enumerate}
 \end{lemma}
 
 \begin{proof}
-    For random variable $X$ let $\Lsnorm{X} = \E[X^2]^{1/2}$, which is a norm
-    on the space of square integrable random variables on some probability space with suitable a.s.\ identification.
-    Let $\bar f = \E[f]$ and $\bar g = \E[g]$.
-    By definition $I(\pi, \xi)^{1/2} = \Lsnorm{f(X) - \bar f(X)}$ and $I(\pi, \nu)^{1/2} = \Lsnorm{g(X) - \bar g(X)}$.
-    The first claim follows since $\Lsnorm{\cdot}$ is a norm.
-    The second claim follows in the same manner and using the fact that $f, g, \bar f, \bar g$ are Lipschitz.
+    For random variable $U$ let $\Lsnorm{U} = \E[U^2]^{1/2}$, and $\norm{U}_{L^\infty}=\esssup |U|$, which are norms on the space of square integrable random variables.
+    Further, it holds that $\norm{U}_{L^2} \leq \norm{U}_{L^\infty}$.
+
+    Let $\bar F = \E[F]$ and $\bar G = \E[G]$, and note that
+    \begin{align}
+        \norm{\bar{F} - \bar{G}}_\infty
+         & = \norm{\E[F] - \E[G]}_\infty
+        = \norm{\E[F - G]}_\infty
+        \leq \E[\norm{F - G}_\infty]
+        \leq \epsilon \,.
+        \label{ineq:joint:1}
+    \end{align}
+    By definition $\cI(\pi, \xi)^{1/2} = \Lsnorm{F(X) - \bar F(X)}$ and $\cI(\pi, \nu)^{1/2} = \Lsnorm{G(X) - \bar G(X)}$.
+    The first claim follows since
+    \begin{align*}
+        \big|\cI(\pi, \xi)^{1/2} - \cI(\pi, \nu)^{1/2}\big|
+         & =
+        \big|
+        \Lsnorm{F(X) - \bar F(X)} - \Lsnorm{G(X) - \bar G(X)}
+        \big|
+        \\
+         &
+        \explan{(a)}
+        \leq
+        \Lsnorm{(F(X) - \bar{F}(X)) - (G(X) - \bar{G}(X))}          \\
+         &
+        \explan{(b)}
+        \leq
+        \norm{(F(X) - \bar{F}(X)) - (G(X) - \bar{G}(X))}_{L^\infty} \\
+         &
+        \explan{(c)}
+        \leq
+        \norm{F(X) - G(X)}_{L^\infty} + \norm{\bar{F}(X) - \bar{G}(X)}_{L^\infty}
+        \\
+         &
+        \explan{(d)}
+        \leq
+        \epsilon + \epsilon
+        = 2\epsilon \,,
+    \end{align*}
+    where \texttt{(a)} follows from the reverse triangle inequality,
+    \texttt{(b)} follows from the definition of $\Lsnorm{\cdot} \leq \norm{\cdot}_{L^\infty}$,
+    \texttt{(c)} follows from the triangle inequality, and
+    \texttt{(d)}
+    follows from \cref{ineq:joint:1} and the fact that
+    \begin{align*}
+        \norm{F(X) - G(X)}_{L^\infty}
+        \leq
+        \norm{\sup_{x \in \cK} |F(x) - G(x)|}_{L^\infty}
+        =
+        \norm{\norm{F(x) - G(x)|}_\infty}_{L^\infty}\leq \epsilon\,.
+    \end{align*}
+    The second claim follows similarly, since
+    \begin{align*}
+        \big| \cI(\pi, \xi)^{1/2} - \cI(\rho, \xi)^{1/2}\big|
+         & =
+        \big|
+        \Lsnorm{F(X) - \bar F(X)} - \Lsnorm{F(Y) - \bar F(Y)}
+        \big|
+        \\
+         &
+        \explan{(a)}
+        \leq
+        \Lsnorm{(F(X) - \bar{F}(X)) - (F(Y) - \bar{F}(Y))}                        \\
+         &
+        \explan{(b)}
+        \leq
+        \norm{(F(X) - \bar{F}(X)) - (F(Y) - \bar{F}(Y))}_{L^\infty}               \\
+         &
+        \explan{(c)}
+        \leq
+        \norm{F(X) - F(Y)}_{L^\infty} + \norm{\bar{F}(X) - \bar{F}(Y)}_{L^\infty} \\
+         & \leq
+        \epsilon + \epsilon
+        = 2\epsilon \,,
+    \end{align*}
+    where \texttt{(a)} follows from the reverse triangle inequality,
+    \texttt{(b)} follows from the definition of $\Lsnorm{\cdot} \leq \norm{\cdot}_{L^\infty}$,
+    \texttt{(c)} follows from the triangle inequality, and
+    \texttt{(d)}
+    follows from the same argument as in \texttt{(d)} of the first claim and the Lipschitzness of $F$ and $\bar F$.
 \end{proof}
 
-
+The point of the next lemma is to show that approximate minimization policies benefit from the same information ratio as exact minimization policies, plus a small additive term that depends on how well they approximate the minimization.
 \begin{lemma}\label{lem:ts-eps}
-    Suppose that $\alpha, \beta \in \IR(\sF)$.
-    Suppose that $X$ and $f$ are (possibly dependent) random elements with laws $\pi \in \sP(\cK)$ and $\nu \in \sP(\sF)$ and such that
-    $f(X) \leq f_\star + \epsilon$ almost surely. Then
+    Suppose that $(\alpha, \beta) \in \IR_\ts(\sF)$.
+    Suppose that $X$ and $F$ are jointly distributed (possibly dependent) random elements with laws $\pi \in \sP(\cK)$ and $\nu \in \sP(\sF)$, respectively, such that
+    $F(X) \leq F_\star + \epsilon$ almost surely. Then
     \begin{align*}
-        \Delta(\pi, \nu) \leq \alpha + \sqrt{\beta I(\pi, \nu)} + \epsilon\left[1 + \sqrt{\beta}\right]\,.
+        \Delta(\pi, \nu) \leq \alpha + \sqrt{\beta \cI(\pi, \nu)} + \epsilon\left[1 + 2\sqrt{\beta}\right]\,.
     \end{align*}
 \end{lemma}
 
 \begin{proof}
-    Let $g(x) = \max(f(x), f(X))$ and $\xi$ be the law of $g$, which means that $\pi \in \ts(\xi)$. %\todot{fix notation here}
-    % \todot{here I am using that $\max(f, u) \in \sF$ whenever $f \in \sF$.}
-    As usual, let $\bar f = \E[f]$ and $\bar g = \E[g]$.
+    Let $G(x) = \max(F(x), F(X))$ and $\xi$ be the law of $G$, which means that $\pi$ is a \ts{} policy for $\xi$, meaning that for any measurable $A \subseteq \cF$,
+    \begin{align*}
+        \mP(G \in A) = \mP\left(X \in \bigcup_{f \in A} \argmin_{x \in \cK} f(x)\right)\,.
+    \end{align*}
+    Now, from the assumption of the theorem that $(\alpha, \beta) \in \IR_\ts(\sF)$, we have
+    $\Delta(\pi, \xi) \leq \alpha + \sqrt{\beta \cI(\pi, \xi)}$\,.
     By construction
     \begin{align*}
-        \norm{f - g}_\infty
+        \norm{F - G}_\infty
          & =
-        \sup_{x \in \cK} |\max(f(x), f(X)) - f(x)|          \\
+        \sup_{x \in \cK} |\max(F(x), G(X)) - F(x)|          \\
          & =
-        \sup_{x \in \cK} \max(f(x), f(X)) - f(x)            \\
+        \sup_{x \in \cK} \max(F(x), F(X)) - F(x)            \\
          & \leq
-        \sup_{x \in \cK} \max(f(x), f(x) + \epsilon) - f(x) \\
+        \sup_{x \in \cK} \max(F(x), F(x) + \epsilon) - F(x) \\
          & \leq \epsilon\,,
     \end{align*}
     almost surely.
-    Therefore
+    As usual, let $\bar F = \E[F]$ and $\bar G = \E[G]$.
+    Putting these together we have
     \begin{align*}
         \Delta(\pi, \nu)
-        = \E[\bar f(X) - f_\star]
-        \leq \E[\bar g(X) - g_\star] + \epsilon
-        = \Delta(\pi, \xi) + \epsilon
-        \leq \alpha + \sqrt{\beta I(\pi, \xi)} + \epsilon \,.
+         & = \E[\bar F(X) - F_\star]                                                   \\
+         & \leq \E[\bar G(X) - G_\star] + \epsilon                                     \\
+         & = \Delta(\pi, \xi) + \epsilon                                               \\
+         & \leq \alpha + \sqrt{\beta I(\pi, \xi)} + \epsilon                           \\
+         & \leq \alpha + \sqrt{\beta} (\sqrt{I(\pi, \nu)} + 2 \epsilon) + \epsilon \,,
     \end{align*}
-    The result now follows from Lemma~\ref{lem:cont:I}.
+    where the last inequality follows from Lemma~\ref{lem:cont:I}\texttt{(a)} and the fact that $\norm{F - G}_\infty \leq \epsilon$.
 \end{proof}
 
 The next lemma establishes basic properties of the regularised minimisers $\tilde x_f$ and $\bar x_f$, which are defined
 in Definition~\ref{def:opt}.
-Remember that $\epsR$ is the amount of regularisation. Larger values make $\tilde x_f$ more stable but also a worse approximation of $x_f$.
-The approximation error in the definition of $\bar x_f$ is $\epsO$, which can be chosen extremely small.
+Remember that $\epsR$ is the amount of regularisation. Larger values make $\tilde x_f$ more stable but also a worse approximation to $x_f$.
+The optimization error in the definition of $\bar x_f$ is $\epsO$.
 
 \begin{lemma}\label{lem:sc}
-    Suppose that $f, g \in \sF$.
+    Suppose that $f \in \sF$.
     Then
     \begin{enumerate}
         \item $\sup \{\norm{\tilde x_f - y} : y \in \bar x_f\} \leq \sqrt{2\epsO / \epsR}$ with $0/0 \triangleq 0$. \label{lem:sc:approx-close}
@@ -951,9 +1037,7 @@ The approximation error in the definition of $\bar x_f$ is $\epsO$, which can be
 
 \begin{proof}
     Note the special case that $\epsR = \epsO = 0$, then $\bar x_f = \{\tilde x_f\}$ by definition and \ref{lem:sc:approx-close} is immediate.
-    Otherwise
-    let $\tilde f(x) = f(x) + \frac{\epsR}{2} \norm{x}^2$
-    and $x = \tilde x_f$ and $y \in \bar x_f$. Then
+    Otherwise, recall that $\tilde f(x) = f(x) + \frac{\epsR}{2} \norm{x}^2$ and pick $y \in \bar x_f$. Then
     \begin{align*}
         \tilde f(\tilde x_f) + \epsO
         \geq \tilde f(y)
@@ -961,11 +1045,17 @@ The approximation error in the definition of $\bar x_f$ is $\epsO$, which can be
         \geq \tilde f(\tilde x_f) + \frac{\epsR}{2} \norm{\tilde x_f - y}^2 \,.
     \end{align*}
     Rearranging completes the proof of the first part.
-    For \ref{lem:sc:min}, let $y \in \cK$ be arbitrary
+    For \ref{lem:sc:min}, let $y \in \cK$ be arbitrary, then
     \begin{align*}
-        f(\tilde x_f) + \frac{\epsR}{2} \norm{x}^2 \leq f(y) + \frac{\epsR}{2} \norm{y}^2  \,.
+        f(\tilde x_f) + \frac{\epsR}{2} \norm{\tilde x_f}^2 \leq f(y) + \frac{\epsR}{2} \norm{y}^2  \,,
     \end{align*}
-    And the result follows since $\norm{y}^2 - \norm{x}^2 \leq \diam(\cK)^2$.
+    and the result follows by rearranging, as
+    \begin{align*}
+        f(\tilde x_f)
+        \leq f(y) + \frac{\epsR}{2}(\norm{y}^2 - \norm{\tilde x_f}^2)
+        \leq f(y) + \frac{\epsR}{2} \diam(\cK)^2 \,,
+    \end{align*}
+    where the last inequality follows from the assumption that $ 0 \in \cK$.
 \end{proof}
 
 
@@ -973,8 +1063,7 @@ The approximation error in the definition of $\bar x_f$ is $\epsO$, which can be
 We can now state a general theorem from which Theorem~\ref{thm:ts-ir-regret} follows.
 
 \begin{theorem}\label{thm:ir-general}
-    Suppose that $\epsilon \in (0,1)$ and $\frac{1}{2} \epsR \diam(\cK)^2 \leq \epsilon$ and $2\epsO/\epsR \leq \epsilon^2$
-    and let $\sF$ be a set of convex functions from $\cK$ to $[0,1]$ and $(\alpha, \beta) \in \IR(\sF)$.
+    Suppose that $\epsilon \in (0,1)$, $\frac{1}{2} \epsR \diam(\cK)^2 \leq \epsilon$, $2\epsO/\epsR \leq \epsilon^2$, and $(\alpha, \beta) \in \IR_\ts(\sF)$ with $\sF$ be a set of convex functions from $\cK$ to $[0,1]$.
     Then the Bayesian regret of \ats{} for any prior $\xi$ is at most
     \begin{align*}
         \BReg_n(\ats, \xi) \leq n \alpha + 3n\epsilon[1 + \sqrt{\beta}] + \sqrt{\frac{\beta n}{2} \log\left(N\left(\sF, 1/\epsilon\right)\right)} \,.
@@ -986,114 +1075,154 @@ Proposition~\ref{prop:N} and Proposition~\ref{prop:N-ridge} to bound the coverin
 
 \begin{proof}
     Let $N = N(\sF, \epsilon)$
-    and $\sF_1,\ldots,\sF_N$ be a collection of subset of $\sF$ satisfying the conditions of Definition~\ref{def:cover}.
-    Hence, there exists a sequence $x_1,\ldots,x_N$ such that for all $k \in [N]$ and $f \in \sF_k$,
-    \begin{align*}
-        \snorm{\tilde x_f - x_k} \leq \epsilon \,.
-    \end{align*}
-    Let $\xi \in \sP(\sF)$ be any prior.
-    Suppose that $f$ is sampled from $\xi$ and $X_\star$ be a random element in $\cK$ such that $X_\star \in \bar x_f$ and let $X$ be an independent copy of $X_\star$
-    and $Y$ be a random variable such that $\E[Y|f, X] = f(X)$ and $Y \in [0,1]$ almost surely.
-    By Definition~\ref{def:cover} there exists an $[N]$-valued random variable $\kappa$ such that:
+    and $\sF_1,\ldots,\sF_N \subset \sF$ together with $x_1, x_2, \ldots, x_N \in \cK$ satisfy the conditions of Definition~\ref{def:cover}.
+    Let $\xi \in \sP(\sF)$ be any prior, and $F$ is sampled from $\xi$, then
+    by Definition~\ref{def:cover} there exists an $[N]$-valued random variable $\kappa$ such that:
     \begin{enumroman}
-        \item There exists a random function $f_\kappa \in \sF_\kappa$ with $\norm{f - f_\kappa}_\infty \leq \epsilon$; and \label{proof:ir:i}
-        \item $\norm{\tilde x_f - x_\kappa} \leq \epsilon$. \label{proof:ir:ii}
+        \item There exists a projection $\Pi:\sF \to \sF$ such that
+        $\Pi(F) \in \sF_\kappa$ and $\norm{F - \Pi(F)}_\infty \leq \epsilon$; and \label{proof:ir:i}
+        \item $\norm{\tilde x_F - x_\kappa} \leq \epsilon$. \label{proof:ir:ii}
     \end{enumroman}
-    Define $\pi$ as the law of $X$, which is a (approximate) Thompson sampling policy for $\xi$.
+    Further, suppose that $X$ is a random element in $\cK$ such that $X \in \bar x_F$ and let $(X', F', \kappa)$ be an independent copy of $(X, F, \kappa)$.
+    Also let $Y$ the observed cost by the learner, i.e., $Y = F(X)$ and
+    $Y \in [0,1]$ almost surely.
+    Define $\pi$ as the law of $X'$, which is an approximate Thompson sampling policy for $\xi$.
 
-    \begin{lemma}\label{lem:ir}
-        The following holds:
-        \begin{align*}
-            % \Delta(\pi, \xi) \leq \alpha + \sqrt{\beta I(\kappa ; X, Y)} + \epsilon \poly(\diam(\cK), \beta) \,,
-            \Delta(\pi, \xi) \leq \alpha + \sqrt{\beta I(\kappa ; X, Y)} + 3\epsilon[1 + \sqrt{\beta}] \,,
-        \end{align*}
-        where $I(\kappa ; X, Y)$ is the mutual information between $\kappa$ and the pair $(X, Y)$.
-    \end{lemma}
-
-    \begin{proof}
-        Let $\nu$ be the law of $\E[f|\kappa]$ and $\nu_\kappa$ be the law of $\E[f_\kappa|\kappa]$ and
-        $\pi_\kappa$ be the law of $x_\kappa$.
-        Let $\bar f_\kappa = \E[f_\kappa]$.
-        Then
+    \begin{enumsteps}
+        \item \label{step:tsmain-1} We start by showing that
+        \begin{align}
+            \Delta(\pi, \xi) \leq \Delta(\pi_\kappa, \xi_\kappa) + 5\epsilon \,, \label{eq:tsmain-1}
+        \end{align}
+        where $\pi_\kappa$ is the law of $x_\kappa$ and $\xi_\kappa$ is the law of $\E[\Pi(F)|\kappa]$.
+        To see this, we can write
         \begin{align*}
             \Delta(\pi, \xi)
-             & = \E[\bar f(X) - f_\star]                                                                           \\
-             & \explan{(a)}= \E[\bar f(X) - \E[f_\star|\kappa]]                                                    \\
-             & \explan{(b)}\leq \E[\bar f_\kappa(X) - \E[f_\star|\kappa]] + \epsilon                               \\
-             & \explan{(c)}\leq \E[\bar f_\kappa(x_\kappa) - \E[f_\kappa|\kappa]_\star] + 3 \epsilon               \\
-             & \explan{(d)}= \Delta(\pi_\kappa, \nu_\kappa) + 3 \epsilon                                           \\
-             & \explan{(e)}\leq \alpha + \sqrt{\beta I(\pi_\kappa, \nu_\kappa)} + 3 \epsilon                       \\
-             & \explan{(f)}\leq \alpha + \sqrt{\beta I(\pi_\kappa, \nu)} + \epsilon[3 + \sqrt{\beta}]              \\
-             & \explan{(g)}\leq \alpha + \sqrt{\beta I(\pi, \nu)} + 3\epsilon[1 + \sqrt{\beta}]                    \\
-             & \explan{(h)}\leq \alpha + \sqrt{\frac{\beta I(\kappa ; X, Y)}{2}} + 3\epsilon[1 + \sqrt{\beta}] \,,
+             & =\E\left[F(X') - F(X_F)\right]                                                      \\
+             & \explan{(a)}\leq\E\left[F(\tilde{x}_{F'}) - F(\tilde{x}_F)\right] + 2\epsilon       \\
+             & \explan{(b)}\leq\E\left[F(x_{\kappa'}) - F(x_{\kappa})\right] + 4\epsilon           \\
+             & \explan{(c)}\leq\E\left[\Pi(F)(x_{\kappa'}) - \Pi(F)(x_{\kappa})\right] + 6\epsilon \\
+             & \explan{(d)}=\E\left[
+                \E[\Pi(F)(x_{\kappa'})|\kappa] -
+                \E[\Pi(F)(x_{\kappa})|\kappa]
+            \right] + 6\epsilon                                                                    \\
+             & \explan{(e)}=\E\left[
+                \E[\Pi(F)|\kappa](x_{\kappa'}) -
+                \E[\Pi(F)|\kappa](x_{\kappa})
+            \right] + 6\epsilon                                                                    \\
+             & =\Delta(\pi_\kappa, \xi_\kappa) + 6\epsilon\,,
         \end{align*}
-        where
-        \begin{enumerate}
-            \item by the tower rule.
-            \item follows since $\snorm{f_\kappa - f}_\infty \leq \epsilon$ by definition and by convexity of $\norm{\cdot}_\infty$,
-                  \begin{align*}
-                      \snorm{\bar f - \bar f_\kappa}_\infty
-                       & = \snorm{\E[f] - \E[f_\kappa]}_\infty
-                      \leq \E[\snorm{f - f_\kappa}_\infty]
-                      \leq \epsilon \,.
-                  \end{align*}
-            \item
-                  follows because $\norm{f - f_\kappa}_\infty \leq \epsilon$ and $\norm{\tilde x_f - x_\kappa} \leq \epsilon$ so that
-                  \begin{align*}
-                      \E[f_\star|\kappa]
-                       & = \E[f(x_f)|\kappa]                                          \\
-                      \tag*{by Lemma~\ref{lem:sc}\ref{lem:sc:min}}
-                       & \geq \E[f(\tilde x_f)|\kappa] - \frac{\epsR}{2} \diam(\cK)^2 \\
-                      \tag*{by the assumption on $\epsR$ and \ref{proof:ir:ii}}
-                       & \geq \E[f(x_\kappa)|\kappa] - 2\epsilon                      \\
-                      \tag*{by \ref{proof:ir:i}}
-                       & \geq \E[f_\kappa(x_\kappa)|\kappa] - 3\epsilon               \\
-                       & = \E[f_\kappa|\kappa]_\star - 3\epsilon \,.
-                  \end{align*}
-                  And because by the triangle inequality, the definition of $X_\star$ and Lemma~\ref{lem:sc}\ref{lem:sc:approx-close},
-                  \begin{align}
-                      \snorm{X_\star - x_\kappa}
-                      \leq \snorm{X_\star - \tilde x_f} + \snorm{\tilde x_f - x_\kappa}
-                      \leq \sqrt{2\epsO / \epsR} + \epsilon
-                      \leq 2 \epsilon\,,
-                      \label{eq:ir:3}
-                  \end{align}
-                  which implies that $\E[\bar f_\kappa(X)] = \E[\bar f_\kappa(X_\star)] \leq \E[\bar f_\kappa(x_\kappa)] + 2 \epsilon$.
-            \item follows by definition.
-            \item follows by $(\alpha, \beta) \in \IR(\cF)$.
-            \item follows from Lemma~\ref{lem:cont:I} and because
-                  \begin{align*}
-                      \snorm{\E[f_\kappa|\kappa] - \E[f|\kappa]}_\infty
-                       & \leq \E[\snorm{f_\kappa - f}_\infty] \leq \epsilon \,.
-                  \end{align*}
-            \item follows from Lemma~\ref{lem:cont:I} and \cref{eq:ir:3}.
-            \item follows from Pinsker's inequality. Let $\KL(\cdot, \cdot)$ be the relative entropy. Then
-                  \begin{align*}
-                      \I(\pi, \nu)
-                       & = \E[(\E[f(X)|X] - \E[f(X)|\kappa,X])^2]                 \\
-                       & = \E[(\E[Y|X] - \E[Y|\kappa,X])^2]                       \\
-                       & \leq \frac{1}{2} \E[ \KL(\bbP_{Y|X}, \bbP_{Y|X,\kappa})] \\
-                       & = \frac{1}{2} I(\kappa ; X, Y)
-                  \end{align*}
-        \end{enumerate}
-        This concludes the explanation of the steps and so the proof of the lemma.
-    \end{proof}
-
-    We are now in a position to prove Theorem~\ref{thm:ir-general}.
-    Let $\pi_t$ be the law of $X_t$ under $\bbP_{t-1}$ and $\xi_t$ be the law of $f$ under $\bbP_{t-1}$.
-    By Lemma~\ref{lem:ir},
-    \begin{align*}
-        \Delta(\pi_t, \xi_t) \leq \alpha + \sqrt{\beta I_t(\kappa ; X_t, Y_t)} + 3\epsilon[1 + \sqrt{\beta}]\,.
-    \end{align*}
-    Hence, letting $I_t$ be the mutual information with respect to probability measure $\bbP_t$,
+        where \texttt{(a)} follows from the fact that $F(\tilde{x}_F) \leq F(X_F) + \tfrac{\epsR}{2}\diam(\cK)^2$ by \cref{lem:sc}, Lipschitzness of $F$ and $\norm{X' - \tilde{x}_{F'}} \leq \epsilon$;
+        \texttt{(b)} follows from the fact that $\norm{\tilde{x}_{F'} - x_{\kappa'}} \leq \epsilon$ and $\norm{\tilde{x}_{F} - x_{\kappa}} \leq \epsilon$;
+        \texttt{(c)} follows from the fact that $\norm{F - \Pi(F)}_\infty \leq \epsilon$;
+        \texttt{(d)} follows from the tower rule;
+        and \texttt{(e)} follows from the independence of $(X', F', \kappa)$ and $(X, F, \kappa)$.
+        \item \label{step:tsmain-2} Next, we use that $(\alpha, \beta) \in \IR_\ts(\sF)$ to bound $\Delta(\pi_\kappa, \xi_\kappa)$, as
+        \begin{align}
+            \Delta(\pi_\kappa, \xi_\kappa) \leq \alpha + \sqrt{\beta \cI(\pi_\kappa, \xi_\kappa)}\,,
+            \label{eq:tsmain-2}
+        \end{align}
+        Note that this step is true since $\E[\pi(F)|\kappa] \in \sF$, which is a direct consequence of \cref{def:cover}\texttt{(i)}.
+        \item \label{step:tsmain-3} We now bound the $\cI(\pi_\kappa, \xi_\kappa)$ term.
+        Let $\bar{\xi}_\kappa$ be the law of $\E[F|\kappa]$.
+        We have
+        \begin{align}
+            \sqrt{\cI(\pi_\kappa, \xi_\kappa)}
+             & \explan{(a)}
+            \leq \sqrt{\cI(\pi_\kappa, \bar{\xi}_\kappa)} + 2\epsilon \nonumber \\
+             & \explan{(b)}
+            \leq \sqrt{\cI(\pi, \bar{\xi}_\kappa)} + 6\epsilon \nonumber        \\
+             & \explan{(c)}
+            \leq \sqrt{\tfrac12 I(\kappa; X', Y)} + 6\epsilon, \label{eq:tsmain-3}
+        \end{align}
+        where \texttt{(a)} follows from \cref{lem:cont:I}\texttt{(a)} and since
+        \begin{align*}
+            \norm{\E[F|\kappa] - \E[\Pi(F)|\kappa]}_\infty
+            =
+            \norm{\E[F - \Pi(F)|\kappa]}_\infty
+            \leq \norm{F - \Pi(F)}_\infty
+            \leq \epsilon \,;
+        \end{align*}
+        \texttt{(b)} follows from \cref{lem:cont:I}\texttt{(b)} and the fact that
+        \begin{align*}
+            \norm{X' - X_{\kappa'}}
+            \leq \norm{X' - \tilde{x}_{F'}}
+            +
+            \norm{\tilde x_{F'} - x_{\kappa'}}
+            \leq 2\epsilon\,;
+        \end{align*}
+        and \texttt{(c)} follows from
+        \begin{align*}
+            \cI(\pi, \bar{\xi}_\kappa)
+             & =
+            \E\left[
+                \left(
+                \E[F|\kappa](X')
+                -
+                \E[F](X')
+                \right)^2
+            \right] \\
+             & =
+            \E\left[
+                \left(
+                \E[F(X')|\kappa]
+                -
+                \E[F(X')|X']
+                \right)^2
+            \right] \\
+             & =
+            \E\left[
+                \left(
+                \E[Y|\kappa, X']
+                -
+                \E[Y|X']
+                \right)^2
+                \right]
+            \\
+             & \leq
+            \tfrac{1}{2}
+            \E\left[
+                D_{KL}\left(
+                \mP_{Y|X'}, \mP_{Y|X', \kappa}
+                \right)
+                \right]
+            \\
+             & =
+            \tfrac{1}{2}
+            I(\kappa; X', Y) \,,
+        \end{align*}
+        where the first inequality follows from the Pinsker's inequality.
+        \item By putting \cref{eq:tsmain-1,eq:tsmain-2,eq:tsmain-3} together we have
+        \begin{align}
+            \Delta(\pi, \xi)
+             & \leq
+            \Delta(\pi_\kappa, \xi_\kappa) + 6\epsilon
+             & \text{(\cref{eq:tsmain-1})} \nonumber \\
+             & \leq
+            \alpha + \sqrt{\beta \cI(\pi_\kappa, \xi_\kappa)} + 6\epsilon
+             & \text{(\cref{eq:tsmain-2})} \nonumber \\
+             & \leq
+            \alpha + \sqrt{\beta} \left(\sqrt{\tfrac{1}{2}I(\kappa; X',Y)} + 6\epsilon\right) + 6\epsilon
+             & \text{(\cref{eq:tsmain-3})} \nonumber \\
+             & \leq
+            \alpha + \sqrt{\tfrac{\beta}{2}I(\kappa; X',Y)} + 6\epsilon \left(1 + \sqrt{\beta}\right)\,,\label{eq:tsmain-4}
+        \end{align}
+    \end{enumsteps}
+    We are now ready to prove Theorem~\ref{thm:ir-general}.
+    Let $\pi_t$ be the law of $X_t$ under $\bbP_{t-1}$ and $\xi_t$ be the law of $F$ under $\bbP_{t-1}$, and $I_t$ be the mutual information with respect to probability measure $\bbP_t$.
+    Note that $\kappa$ is jointly distributed with $F$.
+    Then we have
     \begin{align*}
         \BReg_n(\ats, \xi)
-         & = \E\left[\sum_{t=1}^n \Delta(\pi_t, \xi_t)\right]                                                                     \\
-         & \leq n \alpha + \E\left[\sum_{t=1}^n \sqrt{\beta I_{t-1}(\kappa ; X_t, Y_t)}\right] + 3n \epsilon[1 + \sqrt{\beta}]    \\
-         & \leq n \alpha + \sqrt{\beta n \E\left[\sum_{t=1}^n I_{t-1}(\kappa ; X_t, Y_t)\right]} + 3n \epsilon [1 + \sqrt{\beta}] \\
-         & \leq n \alpha + \sqrt{\beta n \log(N)} + 3n \epsilon [1 + \sqrt{\beta}] \,,
+         & = \E\left[
+        \sum_{t=1}^n \Delta(\pi_t, \xi_t)\right]                                                                                          \\
+         & \explan{(a)}
+        \leq n \alpha + \E\left[\sum_{t=1}^n \sqrt{\beta I_t(\kappa ; X_t, Y_t)}\right] + n \epsilon[1 + \sqrt{\beta}]                    \\
+         & \explan{(b)}\leq n \alpha + \sqrt{\beta n \E\left[\sum_{t=1}^n I_t(\kappa ; X_t, Y_t)\right]} + 6n \epsilon [1 + \sqrt{\beta}] \\
+         & \explan{(c)}\leq n \alpha + \sqrt{\beta n \log(N)} + 6n \epsilon [1 + \sqrt{\beta}] \,,
     \end{align*}
-    where the final inequality holds by the chain rule for the mutual information and because $\kappa \in [N]$ and hence its entropy is at most $\log(N)$.
+    where \texttt{(a)} follows from \cref{eq:tsmain-4};
+    \texttt{(b)} follows from Cauchy-Schwarz inequality;
+    and \texttt{(c)} holds by the chain rule for the mutual information and because $\kappa \in [N]$ and hence its entropy is at most $\log(N)$.
 \end{proof}
 
 \chapter{Thompson Sampling in 1-dimension}
@@ -1102,96 +1231,121 @@ Our first main theorem shows that \ts{} is statistically efficient when the loss
     When $d = 1$, $\displaystyle \sup_{\xi \in \sP(\sF_{\pb\pl})} \BReg_n(\ts, \xi) = O\left(\sqrt{n \log(n) \log(n \diam(\cK))}\right)$.
 \end{theorem}
 
-\cref{thm:ts-1d} is established by combining the following bound on the information ratio and $\alpha = 1/n$ with \cref{thm:ts-ir-regret}.
+\cref{thm:ts-1d} follows by combining a bound on the information ratio established next with \cref{thm:ts-ir-regret}. Interestingly, the following theorem doesn't need the Lipschitzness property.
 
 \begin{theorem}\label{thm:ts}
-    Suppose that $d = 1$ and $\alpha \in (0,1)$. Then $(\alpha, 10^4 \ceil{\log(1/\alpha)}) \in \IR(\sF_{\pb\pl})$.
+    Suppose that $d = 1$ and $\alpha \in (0,1)$.
+    Then $(\alpha, 10^4 \ceil{\log(1/\alpha)}) \in \IR(\sF_{\pb\pl})$.
 \end{theorem}
 
 \begin{proof}
-    Let $\bar f \in \conv(\sF_{\pb\pl})$ and for integer $i$ define
+    Fix $\xi \in \cP(\sF_{\pb\pl})$ and let $\pi$ be the \ts{} policy for $\xi$.
+    As usual, let $\bar{F} = \E[F]$.
+    Our plan is to use \cref{lem:decomp-big}.
+    For this we define a partitioning of $\sF_{\pb\pl}$.
+    In particular, for $f \in \sF_{\pb\pl}$,
+    $f$ is sorted into one of $\sF_i$ defined below based
+    on $\bar{F}(x_f) - f_\star$ and $x_f$:
+    If $\bar{F}(x_f) - f_\star \leq \alpha$, the $f \in \sF_0$,
+    otherwise $f \in \sF_i$ where $i \in \mathbb{Z}$ is so that $\bar{F}(x_f) - f_\star \in (\alpha 2^{|i|-1}, \alpha 2^{|i|}]$, and $i <0$ when $x_f < x_{\bar F}$ and $i>0$ otherwise.
+    Precisely, define
     \begin{align}
         \sF_i & = \begin{cases}
-                      \{f \in \sF_{\pb\pl} : \bar f(x_f) - f_\star \in (\alpha 2^{|i|-1}, \alpha 2^{|i|}],\, x_f \geq x_{\bar f}\} & \text{if } i > 0     \\
-                      \{f \in \sF_{\pb\pl} : \bar f(x_f) - f_\star \in (\alpha 2^{|i|-1}, \alpha 2^{|i|}],\, x_f < x_{\bar f}\}    & \text{if } i < 0     \\
-                      \{f \in \sF_{\pb\pl} : \bar f(x_f) - f_\star \leq \alpha \}                                                  & \text{if } i = 0 \,.
+                      \{f \in \sF_{\pb\pl} : \bar F(x_f) - f_\star \in (\alpha 2^{|i|-1}, \alpha 2^{|i|}],\, x_f \geq x_{\bar F}\}\,, & \text{if } i > 0\,;  \\
+                      \{f \in \sF_{\pb\pl} : \bar F(x_f) - f_\star \in (\alpha 2^{|i|-1}, \alpha 2^{|i|}],\, x_f < x_{\bar F}\}\,,    & \text{if } i < 0\,;  \\
+                      \{f \in \sF_{\pb\pl} : \bar F(x_f) - f_\star \leq \alpha \}\,,                                                  & \text{if } i = 0 \,.
                   \end{cases}
     \end{align}
-    Since the losses in $\sF_{\pb\pl}$ are bounded by assumption, for $|i| > m = \ceil{\log_2(1/\alpha)}$, $\sF_i = \emptyset$
-    so that $\sF_{\pb\pl} = \cup_{i=-m}^m \sF_i$.
-    In a moment we will show that with $k = 4$ and $-m \leq i \leq m$ and $\epsilon = \alpha 2^{|i|}$ that
+    Clearly, since by assumption $\bar{F}(x_f), f_\star \in [0,1]$ for any $f \in \cF_{\pb\pl}$,
+    for $|i| > m = \ceil{\log_2(1/\alpha)}$, $\sF_i = \emptyset$. Hence, $\sF_{\pb\pl} = \cup_{i=-m}^m \sF_i$.
+    In a moment we will show that with $k = 4$ and $-m \leq i \leq m$ and $\epsilon_i = \alpha 2^{|i|}$,
     \begin{align}
-        \sup_{f \in \sF_i} \left(\bar f(x_f) - f_\star\right)
-        \leq \epsilon \leq \alpha + \sqrt{230\inf_{f_1,\ldots,f_k \in \sF_i} \sum_{j,l \in \pair(k)} (f_j(x_{f_l}) - \bar f(x_{f_l}))^2} \,.
+        \sup_{f \in \sF_i} \left(\bar F(x_f) - f_\star\right)
+        \leq \epsilon_i \leq \alpha
+        + \sqrt{230\inf_{f_1,\ldots,f_k \in \sF_i} \sum_{j,l \in \pair(k)} (f_j(x_{f_l}) - \bar F(x_{f_l}))^2}
         \label{eq:ts:1d:goal}
     \end{align}
+    holds.
     Hence, by Lemma~\ref{lem:decomp-big} and naive simplification of constants $(\alpha, 10^4 \ceil{\log(1/\alpha)}) \in \IR(\sF_{\pb\pl})$ as desired.
-    The first inequality in \cref{eq:ts:1d:goal} is an immediate consequence of the definition of $\sF_i$ and $\epsilon$.
+    The first inequality in \cref{eq:ts:1d:goal} is an immediate consequence of the definition of $\sF_i$ and $\epsilon_i$.
     The second is also immediate when $i = 0$.
     The situation when $i < 0$ and $i > 0$ is symmetric, so for the remainder we prove that the second inequality in \cref{eq:ts:1d:goal} holds for any $i > 0$.
-    Let $f_1,\ldots,f_k \in \sF_i$ and
-    for $j \in [4]$ let $x_j = x_{f_j}$ and assume without loss of generality that $x_1 \leq x_2 \leq x_3 \leq x_4$.
-    Suppose that
+    Fix such an $i > 0$ and let $\epsilon = \epsilon_i = \alpha 2^{i}$.
+    Let $k=4$, $f_1,\ldots,f_4 \in \sF_i$, and $x_j = x_{f_j}$ and assume without loss of generality that $x_1 \leq x_2 \leq x_3 \leq x_4$.
+    Note that $x_{\bar{F}} \leq x_1$ also hods because $i>0$.
+    It suffices to show that $\sum_{j,l \in \pair(4)} (f_j(x_{f_l}) - \bar F(x_{f_l}))^2 < c^2 \epsilon_i^2$ for a suitable universal constant $c$. We prove this by contradiction.
+    That is, assume
     \begin{align}
-        \sum_{j,l \in \pair(4)} (f_j(x_{f_l}) - \bar f(x_{f_l}))^2 < c^2 \epsilon^2 \qquad\text{with}\qquad c = \frac{\sqrt{65} - 7}{16} \,.
+        \sum_{j,l \in \pair(4)} (f_j(x_{f_l}) - \bar F(x_{f_l}))^2 < c^2 \epsilon^2 \qquad\text{where we take }\qquad c = \frac{\sqrt{65} - 7}{16} \,,
         \label{eq:ts:max}
     \end{align}
-    Let us now establish a contradiction, which we do in three steps. The main argument in each step is illustrated in Figure~\ref{fig:ts}.
+    for reasons that become clear later.
+    We establish a contradiction in three steps.
+    The main argument in each step is illustrated in Figure~\ref{fig:ts}.
     \begin{enumsteps}
-        \item \label{step:ts:i} We start by showing that $x_2$ must be somewhat closer to $x_3$ than to $x_1$.
+        \item \label{step:ts:i} We start by showing that $x_2$ cannot be too far from $x_3$.
+        In particular, writing $x_2 = (1-p)x_1 + p x_3$, we show that $p \geq 0.27$.
+        First, we have
         \begin{align*}
             f_1(x_3)
-            \explan{(a)}\leq \bar f(x_3) + \epsilon c
+            \explan{(a)}\leq \bar F(x_3) + \epsilon c
             \explan{(b)}\leq f_3(x_3) + \epsilon[c+1] \leq f_3(x_1) + \epsilon[c+1]
-            \explan{(c)}\leq \bar f(x_1) + \epsilon[2c+1] \,,
+            \explan{(c)}\leq \bar F(x_1) + \epsilon[2c+1] \,,
         \end{align*}
-        where \texttt{(a)} follows from \cref{eq:ts:max}, \texttt{(b)} since for $f \in \sF_i$, $f(x_f) \geq \bar f(x_f) - \epsilon$
-        and \texttt{(c)} from \cref{eq:ts:max} again.
-        Hence, with $p \in [0,1]$ such that $x_2 = (1 - p)x_1 + p x_3$,
+        where \texttt{(a)} follows from \cref{eq:ts:max};
+        \texttt{(b)} holds since for $f \in \sF_i$, $\bar F(x_f) - f(x_f) \leq \epsilon$ and $f_3 \in \sF_i$;
+        and \texttt{(c)} follows from \cref{eq:ts:max} again.
+        Hence,
         \begin{align*}
-            \bar f(x_1)
-            \explan{(a)}\leq \bar f(x_2)
+            \bar F(x_1)
+            \explan{(a)}\leq \bar F(x_2)
             \explan{(b)}\leq f_1(x_2) + c\epsilon
-             & \explan{(c)}\leq (1 - p) f_1(x_1) + p f_1(x_3) + c\epsilon                     \\
-             & \explan{(d)}\leq (1 - p) (\bar f_1(x_1) - \epsilon/2) + p f_1(x_3) + c\epsilon \\
-             & \explan{(e)}\leq \bar f(x_1) + \epsilon\left[c + p[2c + 3/2] - 1/2\right] \,,
+             & \explan{(c)}\leq (1 - p) f_1(x_1) + p f_1(x_3) + c\epsilon                    \\
+             & \explan{(d)} < (1 - p) (\bar f_1(x_1) - \epsilon/2) + p f_1(x_3) + c\epsilon  \\
+             & \explan{(e)}\leq \bar F(x_1) + \epsilon\left[c + p[2c + 3/2] - 1/2\right] \,,
         \end{align*}
-        where \texttt{(a)} follows because $\bar f$ is non-decreasing on $[x_1,x_4]$ by the definition of $\sF_i$ and $i > 0$,
-        \texttt{(b)} from \cref{eq:ts:max},
-        \texttt{(c)} by convexity and the definition of $p$,
-        \texttt{(d)} since $f_1(x_1) \leq \bar f_1(x_1) - \epsilon/2$ by the definition of $\sF_i$ and
+        where \texttt{(a)} follows because $\bar F$ is non-decreasing on $[x_1,x_4]$
+        because $x_f \leq x_1$ as discussed before;
+        \texttt{(b)} follows from \cref{eq:ts:max};
+        \texttt{(c)} holds by convexity and the definition of $p$;
+        \texttt{(d)} follows since $f_1(x_1) < \bar f_1(x_1) - \epsilon/2$ by the definition of $\sF_i$ and
         \texttt{(e)} is true by the previous display.
         Therefore $p \geq (1/2 - c) / (2c + 3/2) \approx 0.27$.
 
-        \item \label{step:ts:ii} Having shown that $x_2$ is close to $x_3$, we now show that $f_3(x_3)$ is not much smaller than $\bar f(x_1)$. Indeed,
+        \item \label{step:ts:ii} Having shown that $x_2$ cannot be far from $x_3$,
+        we now show that $\bar{F}(x_1)$ is not much larger than $f_3(x_3)$.
+        Indeed,
         \begin{align*}
-            \bar f(x_1)
-             & \explan{(a)}\leq \bar f(x_2)
+            \bar F(x_1)
+             & \explan{(a)}\leq \bar F(x_2)
             \explan{(b)}\leq f_3(x_2) + c\epsilon                                 \\
              & \explan{(c)}\leq (1 - p) f_3(x_1) + p f_3(x_3) + c\epsilon         \\
-             & \explan{(d)}\leq (1 - p) \bar f(x_1) + p f_3(x_3) + 2c\epsilon \,,
+             & \explan{(d)}\leq (1 - p) \bar F(x_1) + p f_3(x_3) + 2c\epsilon \,,
         \end{align*}
         \texttt{(a)-(c)} follows as above in \ref{step:ts:i} and \texttt{(d)} from \cref{eq:ts:max}.
-        Rearranging shows that $f_3(x_3) \geq \bar f(x_1) - \frac{2c\epsilon}{p}$.
+        Rearranging shows that $\bar F(x_1) \leq f_3(x_3) + \frac{2c\epsilon}{p}$.
 
         \item \label{step:ts:iii}
         Lastly we derive a contradiction using \ref{step:ts:i} and \ref{step:ts:ii} since
         \begin{align*}
             f_4(x_3)
              & \explan{(a)}\leq f_4(x_1)
-            \explan{(b)}\leq \bar f(x_1) + c\epsilon                                              \\
-             & \explan{(c)}\leq f_3(x_3) + \epsilon\left[c + \frac{2c}{p}\right]                  \\
-             & \explan{(d)}\leq \bar f(x_3) + \epsilon\left[c + \frac{2c}{p} - \frac{1}{2}\right] \\
-             & \explan{(e)}\leq \bar f(x_3) - c \epsilon \,,
+            \explan{(b)}\leq \bar F(x_1) + c\epsilon                                            \\
+             & \explan{(c)}\leq f_3(x_3) + \epsilon\left[c + \frac{2c}{p}\right]                \\
+             & \explan{(d)} < \bar F(x_3) + \epsilon\left[c + \frac{2c}{p} - \frac{1}{2}\right] \\
+             & \explan{(e)}\leq \bar F(x_3) - c \epsilon \,,
         \end{align*}
     \end{enumsteps}
     where \texttt{(a)} follows by convexity and because $f_4$ is minimised at $x_4$,
     \texttt{(b)} from \cref{eq:ts:max},
     \texttt{(c)} from \ref{step:ts:ii},
-    \texttt{(d)} since $f_3(x_3) \leq \bar f(x_3) - \epsilon/2$ by the definition of $\sF_i$
+    \texttt{(d)} since $f_3(x_3) < \bar F(x_3) - \epsilon/2$ by the definition of $\sF_i$
     and \texttt{(e)} from the bound on $p$ in \ref{step:ts:i} and the definition of $c$.
     But this contradicts \cref{eq:ts:max}.
     Hence \cref{eq:ts:max} does not hold. And since $c^2 \geq \frac{1}{230}$ it follows that \cref{eq:ts:1d:goal} holds.
+\end{proof}
+\begin{proof}[Proof of \cref{thm:ts-1d}]
+    Use \cref{thm:ts} with $\alpha= 1/n$ and then \cref{thm:ts-ir-regret}.
 \end{proof}
 
 \begin{figure}[h!]
@@ -1200,7 +1354,7 @@ Our first main theorem shows that \ts{} is statistically efficient when the loss
         \draw[thick,red] (0,-0.23) -- (1,0.52);
         \node[anchor=west] at (1,.52) {$f_1$};
         \node[anchor=west] at (1, 0.2){$f_3$};
-        \node[anchor=east] at (0,0) {$\bar f$};
+        \node[anchor=east] at (0,0) {$\bar F$};
         \draw[thick,blue] plot [smooth] coordinates {(1,0.2) (0.5,0.2) (0,0.3)};
         \draw (0,-0.25) -- (1,-0.25);
         \draw (0,-0.25) -- (0,-0.27);
@@ -1219,7 +1373,7 @@ Our first main theorem shows that \ts{} is statistically efficient when the loss
         \node[anchor=west] at (1, -0.06){$f_3$};
         \draw[thick,blue] (0,0.1) -- (1,-0.08);
 
-        \node[anchor=east] at (0,0) {$\bar f$};
+        \node[anchor=east] at (0,0) {$\bar F$};
         \draw (0,-0.25) -- (1,-0.25);
         \draw (0,-0.25) -- (0,-0.27);
         \draw (1,-0.25) -- (1,-0.27);
@@ -1240,7 +1394,7 @@ Our first main theorem shows that \ts{} is statistically efficient when the loss
 
         \node[anchor=west] at (1.5, 0.41){$f_3$};
         \draw[thick,blue] (0,0.08) -- (1,-0.06) -- (1.5,0.41);
-        \node[anchor=east] at (0,0) {$\bar f$};
+        \node[anchor=east] at (0,0) {$\bar F$};
 
         \draw (0,-0.25) -- (1.5,-0.25);
         \draw (0,-0.25) -- (0,-0.27);
@@ -1255,9 +1409,9 @@ Our first main theorem shows that \ts{} is statistically efficient when the loss
 
     \caption{
         \texttt{(i)} shows that if $x_2$ is too close to $x_1$, then $f_1(x_3)$ must be large, which implies that $f_3(x_3)$ must be large
-        and so too must $f_3(x_1)$, which shows that $f_3(x_1) - \bar f(x_1)$ is large.
-        \texttt{(ii)} shows what happens if $f_3(x_3)$ is too far below $\bar f(x_1)$, which is that $f_3(x_1)$ must be much larger than $\bar f(x_1)$.
-        \texttt{(iii)} shows that $f_4(x_3)$ cannot be much larger than $f_3(x_3)$ and therefore $\bar f(x_3) - f_4(x_3)$ must be large.
+        and so too must $f_3(x_1)$, which shows that $f_3(x_1) - \bar F(x_1)$ is large.
+        \texttt{(ii)} shows what happens if $f_3(x_3)$ is too far below $\bar F(x_1)$, which is that $f_3(x_1)$ must be much larger than $\bar F(x_1)$.
+        \texttt{(iii)} shows that $f_4(x_3)$ cannot be much larger than $f_3(x_3)$ and therefore $\bar F(x_3) - f_4(x_3)$ must be large.
     }
     \label{fig:ts}
 \end{figure}
