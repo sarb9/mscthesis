@@ -263,7 +263,7 @@
 
 \begin{titlepage}
     \centering
-    \textbf{\large{Thompson Sampling for Bandit Convex Optimization}}
+    \textbf{\large{Thompson Sampling for Bandit Convex Optimization\\(Version 1.0)}}
     \vskip.5in by \vskip.5in
     \large{Alireza Bakhtiari}
 
@@ -1447,7 +1447,8 @@ Like \cref{thm:ts-1d}, \cref{thm:ts-ridge} is established by combining a bound o
     Given a nonempty finite set $\cC \subset \sF$ and $\delta > 0$, let
     $J_\delta(\cC) = \conv\left(\cup_{g \in \cC} \ball_\delta(x_g)\right)$.
     Moreover, let $E_\delta(\cC)$ be the ellipsoid of maximum volume enclosed in $J_\delta(\cC)$, which is called John's ellipsoid.
-    We now need two lemmas. The first shows that for a suitable subset $\cC$ of loss functions either the information gain is reasonably large
+    We now prove two lemmas.
+    The first shows that for a suitable subset $\cC$ of loss functions either the information gain is reasonably large
     or some function $f$ can be removed from $\cC$ in such a way that $E_\delta(\cC \setminus \{f\})$ is considerably smaller than $E_\delta(\cC)$.
 
     \begin{lemma}\label{lem:ridge-ir-1}
@@ -1479,7 +1480,7 @@ Like \cref{thm:ts-1d}, \cref{thm:ts-ridge} is established by combining a bound o
             such that $\ip{x_g, \theta} < \ip{\mu, \theta} + \delta$.
             Since $E_{\delta}(\cC) \subset J_\delta(\cC)$, there exists an $x \in J_\delta(\cC)$ such that
             $\ip{x, \theta} \geq \ip{\mu, \theta} + \norm{\theta}_\Sigma$.
-            By the definition of $J_\delta(\cC)$ it follows that there there exists a $h \in \cC$ such that
+            By the definition of $J_\delta(\cC)$ it follows that there exists a $h \in \cC$ such that
             $\ip{x_h, \theta} \geq \ip{\mu, \theta} + \norm{\theta}_\Sigma - \delta$.
             Let $x_h' = x_h + \delta \theta$ and $x_g' = x_g - \delta \theta$ and $x_f' = x_f - \delta \theta$.
             Collecting the above facts, we have
@@ -1499,11 +1500,11 @@ Like \cref{thm:ts-1d}, \cref{thm:ts-ridge} is established by combining a bound o
                 \explan{(e)}\leq 3 \delta + f(x_h) + \frac{1}{d+1} (f(x_f) - f(x_h)) \,, \label{eq:ts-ridge:1}
             \end{align}
             where \texttt{(a)} follows because $f$ is a Lipschitz ridge function and using Lemma~\ref{lem:lip} and the definition of $x_g'$ so that
-            $|\sip{x_g - x_g', \theta}| = \delta$.
-            \texttt{(b)} by definitions and the fact that $f(\cdot) = \ell(\ip{\cdot, \theta})$,
-            \texttt{(c)} by convexity of $f$,
-            \texttt{(d)} from \cref{eq:ts-ridge:rel} and because $f(x'_f) \leq f(x'_h)$.
-            \texttt{(e)} uses again that $f$ is a Lipschitz ridge function and Lemma~\ref{lem:lip} and that $|\sip{x_h' - x_h, \theta}| = \delta$.
+            $|\sip{x_g - x_g', \theta}| = \delta$;
+            \texttt{(b)} holds by definitions and the fact that $f(\cdot) = \ell(\ip{\cdot, \theta})$;
+            \texttt{(c)} by convexity of $f$;
+            \texttt{(d)} follows from \cref{eq:ts-ridge:rel} and because $f(x'_f) \leq f(x'_h)$;
+            and \texttt{(e)} uses again that $f$ is a Lipschitz ridge function and Lemma~\ref{lem:lip} and that $|\sip{x_h' - x_h, \theta}| = \delta$.
             Suppose that $f(x_h) \geq \bar f(x_h) + \delta$, then $(f(x_h) - \bar f(x_h))^2 \geq \delta^2$ and \ref{lem:ridge-ir-1:b} holds.
             Otherwise $f(x_h) < \bar f(x_h) + \delta$ and so
             \begin{align*}
@@ -1612,7 +1613,7 @@ Like \cref{thm:ts-1d}, \cref{thm:ts-ridge} is established by combining a bound o
 
         \caption{The two cases considered in the proof of Lemma~\ref{lem:ridge-ir-1}.
             In the left figure, the situation is such that $E_\delta(\cC \setminus \{f\})$ is a constant fraction less volume than $E_\delta(\cC)$.
-            On the other hand, in the figure on the right one of $(f(x_h) - \bar f(x_h))^2$ or $(f(x_g) - \bar f(x_g))^2$ must be reasonably large.}
+            On the other hand, in the figure on the right, one of $(f(x_h) - \bar f(x_h))^2$ or $(f(x_g) - \bar f(x_g))^2$ must be reasonably large.}
         \label{fig:ir-ridge}
     \end{figure}
 
