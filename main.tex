@@ -263,7 +263,7 @@
 
 \begin{titlepage}
     \centering
-    \textbf{\large{Thompson Sampling for Bandit Convex Optimization\\(Version 1.1)}}
+    \textbf{\large{Thompson Sampling for Bandit Convex Optimization\\(Version 2.0)}}
     \vskip.5in by \vskip.5in
     \large{Alireza Bakhtiari}
 
@@ -558,8 +558,7 @@ The centered euclidean ball of radius $r > 0$ is $\ball_r = \{x \in \R^d : \norm
 the sphere is $\sphere_r = \{x \in \R^d : \norm{x} = r\}$. We also let $\ball_r(x) = \{y \in \R^d : \norm{x - y} \leq r\}$.
 We let $H(x, \eta) = \{y : \ip{y, \eta} \geq \ip{x, \eta}\}$, which is a half-space with inward-facing normal $\eta$.
 Given a finite set $\cC$ let $\pair(\cC) = \{(x, y) \in \cC : x \neq y\}$ be the set of all distinct ordered pairs in $\cC$ and abbreviate $\pair(k) = \pair([k] \times [k])$.
-The convex hull of a subset $A$ of a finite dimensional vector space $V$ is $\conv(A)=\{ \sum_{i=1}^{m}\lambda_i a_i \;:\; m\in\mathbb{N},\ a_i\in A,\ \lambda_i\ge 0,\ \sum_{i=1}^{m}\lambda_i=1\}$.
-The space of probability measures on a convex body $\cK \in \R^d$ with respect to the Borel $\sigma$-algebra is $\sP(\cK)$.
+For nonempty $A,B\subset\mathbb{R}^d$, the Minkowski sum is $A+B=\{a+b:a\in A,b\in B\}$.
 Similarly, $\sP(\sF)$ is a space of probability measures on $\sF$ with some unspecified $\sigma$-algebra ensuring that $f \mapsto f(x)$
 is measurable for all $x \in \cK$.
 Given a convex function $f : \cK \to \R$ we define $\lip_K(f) = \sup_{x \neq y \in \cK} (f(x) - f(y)) / \norm{x - y}$.
@@ -1279,6 +1278,73 @@ Our first main theorem shows that \ts{} is statistically efficient when the loss
     \end{align}
     for reasons that become clear later.
     We establish a contradiction in three steps.
+    \begin{figure}[t]
+        \begin{tikzpicture}[scale=3]
+            \draw[thin] (0,0) -- (0.3,0.02) -- (0.6,0.1) -- (1,0.5);
+            \draw[thick,red] (0,-0.23) -- (1,0.52);
+            \node[anchor=west] at (1,.52) {$f_1$};
+            \node[anchor=west] at (1, 0.2){$f_3$};
+            \node[anchor=east] at (0,0) {$\bar F$};
+            \draw[thick,blue] plot [smooth] coordinates {(1,0.2) (0.5,0.2) (0,0.3)};
+            \draw (0,-0.25) -- (1,-0.25);
+            \draw (0,-0.25) -- (0,-0.27);
+            \draw (1,-0.25) -- (1,-0.27);
+            \node[anchor=north] at (0,-0.25) {$x_1$};
+            \node[anchor=north] at (0.3, -0.25) {$x_2$};
+            \node[anchor=north] at (1,-0.25) {$x_3$};
+            \node[anchor=north] at (0.5,-0.45) {\texttt{(i)}};
+        \end{tikzpicture}
+        \hspace{0.5cm}
+        \begin{tikzpicture}[scale=3]
+            \draw[thin] (0,0) -- (0.6,0.02) -- (1,0.22);
+            \draw[thick,red] (0,-0.23) -- (1,0.24);
+            \node[anchor=west] at (1,.24) {$f_1$};
+
+            \node[anchor=west] at (1, -0.06){$f_3$};
+            \draw[thick,blue] (0,0.1) -- (1,-0.08);
+
+            \node[anchor=east] at (0,0) {$\bar F$};
+            \draw (0,-0.25) -- (1,-0.25);
+            \draw (0,-0.25) -- (0,-0.27);
+            \draw (1,-0.25) -- (1,-0.27);
+            \node[anchor=north] at (0,-0.25) {$x_1$};
+            \node[anchor=north] at (0.6, -0.25) {$x_2$};
+            \node[anchor=north] at (1,-0.25) {$x_3$};
+            \node[anchor=north] at (0.5,-0.45) {\texttt{(ii)}};
+        \end{tikzpicture}
+        \hspace{0.5cm}
+        \begin{tikzpicture}[scale=3]
+            \draw[thin] (0,0) -- (0.6,0.02) -- (1,0.22) -- (1.5,0.44);
+
+            \draw[thick,red] (0,-0.23) -- (1.5,0.46);
+            \node[anchor=south] at (1.5,.46) {$f_1$};
+
+            \draw[thick,green!30!black] (0,0.02) -- (1.5,-0.04);
+            \node[anchor=west] at (1.5,-0.04) {$f_4$};
+
+            \node[anchor=west] at (1.5, 0.41){$f_3$};
+            \draw[thick,blue] (0,0.08) -- (1,-0.06) -- (1.5,0.41);
+            \node[anchor=east] at (0,0) {$\bar F$};
+
+            \draw (0,-0.25) -- (1.5,-0.25);
+            \draw (0,-0.25) -- (0,-0.27);
+            \draw (1.5,-0.25) -- (1.5,-0.27);
+
+            \node[anchor=north] at (0,-0.25) {$x_1$};
+            \node[anchor=north] at (0.6, -0.25) {$x_2$};
+            \node[anchor=north] at (1,-0.25) {$x_3$};
+            \node[anchor=north] at (1.5,-0.25) {$x_4$};
+            \node[anchor=north] at (0.75,-0.45) {\texttt{(iii)}};
+        \end{tikzpicture}
+
+        \caption{
+            \texttt{(i)} shows that if $x_2$ is too close to $x_1$, then $f_1(x_3)$ must be large, which implies that $f_3(x_3)$ must be large
+            and so too must $f_3(x_1)$, which shows that $f_3(x_1) - \bar F(x_1)$ is large.
+            \texttt{(ii)} shows what happens if $f_3(x_3)$ is too far below $\bar F(x_1)$, which is that $f_3(x_1)$ must be much larger than $\bar F(x_1)$.
+            \texttt{(iii)} shows that $f_4(x_3)$ cannot be much larger than $f_3(x_3)$ and therefore $\bar F(x_3) - f_4(x_3)$ must be large.
+        }
+        \label{fig:ts}
+    \end{figure}
     The main argument in each step is illustrated in Figure~\ref{fig:ts}.
     \begin{enumsteps}
         \item \label{step:ts:i} We start by showing that $x_2$ cannot be too far from $x_3$.
@@ -1346,184 +1412,105 @@ Our first main theorem shows that \ts{} is statistically efficient when the loss
     Use \cref{thm:ts} with $\alpha= 1/n$ and then \cref{thm:ts-ir-regret}.
 \end{proof}
 
-\begin{figure}[h!]
-    \begin{tikzpicture}[scale=3]
-        \draw[thin] (0,0) -- (0.3,0.02) -- (0.6,0.1) -- (1,0.5);
-        \draw[thick,red] (0,-0.23) -- (1,0.52);
-        \node[anchor=west] at (1,.52) {$f_1$};
-        \node[anchor=west] at (1, 0.2){$f_3$};
-        \node[anchor=east] at (0,0) {$\bar F$};
-        \draw[thick,blue] plot [smooth] coordinates {(1,0.2) (0.5,0.2) (0,0.3)};
-        \draw (0,-0.25) -- (1,-0.25);
-        \draw (0,-0.25) -- (0,-0.27);
-        \draw (1,-0.25) -- (1,-0.27);
-        \node[anchor=north] at (0,-0.25) {$x_1$};
-        \node[anchor=north] at (0.3, -0.25) {$x_2$};
-        \node[anchor=north] at (1,-0.25) {$x_3$};
-        \node[anchor=north] at (0.5,-0.45) {\texttt{(i)}};
-    \end{tikzpicture}
-    \hspace{0.5cm}
-    \begin{tikzpicture}[scale=3]
-        \draw[thin] (0,0) -- (0.6,0.02) -- (1,0.22);
-        \draw[thick,red] (0,-0.23) -- (1,0.24);
-        \node[anchor=west] at (1,.24) {$f_1$};
-
-        \node[anchor=west] at (1, -0.06){$f_3$};
-        \draw[thick,blue] (0,0.1) -- (1,-0.08);
-
-        \node[anchor=east] at (0,0) {$\bar F$};
-        \draw (0,-0.25) -- (1,-0.25);
-        \draw (0,-0.25) -- (0,-0.27);
-        \draw (1,-0.25) -- (1,-0.27);
-        \node[anchor=north] at (0,-0.25) {$x_1$};
-        \node[anchor=north] at (0.6, -0.25) {$x_2$};
-        \node[anchor=north] at (1,-0.25) {$x_3$};
-        \node[anchor=north] at (0.5,-0.45) {\texttt{(ii)}};
-    \end{tikzpicture}
-    \hspace{0.5cm}
-    \begin{tikzpicture}[scale=3]
-        \draw[thin] (0,0) -- (0.6,0.02) -- (1,0.22) -- (1.5,0.44);
-
-        \draw[thick,red] (0,-0.23) -- (1.5,0.46);
-        \node[anchor=south] at (1.5,.46) {$f_1$};
-
-        \draw[thick,green!30!black] (0,0.02) -- (1.5,-0.04);
-        \node[anchor=west] at (1.5,-0.04) {$f_4$};
-
-        \node[anchor=west] at (1.5, 0.41){$f_3$};
-        \draw[thick,blue] (0,0.08) -- (1,-0.06) -- (1.5,0.41);
-        \node[anchor=east] at (0,0) {$\bar F$};
-
-        \draw (0,-0.25) -- (1.5,-0.25);
-        \draw (0,-0.25) -- (0,-0.27);
-        \draw (1.5,-0.25) -- (1.5,-0.27);
-
-        \node[anchor=north] at (0,-0.25) {$x_1$};
-        \node[anchor=north] at (0.6, -0.25) {$x_2$};
-        \node[anchor=north] at (1,-0.25) {$x_3$};
-        \node[anchor=north] at (1.5,-0.25) {$x_4$};
-        \node[anchor=north] at (0.75,-0.45) {\texttt{(iii)}};
-    \end{tikzpicture}
-
-    \caption{
-        \texttt{(i)} shows that if $x_2$ is too close to $x_1$, then $f_1(x_3)$ must be large, which implies that $f_3(x_3)$ must be large
-        and so too must $f_3(x_1)$, which shows that $f_3(x_1) - \bar F(x_1)$ is large.
-        \texttt{(ii)} shows what happens if $f_3(x_3)$ is too far below $\bar F(x_1)$, which is that $f_3(x_1)$ must be much larger than $\bar F(x_1)$.
-        \texttt{(iii)} shows that $f_4(x_3)$ cannot be much larger than $f_3(x_3)$ and therefore $\bar F(x_3) - f_4(x_3)$ must be large.
-    }
-    \label{fig:ts}
-\end{figure}
 
 \chapter{Thompson Sampling for Ridge Functions}
 
 We now consider the multi-dimensional convex monotone ridge function setting where $\sF = \sF_{\pb\pl\pr\pm}$
 
 \begin{theorem}\label{thm:ts-ridge}
+    The following holds:
     $\displaystyle \sup_{\xi \in \sP(\sF_{\pb\pl\pr\pm})} \BReg_n(\ts, \xi) = O\left(d^{2.5} \sqrt{n} \log(n d \diam(\cK))^2\right)$.
 \end{theorem}
 
+The class of convex ridge functions is an extension of the class of linear functions, which have been studied extensively in the literature.
 \cite{RV16} used information-theoretic means to show that for linear bandits the regret is at most $\tilde O(d \sqrt{n})$.
 \cite{lattimore2021minimax} showed that for (possibly non-monotone) convex ridge functions a version of \IDS{} has Bayesian regret at most $\tilde O(d \sqrt{n})$.
-The downside is that \IDS{} is barely implementable in practice, even given efficient access to posterior samples.
+The downside is that \IDS{} is often not implementable in practice, even given efficient access to posterior samples, whereas Thompson Sampling only needs to minimize a convex function given an efficient sampling oracle from the posterior.
 Like \cref{thm:ts-1d}, \cref{thm:ts-ridge} is established by combining a bound on the information ratio with \cref{thm:ts-ir-regret}.
 
-\begin{theorem}\label{thm:ridge-ir}
-    $(\alpha, \beta \ceil{\log(1/\alpha)}) \in \IR(\sF_{\pb\pl\pr\pm})$ whenever $\alpha \in (0,1)$ and
-    \begin{align*}
-        \beta = O\left(d^4 \log\left(\frac{d \diam(\cK)}{\alpha}\right)^2\right) \,.
-    \end{align*}
-    with the Big-O hiding only a universal constant.
+We first provide two lemmas that are used in the proof.
+\begin{theorem}[John's Theorem, \cite{todd2016minimum} Theorem 1.1]
+    \label{thm:john}
+    Let $X \subset \R^d$ be a convex body, and $E$ be the ellipsoid of maximal volume contained in $X$. Then $X \subseteq d E$.
+\end{theorem}
+\begin{theorem}[Khachiyan volume bound \cite{khachiyan1990inequality}]\label{thm:khachiyan}
+    Let $E=\{x\in\mathbb{R}^d:(x-\mu)^\top\Sigma^{-1}(x-\mu)\le1\}$ and let
+    $H=\{x:a^\top(x-\mu)\le0\}$ be a halfspace
+    that contains the center $\mu$ of $E$ and splits $E$ into two parts
+    $E^+ = E \cap H$ and $E^- = E \cap H^c$.
+    Let $V^+$ and $V^-$ be the volumes of the maximal volume ellipsoids contained in $E^+$ and $E^-$, respectively.
+    Then it holds that $\max(V^+, V^-) \leq 0.85 \vol(E)$.
 \end{theorem}
 
 
+\begin{theorem}\label{thm:ridge-ir}
+    For any $\alpha \in (0,1)$ and
+    \begin{align*}
+        \beta = O\left(d^4 \log\left(\frac{d \diam(\cK)}{\alpha}\right)^2\right) \,,
+    \end{align*}
+    it holds that $(\alpha, \beta \ceil{\log(1/\alpha)}) \in \IR(\sF_{\pb\pl\pr\pm})$ with the Big-O hiding only a universal constant.
+\end{theorem}
+
 \begin{proof}
-    Abbreviate $\sF = \sF_{\pb\pl\pm\pr}$.
-    The high-level argument follows the proof of Theorem~\ref{thm:ts}.
-    The main challenge is lower bounding the quadratic (information gain) term that appears in Lemma~\ref{lem:decomp-big},
-    which uses an argument based on the method of inscribed ellipsoid for optimization \citep{tarasov1988method}.
-    Let $\bar f \in \conv(\sF)$.
-    Given a nonempty finite set $\cC \subset \sF$ and $\delta > 0$, let
-    $J_\delta(\cC) = \conv\left(\cup_{g \in \cC} \ball_\delta(x_g)\right)$.
-    Moreover, let $E_\delta(\cC)$ be the ellipsoid of maximum volume enclosed in $J_\delta(\cC)$, which is called John's ellipsoid.
-    We now prove two lemmas.
-    The first shows that for a suitable subset $\cC$ of loss functions either the information gain is reasonably large
-    or some function $f$ can be removed from $\cC$ in such a way that $E_\delta(\cC \setminus \{f\})$ is considerably smaller than $E_\delta(\cC)$.
+    Abbreviate $\sF = \sF_{\pb\pl\pr\pm}$.
+    The high-level argument follows the proof of Theorem~\ref{thm:ts}---first using \cref{lem:decomp-big} to partition the class $\sF_{\pb\pl\pr\pm}$ and then using convexity of the functions to lower bound the information gain.
+    Let $\bar{f} \in \conv(\sF)$.
 
-    \begin{lemma}\label{lem:ridge-ir-1}
-        Let $\epsilon > 0$, $\delta = \frac{\epsilon}{12(d+1)}$ and $\cC \subset \sF$ be a nonempty finite set such that for all $f, g \in \cC$,
-        $\bar f(x_f) - f_\star \in [\epsilon/2, \epsilon]$ and
-        $|\bar f(x_f) - \bar f(x_g)| \leq \delta$.
-        Then at least one of the following holds:
-        \begin{enumroman}
-            \item There exists an $f \in \cC$ such that $\vol(E_\delta(\cC \setminus \{f\})) \leq 0.85 \vol(E_\delta(\cC))$. \label{lem:ridge-ir-1:a}
-            \item There exists a pair $f, g \in \pair(\cC)$ such that $(f(x_g) - \bar f(x_g))^2 \geq \delta^2$. \label{lem:ridge-ir-1:b}
-        \end{enumroman}
-    \end{lemma}
+    For $0 \leq i \leq \ceil{\log_2(1/\alpha)}$ let
+    \begin{align*}
+        \sF_i = \begin{cases}
+                    \{f \in \sF : \bar f(x_f) - f_\star \in [\alpha 2^{i-1}, \alpha 2^{i})\}, & \text{if } i > 0;    \\
+                    \{f \in \sF : \bar f(x_f) - f_\star < \alpha\},                           & \text{if } i = 0 \,,
+                \end{cases}
+    \end{align*}
+    To be able to apply Lemma~\ref{lem:decomp-big}, the decomposition lemma, we will show that for all $0 \leq i \leq \ceil{\log_2(1/\alpha)}$,
+    for $\epsilon_i = \alpha 2^i$ and $f_1,\ldots,f_k \in \sF_i$,
+    \begin{align}
+        \sup_{f \in \sF_i} \left(\bar f(x_f) - f_\star\right) \leq \epsilon_i \leq \alpha + \sqrt{512 \sum_{(j, l) \in \pair(k)} (f_j(x_{f_l}) - \bar f(x_{f_l}))^2}\,,
+        \label{eq:ridge:condition}
+    \end{align}
+    with
+    \begin{align*}
+        k = 9d\left[1 + 2d + 8d\ceil{\log\left(\frac{2d \diam(\cK)}{\alpha}\right)}\right] = O\left(d^2 \log\left(\frac{d \diam(\cK)}{\alpha}\right)\right) \,.
+    \end{align*}
+    Then \cref{lem:decomp-big} will imply that $(\alpha, 512k(k-1) (1 + \ceil{\log(1/\alpha)})) \in \IR(\sF)$, as required.
 
-    \begin{proof}
-        Let $\mu \in \R^d$ and $\Sigma$ be positive definite such that $E_{\delta}(\cC) = \{x : \norm{x - \mu}_{\Sigma^{-1}} \leq 1 \}$ and for $r > 0$,
-        let $E_{\delta,r}(\cC) = \{x : \norm{x - \mu}_{\Sigma^{-1}} \leq r\}$.
-        By John's theorem \citep[Remark 2.1.17]{ASG15}, $E_{\delta}(\cC) \subset J_\delta(\cC) \subset E_{\delta,d}(\cC)$.
-        Let $f \in \cC$ be arbitrary.
-        By assumption there exists a convex monotone increasing $\ell$ and $\theta \in \sphere_1$ such that
-        $f = \ell(\ip{\cdot, \theta})$.
-        Let $H = H(\mu, \theta)$, which is the half-space passing through the center of John's ellipsoid $E_{\delta}(\cC)$ with inward-facing normal $\theta$.
-        Consider the following cases, illustrated in Figure~\ref{fig:ir-ridge}:
-        \begin{enumcases}
-            \item \label{lem:ir-ridge:c1} $\ip{x_g, \theta} \geq \ip{\mu, \theta} + \delta$ for all $g \in \cC \setminus \{f\}$.
-            In this case $J_\delta(\cC \setminus \{f\}) \subset H \cap J_\delta(\cC)$ and therefore
-            the inequality of \cite{khachiyan1990inequality} shows that
-            $\vol(E_{\delta}(\cC \setminus \{f\}))) \leq 0.85 \vol(E_{\delta}(\cC))$.
-            \item \label{lem:ir-ridge:c2} There exists a $g \in \cC \setminus \{f\}$ such that
-            such that $\ip{x_g, \theta} < \ip{\mu, \theta} + \delta$.
-            Since $E_{\delta}(\cC) \subset J_\delta(\cC)$, there exists an $x \in J_\delta(\cC)$ such that
-            $\ip{x, \theta} \geq \ip{\mu, \theta} + \norm{\theta}_\Sigma$.
-            By the definition of $J_\delta(\cC)$ it follows that there exists a $h \in \cC$ such that
-            $\ip{x_h, \theta} \geq \ip{\mu, \theta} + \norm{\theta}_\Sigma - \delta$.
-            Let $x_h' = x_h + \delta \theta$ and $x_g' = x_g - \delta \theta$ and $x_f' = x_f - \delta \theta$.
-            Collecting the above facts, we have
-            \begin{align}
-                \sip{x_f', \theta} & \geq \ip{\mu, \theta} - d \norm{\theta}_\Sigma                           & (\text{since } J_\delta(\cC) \subset E_{\delta, d}(\cC)) \\
-                \sip{x_g', \theta} & \leq \ip{\mu, \theta}                                                                                                               \\
-                \sip{x_h', \theta} & \geq \ip{\mu, \theta} + \norm{\theta}_\Sigma \,. \label{eq:ts-ridge:rel} & (\text{since }  E_{\delta}(\cC) \subset J_\delta(\cC))
-            \end{align}
-            Since $\ell$ is nondecreasing and $f(x_f) \leq f(x_g)$ it follows that $\sip{x_f', \theta} \leq \sip{x_g', \theta} \leq \sip{x_h', \theta}$.
-            Therefore,
-            \begin{align}
-                f(x_g)
-                 & \explan{(a)}\leq \delta + f(x_g')                                                                                 \nonumber
-                \explan{(b)}= \delta + f\left(\frac{\sip{x_g' - x_f', \theta}}{\sip{x_h' - x_f', \theta}} x_h' + \frac{\sip{x_h' - x_g', \theta}}{\sip{x_h' - x_f',\theta}} x_f'\right) \nonumber \\
-                 & \explan{(c)}\leq \delta + f(x_h') + \frac{\sip{x_h' - x_g', \theta}}{\sip{x_h' - x_f', \theta}} (f(x_f') - f(x_h')) \nonumber                                                  \\
-                 & \explan{(d)}\leq \delta + f(x_h') + \frac{1}{d+1} (f(x_f') - f(x_h'))
-                \explan{(e)}\leq 3 \delta + f(x_h) + \frac{1}{d+1} (f(x_f) - f(x_h)) \,, \label{eq:ts-ridge:1}
-            \end{align}
-            where \texttt{(a)} follows because $f$ is a Lipschitz ridge function and using Lemma~\ref{lem:lip} and the definition of $x_g'$ so that
-            $|\sip{x_g - x_g', \theta}| = \delta$;
-            \texttt{(b)} holds by definitions and the fact that $f(\cdot) = \ell(\ip{\cdot, \theta})$;
-            \texttt{(c)} by convexity of $f$;
-            \texttt{(d)} follows from \cref{eq:ts-ridge:rel} and because $f(x'_f) \leq f(x'_h)$;
-            and \texttt{(e)} uses again that $f$ is a Lipschitz ridge function and Lemma~\ref{lem:lip} and that $|\sip{x_h' - x_h, \theta}| = \delta$.
-            Suppose that $f(x_h) \geq \bar f(x_h) + \delta$, then $(f(x_h) - \bar f(x_h))^2 \geq \delta^2$ and \ref{lem:ridge-ir-1:b} holds.
-            Otherwise $f(x_h) < \bar f(x_h) + \delta$ and so
-            \begin{align*}
-                f(x_g)
-                 & \explan{(a)}\leq 3 \delta + \frac{d}{d+1} f(x_h) + \frac{1}{d+1} f(x_f)
-                \explan{(b)}\leq 3 \delta + \frac{d}{d+1} (\bar f(x_h) + \delta) + \frac{1}{d+1} (\bar f(x_h) + \delta - \epsilon / 2) \\
-                 & \explan{(c)}\leq 4 \delta + \bar f(x_h) - \frac{\epsilon}{2(d+1)}
-                \explan{(d)}= \bar f(x_h) - 2\delta
-                \explan{(e)}\leq \bar f(x_g) - \delta \,,
-            \end{align*}
-            where \texttt{(a)} follows from \cref{eq:ts-ridge:1},
-            \texttt{(b)} follows from the assumption in the lemma statement that $f(x_f) \leq \bar f(x_f) - \epsilon/2 \leq \bar f(x_h) + \delta - \epsilon/2$
-            and $f(x_h) < \bar f(x_h) + \delta$.
-            \texttt{(c)} by naive simplification,
-            \texttt{(d)} by the definition of $\epsilon$ and $\delta$
-            and \texttt{(e)} by the assumptions in the lemma.
-            Therefore $f(x_g) \leq \bar f(x_g) - \delta$,
-            which implies that $(f(x_g) - \bar f(x_g))^2 \geq \delta^2$ and again \ref{lem:ridge-ir-1:b} holds.
-        \end{enumcases}
-        Summarising, in \ref{lem:ir-ridge:c1}, \ref{lem:ridge-ir-1:a} holds while in \ref{lem:ir-ridge:c2}, \ref{lem:ridge-ir-1:b} holds.
-    \end{proof}
+    It remains to verify \cref{eq:ridge:condition}.
+    The first inequality in \cref{eq:ridge:condition} follows immediately from the definition of $\epsilon_i$ and $\sF_i$. The second is also immediate when $i = 0$ by the definition of $\sF_i$.
+    Suppose now that $i > 0$, and to reduce the clutter let $\epsilon = \epsilon_i$.
+    Let $f_1,\ldots,f_k \in \sF_i$ and
+    assume without loss of generality that $j \mapsto \bar f(x_{f_j})$ is non-increasing.
+    The second inequality in \cref{eq:ridge:condition} holds immediately if $f_j = f_l$ for some $(j,l) \in \pair(k)$ since then $f_j(x_{f_l}) = f_l(x_{f_l}) \leq \bar f(x_{f_l}) - \epsilon/2$.
+    Therefore, we can focus on the case where $f_j \neq f_l$ for all $(j,l) \in \pair(k)$. We consider two cases:
+    \begin{enumcases}
+        \item Large drop of $\bar{f}$: $\bar f(x_{f_1}) \geq \bar f(x_{f_k}) + 2\epsilon$. In this case
+        $f_1(x_{f_k}) \geq f_1(x_{f_1}) \geq \bar f(x_{f_1}) - \epsilon \geq \bar f(x_{f_k}) + \epsilon$,
+        which shows that $(f_1(x_{f_k}) - \bar f(x_{f_k}))^2 \geq \epsilon^2$ and the second inequality in \cref{eq:ridge:condition} holds.
+        \item Small drop of $\bar{f}$: $\bar f(x_1) < \bar f(x_k) + 2\epsilon$. Let $\delta = \frac{\epsilon}{4d}$.
+        Let $b = 9d$ and $\cC_1,\ldots,\cC_b$ be formed by dividing $\{f_1,\ldots,f_k\}$ in order into $b$ blocks of equal size.
+        Let $s_a = \max_{f,g \in \cC_a} |\bar f(x_f) - \bar f(x_g)|$.
+        Given the conditions of the case we have $2\epsilon > \sum_{a=1}^b s_a \geq \sum_{a=1}^b \delta \sind(s_a > \delta)$,
+        which means that $\sum_{a=1}^b \sind(s_a > \delta) < 2\epsilon / \delta \leq 8d = b - d$.
+        Hence, there exist at least $d$ blocks $\cC_a$ for which $s_a \leq \delta$.
+        For each of these blocks, we have
+        \begin{align*}
+            s_a = \max_{f,g \in \cC_a} |\bar f(x_f) - \bar f(x_g)| \leq \delta\,,
+        \end{align*}
+        which intuitively means that the value of $\bar{f}$ is approximately constant within each block $\cC_a$.
+        Next, we exploit this property to lower bound the quadratic (information gain) term within each of these blocks.
+        To this end, we use an iterative process based on the method of inscribed ellipsoid for optimization \citep{tarasov1988method}, where we use shrinking ellipsoids to show that the information gain is sufficiently large (for a pair $f_j, f_l \in \cC_a$) unless the volume of certain ellipsoid (defined later) shrinks significantly.
+        % and these blocks satisfy the conditions of Lemma~\ref{lem:ridge-ir-2} so that
+        % $\sum_{j,l \in \pair(k)} (f_j(x_{f_l}) - \bar f(x_{f_l}))^2 \geq d^2 \delta^2 \geq \epsilon^2 / 512$ and again the
+        % second inequality in \cref{eq:ridge:condition} holds.
+
+        Given a nonempty finite set $\cC \subset \sF$ and $\delta > 0$, let
+        $J_\delta(\cC) = \conv\left(\cup_{g \in \cC} \ball_\delta(x_g)\right) \subseteq \R^d$.
+        Moreover, let $E_\delta(\cC)$ be the ellipsoid of maximum volume enclosed in $J_\delta(\cC)$ (this is known as John's ellipsoid \cite{john1948extremum}).
+        We now state two lemmas.
+        The first shows that for a suitable subset $\cC$ of loss functions either the information gain is reasonably large
+        or one can find a function $f$ in $\cC$ such that the ellipsoid $E_\delta(\cC \setminus \{f\})$ has a  considerably smaller volume than $E_\delta(\cC)$.
+    \end{enumcases}
+
 
     \begin{figure}[h!]
         \centering
@@ -1616,28 +1603,122 @@ Like \cref{thm:ts-1d}, \cref{thm:ts-ridge} is established by combining a bound o
     \end{figure}
 
     \FloatBarrier
+    \begin{lemma}\label{lem:ridge-ir-1}
+        Let $\bar{f} \in \conv(\sF)$.
+        Let $\epsilon > 0$, $\delta = \frac{\epsilon}{4d}$ and $\cC \subset \sF$ be a nonempty finite set such that for all $f, g \in \cC$,
+        $\bar f(x_f) - f_\star \in [\epsilon/2, \epsilon]$ and
+        $|\bar f(x_f) - \bar f(x_g)| \leq \delta$.
+        Pick any $f \in \cC$.
+        Then at least one of the following holds:
+        \begin{enumroman}
+            \item We have $\vol(E_\delta(\cC \setminus \{f\})) \leq 0.85 \vol(E_\delta(\cC))$. \label{lem:ridge-ir-1:a}
+            \item There exists $g \in \cC\setminus\{f\}$ such that $(f(x_g) - \bar f(x_g))^2 \geq \delta^2$. \label{lem:ridge-ir-1:b}
+        \end{enumroman}
+    \end{lemma}
+
+    \begin{proof}
+        Let $\mu \in \R^d$ and $\Sigma \in \R^{d \times d}$ be positive definite such that $E_{\delta}(\cC) = \{x : \norm{x - \mu}_{\Sigma^{-1}} \leq 1 \}$ and for $r > 0$,
+        let $E_{\delta,r}(\cC) = \{x : \norm{x - \mu}_{\Sigma^{-1}} \leq r\}$.
+        By assumption there exists a convex non-decreasing function $\ell:\R\to\R$ and $\theta \in \sphere_1$ such that $f = \ell(\ip{\cdot, \theta})$.
+        Let $H = H(\mu, \theta)$, which is the half-space passing through the center of John's ellipsoid $E_{\delta}(\cC)$ with inward-facing normal $\theta$.
+        Consider the following cases, illustrated in Figure~\ref{fig:ir-ridge}:
+        \begin{enumcases}
+            \item \label{lem:ir-ridge:c1} $\ip{x_g, \theta} \geq \ip{\mu, \theta} + \delta$ for all $g \in \cC \setminus \{f\}$.
+            In this case $J_\delta(\cC \setminus \{f\}) \subset H \cap J_\delta(\cC)$ and therefore
+            the inequality of \cref{thm:khachiyan} shows that $\vol(E_{\delta}(\cC \setminus \{f\})) \leq 0.85 \vol(E_{\delta}(\cC))$.
+            \item \label{lem:ir-ridge:c2} There exists a $g \in \cC \setminus \{f\}$ such that
+            \begin{align}
+                \ip{x_g, \theta} < \ip{\mu, \theta} + \delta\,.
+                \label{eq:ts-ir-ridge-g}
+            \end{align}
+            We now show that for some $h \in \cC$, $\ip{x_h, \theta} \geq \ip{\mu, \theta} + \norm{\theta}_{\Sigma^{-1}}^{-1} - \delta$.
+            % Let $x = \mu + \tfrac{\theta}{\norm{\theta}_{\Sigma^{-1}}}$.
+            % Then $\norm{x - \mu}_{\Sigma^{-1}} = 1$ and so $x \in E_{\delta}(\cC) \subset J_\delta(\cC)$.
+            Let $\overline{x} = \argmax_{z \in E_\delta(\cC)} \ip{z, \theta}$,
+            which has the closed form of $\overline{x} = \mu + \tfrac{\Sigma \theta}{\norm{\theta}_\Sigma}$.
+            Since $J_\delta(\cC) = \conv(\cup_{g \in \cC} \ball_\delta(x_g))$,
+            $x = \sum_{g \in \cC} \lambda_g x_g'$ for some $x_g' \in \ball_\delta(x_g)$,
+            with $\lambda_g \geq 0$ and $\sum_{g \in \cC} \lambda_g = 1$.
+            Since $\ip{\cdot, \theta}$ is linear, there exists $h \in \cC$ such that $\ip{x_h', \theta} = \ip{\overline{x}, \theta}$.
+            Further, since $x_h' \in \ball_\delta(x_h)$ and $\norm{\theta}=1$, we have $\ip{x_h', \theta} \geq \ip{x_h, \theta} - \delta$.
+            Therefore,
+            \begin{align}
+                \ip{x_h, \theta} & \geq \ip{x_h', \theta} - \delta \geq \ip{\overline{x}, \theta} - \delta = \ip{\mu, \theta} + \norm{\theta}_{\Sigma} - \delta \,.
+                \label{eq:ts-ir-ridge-h}
+            \end{align}
+
+            Next, we show that $\ip{x_f', \theta} \geq \ip{\mu, \theta} - d\norm{\theta}_\Sigma$.
+            By \cref{thm:john}, we have $J_\delta(\cC) \subseteq E_{\delta,d}(\cC)$.
+            Let $\underline{x} = \argmin_{z \in E_{\delta,d}(\cC)} \ip{z, \theta}$,
+            which has the closed form of $\underline{x} = \mu - \tfrac{\Sigma \theta}{\norm{\theta}_\Sigma}$.
+            Note that $J_\delta(\cC) \subseteq E_{\delta,d}(\cC)$,
+            so $x_f' \in E_{\delta,d}(\cC)$ and $\ip{\underline{x}, \theta} \leq \ip{x_f', \theta}$. This together with $x_f' \in \ball_\delta(x_f)$ implies that
+            \begin{align}
+                \ip{x_f, \theta} & \geq \ip{x_f', \theta} - \delta \geq \ip{\underline{x}, \theta} - \delta = \ip{\mu, \theta} - d\norm{\theta}_{\Sigma} - \delta \,.
+                \label{eq:ts-ir-ridge-f}
+            \end{align}
+            Since $\ell$ is nondecreasing and $f(x_f) \leq f(x_g)$ it follows that $\sip{x_f', \theta} \leq \sip{x_g', \theta} \leq \sip{x_h', \theta}$.
+            Therefore,
+            \begin{align}
+                f(x_g)
+                 & \explan{(a)}\leq \delta + f(x_g')                                                                                 \nonumber
+                \explan{(b)}= \delta + f\left(\frac{\sip{x_g' - x_f', \theta}}{\sip{x_h' - x_f', \theta}} x_h' + \frac{\sip{x_h' - x_g', \theta}}{\sip{x_h' - x_f',\theta}} x_f'\right) \nonumber \\
+                 & \explan{(c)}\leq \delta + f(x_h') + \frac{\sip{x_h' - x_g', \theta}}{\sip{x_h' - x_f', \theta}} (f(x_f') - f(x_h')) \nonumber                                                  \\
+                 & \explan{(d)}\leq \delta + f(x_h') + \frac{1}{d} (f(x_f') - f(x_h'))
+                \explan{(e)}\leq 2 \delta + f(x_h) + \frac{1}{d} (f(x_f) - f(x_h)) \,, \label{eq:ts-ridge:1}
+            \end{align}
+            where \texttt{(a)} follows because $f$ is a 1-Lipschitz ridge function, and because
+            $|\sip{x_g - x_g', \theta}| = \delta$;
+            \texttt{(b)} holds by definitions and the fact that $f(\cdot) = \ell(\ip{\cdot, \theta})$;
+            \texttt{(c)} by convexity of $f$;
+            \texttt{(d)} follows from \cref{eq:ts-ir-ridge-g,eq:ts-ir-ridge-h,eq:ts-ir-ridge-f} and because $f(x'_f) \leq f(x'_h)$;
+            and \texttt{(e)} uses again that $f$ is a 1-Lipschitz ridge function, Lemma~\ref{lem:lip}, and that $|\sip{x_h' - x_h, \theta}| = \delta$.
+            If $f(x_h) \geq \bar f(x_h) + \delta$, then $(f(x_h) - \bar f(x_h))^2 \geq \delta^2$ and \ref{lem:ridge-ir-1:b} holds and we are done.
+            So it remains to consider the case when $f(x_h) < \bar f(x_h) + \delta$.
+            Then
+            \begin{align*}
+                f(x_g)
+                 & \explan{(a)}\leq 2 \delta + \frac{d-1}{d} f(x_h) + \frac{1}{d} f(x_f)
+                \explan{(b)}\leq 2 \delta + \frac{d-1}{d} (\bar f(x_h) + \delta) + \frac{1}{d} (\bar f(x_h) + \delta - \epsilon / 2) \\
+                 & \explan{(c)}\leq 3 \delta + \bar f(x_h) - \frac{\epsilon}{2d}
+                \explan{(d)}= \bar f(x_h) - 2\delta
+                \explan{(e)}\leq \bar f(x_g) - \delta \,,
+            \end{align*}
+            where \texttt{(a)} follows from \cref{eq:ts-ridge:1},
+            \texttt{(b)} follows from on the one hand from our assumption that
+            $f(x_f) \leq \bar f(x_f) - \epsilon/2 \leq \bar f(x_h) + \delta - \epsilon/2$, and on the other hand, that $f(x_h) < \bar f(x_h) + \delta$ holds thanks to the case we are considering;
+            \texttt{(c)} follows by calculations,
+            \texttt{(d)} by the definition of $\epsilon$ and $\delta$
+            and \texttt{(e)} by the assumptions of the lemma.
+            Therefore $f(x_g) \leq \bar f(x_g) - \delta$,
+            which implies that $(f(x_g) - \bar f(x_g))^2 \geq \delta^2$ and again \ref{lem:ridge-ir-1:b} holds, finishing the proof.
+        \end{enumcases}
+    \end{proof}
 
     The next lemma uses an inductive argument to show that any suitably large set $\cC$ satisfying the conditions of the previous lemma necessarily
     yields a large information gain.
 
     \begin{lemma}\label{lem:ridge-ir-2}
-        Suppose that $\cC$ satisfies the conditions of Lemma~\ref{lem:ridge-ir-1} for some $\epsilon \geq \alpha$ and
-        $|\cC| = 1 + 2d + 8 d \ceil{\log\left(\frac{24d(d+1) \diam(\cK)}{\alpha}\right)}$. Then
+        Suppose that $\cC, f$, and $\epsilon$ satisfy the conditions of Lemma~\ref{lem:ridge-ir-1} for some $\epsilon \geq \alpha \geq 0, \delta = \tfrac{\epsilon}{4d}$ and $|\cC| \geq 2 + 2d + 14 d \ceil{\log\left(\frac{2d \diam(\cK)}{\alpha}\right)}$.
+        Then
         \begin{align*}
-            \sum_{f,g \in \pair(\cC)} (f(x_g) - \bar f(x_g))^2 \geq d \delta^2 \,.
+            \sum_{(f,g) \in \pair(\cC)} (f(x_g) - \bar f(x_g))^2 \geq d \delta^2 \,.
         \end{align*}
     \end{lemma}
 
     \begin{proof}
-        Define a sequence $(\cC_k)$ of sets as follows.
-        Let $\cC_1 = \cC$ and $2m-1 \triangleq |\cC|$. Then, given $\cC_k$, define $\cC_{k+1} \subset \cC_k$ as a set such that one of two properties hold:
+        Define a sequence $(\cC_k)_{k\geq1}$ of sets as follows.
+        Let $\cC_1 = \cC$ and $m$ be such that $2m -1 \leq |\cC| \leq 2m$.
+        Note that $\tfrac{|\cC|}{2} \leq m \leq \tfrac{|\cC|+1}{2}$.
+        Then, given $\cC_k$, define $\cC_{k+1} \subset \cC_k$ as a set such that one of two properties hold:
         \begin{enumroman}
             \item $|\cC_{k+1}| = |\cC_k| - 1$ and $\vol(E_\delta(\cC_{k+1})) \leq 0.85 \vol(E_\delta(\cC_k))$; or \label{item:lem-ridge:a}
             \item $\cC_{k+1} = \cC_k \setminus \{f, g\}$ for some $f, g \in \pair(\cC_k)$ and $(f(x_g) - \bar f(x_g))^2 \geq \delta^2$. \label{item:lem-ridge:b}
         \end{enumroman}
         Such a sequence exists by Lemma~\ref{lem:ridge-ir-1}.
-        By definition $|\cC_1| = 2m-1$ and since $|\cC_{k+1}| \geq |\cC_k| - 2$, $|\cC_m| \geq |\cC_1| - 2(m-1) = 1$.
-        Recall that by John's theorem $E_\delta(\cC_m) \subset J_\delta(\cC_m) \subset E_{\delta,d}(\cC_m)$, which means that
+        It suffices to show that  in this process \ref{item:lem-ridge:b} happens at least $d$ times.
+        By definition $|\cC_1| \geq 2m-1$ and since $|\cC_{k+1}| \geq |\cC_k| - 2$, $|\cC_m| \geq |\cC_1| - 2(m-1) \geq 1$.
+        Recall that by \cref{thm:john} $E_\delta(\cC_m) \subset J_\delta(\cC_m) \subset E_{\delta,d}(\cC_m)$, which means that
         \begin{align*}
             \vol(E_\delta(\cC_m))
             = \left(\frac{1}{d}\right)^d \vol(E_{\delta,d}(\cC_m))
@@ -1653,53 +1734,28 @@ Like \cref{thm:ts-1d}, \cref{thm:ts-ridge} is established by combining a bound o
         which shows that
         \begin{align*}
             \tau
-            \leq \frac{d \log\left(\frac{\delta}{d(\diam(\cK) + \delta)}\right)}{\log(0.85)}
-            \leq 8 d \log\left(\frac{2d \diam(\cK)}{\delta}\right)
-            \leq |\cC| - 2d - 1\,.
+            \leq \frac{d \log\left(\frac{-\delta}{d(\diam(\cK) + \delta)}\right)}{\log(0.85)}
+            \leq 7 d \log\left(\frac{2d \diam(\cK)}{\delta}\right)
+            \leq \frac{|\cC|}{2} - d - 1\,.
+        \end{align*}
+        Note that \ref{item:lem-ridge:b} happens $s = m-\tau - 1$ times in the process produces $\cC_m$ from $\cC_1$.
+        Using the upper bound on $\tau$, we get
+        \begin{align*}
+            s \geq m - 1 - \left(\tfrac{|\cC|}{2} - d - 1\right)
+            \geq m - 1 - \tfrac{2m}{2} + d + 1
+            = d\,.
         \end{align*}
         Therefore \ref{item:lem-ridge:b} happens at least $d$ times and the claim follows by the definition of \ref{item:lem-ridge:b}.
     \end{proof}
 
-    The last step is to introduce a decomposition of the space of loss functions and show how to obtain finite sets satisfying
-    the conditions of Lemma~\ref{lem:ridge-ir-2}.
-    Let
+    To summarize, with $k = 9d\left[1 + 2d + 8d\ceil{\log\left(\frac{2d \diam(\cK)}{\alpha}\right)}\right]$,
+    at least $d$ many of the blocks $\cC_a$ satisfy the conditions of Lemma~\ref{lem:ridge-ir-2} and therefore
     \begin{align*}
-        k = (25d + 24)\left[1 + 2d + 8d\ceil{\log\left(\frac{24d(d+1) \diam(\cK)}{\alpha}\right)}\right] = O\left(d^2 \log\left(\frac{d \diam(\cK)}{\alpha}\right)\right) \,.
+        \sum_{(f,g) \in \pair(k)} (f(x_g) - \bar f(x_g))^2
+        \geq d \sum_{(f,g) \in \pair(\cC_a)} (f(x_g) - \bar f(x_g))^2
+        \geq d^2 \delta^2\,,
     \end{align*}
-    For $0 \leq i \leq \ceil{\log_2(1/\alpha)}$ let
-    \begin{align*}
-        \sF_i = \begin{cases}
-                    \{f \in \sF : \bar f(x_f) - f_\star \in [\alpha 2^{|i|-1}, \alpha 2^{|i|})\} & \text{if } i > 0     \\
-                    \{f \in \sF : \bar f(x_f) - f_\star < \alpha\}                               & \text{if } i = 0 \,.
-                \end{cases}
-    \end{align*}
-    In order to apply Lemma~\ref{lem:decomp-big} we will show that for all $0 \leq i \leq \ceil{\log_2(1/\alpha)}$
-    and with $\epsilon = \alpha 2^i$ that for all $f_1,\ldots,f_k \in \sF_i$,
-    \begin{align}
-        \sup_{f \in \sF_i} \left(\bar f(x_f) - f_\star\right) \leq \epsilon \leq \alpha + \sqrt{512 \sum_{j, l \in \pair(k)} (f_j(x_{f_l}) - \bar f(x_{f_l}))^2}\,.
-        \label{eq:ridge:condition}
-    \end{align}
-    This implies that $(\alpha, 512k(k-1) (1 + \ceil{\log(1/\alpha)})) \in \IR(\sF)$ as required.
-    The first inequality in \cref{eq:ridge:condition} follows immediately from the definition of $\epsilon$ and $\sF_i$. The second is also immediate when $i = 0$ by the definition of $\sF_i$.
-    Suppose now that $i > 0$.
-    Let $f_1,\ldots,f_k \in \sF_i$ and
-    assume without loss of generality that $j \mapsto \bar f(x_{f_j})$ is nonincreasing.
-    The second inequality in \cref{eq:ridge:condition} holds immediately if $f_j = f_l$ for some $j,l \in \pair(k)$ since $f_j(x_{f_l}) = f_j(x_{f_j}) \leq \bar f(x_{f_j}) - \epsilon/2$.
-    Suppose this is not the case and consider two cases:
-    \begin{enumcases}
-        \item $\bar f(x_{f_1}) \geq \bar f(x_{f_k}) + 2\epsilon$. In this case
-        $f_1(x_{f_k}) \geq f_1(x_{f_1}) \geq \bar f(x_{f_1}) - \epsilon \geq \bar f(x_{f_k}) + \epsilon$,
-        which shows that $(f_1(x_{f_k}) - \bar f(x_{f_k}))^2 \geq \epsilon^2$ and the second inequality \cref{eq:ridge:condition} holds.
-        \item $\bar f(x_1) < \bar f(x_k) + 2\epsilon$. Let $\delta = \frac{\epsilon}{12(d+1)}$ as in Lemma~\ref{lem:ridge-ir-2}.
-        Let $b = 25d + 24$ and $\cC_1,\ldots,\cC_b$ be formed by dividing $\{f_1,\ldots,f_k\}$ in order into $b$ blocks of equal size.
-        Let $s_a = \max_{f,g \in \cC_a} |\bar f(x_f) - \bar f(x_g)|$.
-        Given the conditions of the case we have $2\epsilon > \sum_{a=1}^b s_a \geq \sum_{a=1}^b \delta \sind(s_a > \delta)$,
-        which means that $\sum_{a=1}^b \sind(s_a > \delta) \leq 2\epsilon / \delta \leq 24(d+1) = b - d$.
-        Hence there exist at least $d$ blocks $\cC_a$ for which $s_a \leq \delta$ and these blocks satisfy the conditions of Lemma~\ref{lem:ridge-ir-2} so that
-        $\sum_{j,l \in \pair(k)} (f_j(x_{f_l}) - \bar f(x_{f_l}))^2 \geq d^2 \delta^2 \geq \epsilon^2 / 512$ and again the
-        second inequality in \cref{eq:ridge:condition} holds.
-    \end{enumcases}
-    Hence \cref{eq:ridge:condition} holds and the claim follows from Lemma~\ref{lem:decomp-big} and the definitions of $k$ and $m$.
+    where the last inequality holds by \cref{lem:ridge-ir-2}, finishing the proof.
 \end{proof}
 
 \chapter{\ts Lower-Bound for general Convex Functions}
