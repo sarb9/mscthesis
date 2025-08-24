@@ -222,6 +222,7 @@
 \newcommand{\EST}{\text{{\normalfont EST}}}
 \newcommand{\co}{\text{{\normalfont co}}}
 \DeclareMathOperator{\Log}{Log}
+\renewcommand{\epsilon}{\varepsilon}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%     stuff      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1765,35 +1766,97 @@ Thompson sampling has poor behaviour for general multi-dimensional convex functi
 that the classical information-theoretic techniques cannot improve on the best known bound for general bandit convex optimization
 of $\tilde O(d^{1.5} \sqrt{n})$. While these seem like quite different results, they are based on the same construction, which is
 based on finding a family of functions and prior that makes learning challenging.
+This family is based on constructing a convex function $f_\theta$ for each $\theta \in \sphere_1$ such that $f_\theta$ is minimised at $\theta$ with minimum value of $0$, and $f_\theta$ exactly agrees with the upward-shifted quadratic function outside of a ball of radius $\sqrt{1 + 2\epsilon}$ centered at $\theta$, where $\epsilon$ is the minimum value the upward-shifted quadratic function takes, which is realized at $x=0$.
+
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+                axis lines=middle,
+                width= 0.6\textwidth,
+                height=0.3\textwidth,
+                xlabel={$x$},
+                ylabel={$y$},
+                xtick={-1,0,1},
+                ytick={0,0.5,1},
+                domain=-1.2:1.2,
+                samples=400,
+                ymin=0, ymax=1.1,
+                xmin=-1.2, xmax=1.2,
+                legend style={
+                        at={(0.02,0.02)}, anchor=south west, draw=none, fill=none
+                    },
+                clip=false,
+                yticklabel style={yshift=6pt, xshift=3pt}
+            ]
+            % Parameters
+            \pgfmathsetmacro{\eps}{0.50}
+            \pgfmathsetmacro{\th}{1.0}
+            \pgfmathsetmacro{\s}{sqrt(1+2*\eps)}
+            \pgfmathsetmacro{\xm}{\th-\s}
+            \pgfmathsetmacro{\xp}{\th+\s}
+
+            % f_theta: left quadratic part
+            \addplot[very thick, domain=-1:\xm]
+            {\eps + 0.5*x^2};
+
+            % f_theta: middle (linear+abs) part
+            \addplot[very thick, domain=\xm:\th]
+            {\th*x - 1 + \s*abs(\th - x)}
+            node[pos=1, above, inner sep=6pt] {$f_1$};
+
+            % baseline f(x) = 1/2 + x^2/2
+            \addplot[ultra thick, domain=-1:1, dash pattern=on 1pt off 2pt ]
+            {0.5 + 0.5*x^2}
+            node[pos=0.85, above, inner sep=6pt] {$f$};
+            % \addlegendentry{$f(x)$}
+
+            % Minimizer marker at x = theta
+            \pgfmathsetmacro{\fth}{\th*\th - 1}
+            dash pattern=on 3pt off 2pt  % explicit, high-contrast dash
+
+            % \addplot[mark=*, only marks] coordinates {(\th,\fth)};
+            % \node[anchor=south] at (axis cs:\th,\fth) {$\;\theta$};
+
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Illustration of the function $f_\theta$ for $\epsilon = 0.5$ and $\theta = 1$ in 1 dimension. It can be seen that $f_\theta$ is convex, minimised at $\theta$ and lies below $f$.}
+    \label{fig:ftheta}
+\end{figure}
+
 
 \begin{lemma}\label{lem:f-theta}
     Let $\epsilon \in [0,1/2]$ and $\theta \in \sphere_1$ and define functions $f$ and $f_\theta$ by
     \begin{align*}
-        f(x)        & = \epsilon + \frac{1}{2} \norm{x}^2                                                                                 &
+        f(x)        & = \epsilon + \frac{1}{2} \norm{x}^2,                                                                                  &
         f_\theta(x) & = \begin{cases}
-                            f(x)                                                        & \text{if } \norm{\theta - x}^2 \geq 1 + 2 \epsilon \\
-                            \ip{\theta, x} - 1 + \sqrt{1 + 2\epsilon} \norm{\theta - x} & \text{otherwise} \,.
+                            f(x),                                                        & \text{if } \norm{\theta - x}^2 \geq 1 + 2 \epsilon; \\
+                            \ip{\theta, x} - 1 + \sqrt{1 + 2\epsilon} \norm{\theta - x}, & \text{otherwise} \,.
                         \end{cases}
     \end{align*}
-    Then $f_\theta$ is convex and minimised at $\theta$ and $\lip_{\ball_1}(f_\theta) \leq \sqrt{2 + 2\epsilon}$.
+    Then $f_\theta$ is convex, is minimized at $\theta$, $\lip_{\ball_1}(f_\theta) \leq \sqrt{2 + 2\epsilon}$, and $f_\theta(x) \leq f(x)$ for all $x \in \R^d$.
 \end{lemma}
-The function $f_\theta$ arises naturally as the largest convex function for which both $f_\theta(\theta) = 0$ and $f_\theta(x) \leq f(x)$ for
-all $x \in \R^d$.
-Equivalently, its epigraph is the convex hull of the epigraphs of $f$ and the convex indicator function: $\infty \sind_\theta(\cdot)$.
+The function $f_\theta$ arises naturally as the largest convex function for which both $f_\theta(\theta) = 0$ and $f_\theta(x) \leq f(x)$ for all $x \in \R^d$.
+The 1 dimensional version of this function is illustrated in Figure~\ref{fig:ftheta}.
+% Equivalently, its epigraph is the convex hull of the epigraphs of $f$ and the convex indicator function: $\infty \sind_\theta(\cdot)$.
+While for our later argument it suffices to consider $f_\theta$ only on $\ball_1$, in Lemma~\ref{lem:f-theta} we consider the $\R^d$ as the domain for generality.
 \begin{proof}[Proof of Lemma~\ref{lem:f-theta}] \label{app:proof:f-theta}
-    Recall that $\epsilon \in [0,1/2]$ and
-    \begin{align*}
-        f(x)        & = \epsilon + \frac{1}{2} \norm{x}^2                                                                                 &
-        f_\theta(x) & = \begin{cases}
-                            f(x)                                                         & \text{if } \norm{x - \theta}^2 \geq 1 + 2\epsilon \\
-                            \ip{\theta, x} - 1 + \sqrt{1 + 2 \epsilon} \norm{\theta - x} & \text{otherwise} \,.
-                        \end{cases}
-    \end{align*}
-    We need to prove that $f_\theta$ on $\ball_1$ is convex, Lipschitz and minimised at $\theta$.
-    Convexity follows because
+    % Recall that $\epsilon \in [0,1/2]$ and
+    % \begin{align*}
+    %     f(x)        & = \epsilon + \frac{1}{2} \norm{x}^2                                                                                 &
+    %     f_\theta(x) & = \begin{cases}
+    %                         f(x)                                                         & \text{if } \norm{x - \theta}^2 \geq 1 + 2\epsilon \\
+    %                         \ip{\theta, x} - 1 + \sqrt{1 + 2 \epsilon} \norm{\theta - x} & \text{otherwise} \,.
+    %                     \end{cases}
+    % \end{align*}
+    We need to prove that $f_\theta$ is convex, minimised at $\theta$,
+    $f_\theta(x) \leq f(x)$ for all $x \in \R^d$, and
+    when restricted to $\ball_1$, $f_\theta$ is $\sqrt{2 + 2\epsilon}$-Lipschitz.
+    That $f_\theta(x) \leq f(x)$ for all $x \in \R^d$ and that $f_\theta$ is convex follows because
     \begin{align}
-        g_\theta(x)
-         & \triangleq \sup_{y \in \R^d} \left\{ f(y) + \ip{f'(y), x - y} : f(y) + \ip{f'(y), \theta - y} \leq 0\right\}  \nonumber                \\
+        % g_\theta(x)
+        %  &
+         & \sup_{y \in \R^d} \left\{ f(y) + \ip{f'(y), x - y} : f(y) + \ip{f'(y), \theta - y} \leq 0\right\}  \nonumber                           \\
          & = \sup_{\substack{y \in \R^d                                                                                                           \\ r \leq 0}} \left\{ f(y) + \ip{f'(y), x - y} : f(y) + \ip{f'(y), \theta - y} = r \right\} \nonumber\\
          & = \sup_{\substack{y \in \R^d                                                                                                           \\ r \leq 0}} \left\{ \ip{f'(y), x - \theta} + r : f(y) + \ip{f'(y), \theta - y} = r \right\} \nonumber\\
          & = \sup_{\substack{y \in \R^d                                                                                                           \\ r \leq 0}} \left\{  \ip{y, x - \theta} + r : \norm{y - \theta}^2 = 1 + 2\epsilon - 2r \right\} \nonumber\\
@@ -1804,67 +1867,72 @@ Equivalently, its epigraph is the convex hull of the epigraphs of $f$ and the co
     where in the final inequality we note that the maximising $r$ is
     \begin{align*}
         r = \begin{cases}
-                \frac{1}{2} + \epsilon - \frac{1}{2}\norm{x - \theta}^2 & \text{if } \norm{x - \theta}^2 \geq 1 + 2\epsilon \\
-                0                                                       & \text{otherwise } \,.
+                \frac{1}{2} + \epsilon - \frac{1}{2}\norm{x - \theta}^2, & \text{if } \norm{x - \theta}^2 \geq 1 + 2\epsilon; \\
+                0,                                                       & \text{otherwise } \,.
             \end{cases}
     \end{align*}
     Therefore $f_\theta$ is the supremum over a set of linear functions and hence convex.
+
     That $f_\theta$ is minimised at $\theta$ follows directly from the first-order optimality conditions.
-    Let $\eta \in \sphere_1$. Then
+    To see this, let $\eta \in \sphere_1$. Then
     \begin{align*}
         Df_\theta(\theta)[\eta] = \ip{\theta, \eta} + \sqrt{1 + 2 \epsilon} \norm{\eta} > 0 \,,
     \end{align*}
     where $Df_\theta(\theta)[\cdot]$ is the directional derivative operator (noting that $f_\theta$ is not differentiable at $\theta$).
-    Lastly, for Lipschitzness. Since $f_\theta$ is continuous, it suffices to bound $\norm{f_\theta'(\cdot)}$ on $\interior(\ball_1)$ where $f_\theta$ is
+    Hence, only 0 is a subgradient of $f_\theta$ at $\theta$.
+
+    Lastly, for the Lipschitzness of $f_\theta$ on $\ball_1$: since $f_\theta$ is continuous, it suffices to bound $\norm{f_\theta'(\cdot)}$ on $\interior(\ball_1)$ where $f_\theta$ is
     differentiable.
     When $\norm{x - \theta}^2 \geq 1 + 2 \epsilon$, then $\norm{f'_\theta(x)} = \norm{f'(x)} = \norm{x} \leq 1$.
     On the other hand, if $\norm{x - \theta}^2 < 1 + 2 \epsilon$, then
     \begin{align*}
         \norm{f'_\theta(x)}^2
-         & = \norm{\theta + \sqrt{1 + 2\epsilon} \frac{x - \theta}{\norm{x - \theta}}}^2            \\
-         & = 2 + 2\epsilon + \sqrt{1 + 2\epsilon} \frac{\ip{\theta, x - \theta}}{\norm{x - \theta}} \\
+         & = \norm{\theta + \sqrt{1 + 2\epsilon} \frac{x - \theta}{\norm{x - \theta}}}^2             \\
+         & = 2 + 2\epsilon + 2\sqrt{1 + 2\epsilon} \frac{\ip{\theta, x - \theta}}{\norm{x - \theta}} \\
          & \leq 2 + 2\epsilon \,.
     \end{align*}
     Therefore $\lip_{\ball_1}(f) \leq \sqrt{2 + 2\epsilon}$.
 \end{proof}
 
 \begin{theorem}\label{thm:ts-lower}
-    When $\cK = \ball_1$ is the standard euclidean ball.
+    When $\cK = \ball_1$ is the standard Euclidean ball.
     There exists a prior $\xi$ on $\sF_{\pb\pl}$ such that
     \begin{align*}
         \BReg_n(\ts, \xi) \geq \frac12 \min\left(n, \floor{\frac{1}{4} \exp(d/32)}\right)\,.
     \end{align*}
 \end{theorem}
 
-\begin{proof}[sketch]
-    The idea is to construct a prior such that with high probability \ts{} obtains limited information while suffering high regret.
-    We assume there is no noise and let $f$ and $f_\theta$ be defined as in Lemma~\ref{lem:f-theta} with $\epsilon = 1/4$.
-    Let $\sigma$ be the uniform probability measure on $\sphere_1$ and
-    the prior $\xi$ be the law of $f_\theta$ when $\theta$ is sampled from $\sigma$.
-    By the definition of $f_\theta$ and the fact that $\epsilon = 1/4$, for any $x \in \sphere_1$
-    $\left(f(x) = f_\theta(x)\right) \Leftrightarrow \ip{x, \theta} \leq \frac{1}{4}$.
-    Since \ts{} plays the minimiser of some $f_\theta$ in every round, it follows that \ts{} always plays in $\sphere_1$.
-    Let $\cC_\theta = \{x \in \sphere_1 : \ip{x, \theta} > \frac{1}{4}\}$ and $\delta = \sigma(\cC_\theta)$.
-    Let $f_{\theta_\star}$ be the true loss function sampled from $\xi$.
-    Suppose that $X_1,\ldots,X_t \in \sphere_1 \setminus \cC_{\theta_\star}$,
-    which means that $Y_s = \frac{3}{4}$ for $1 \leq s \leq t$ and
-    the posterior is the uniform distribution on $\Theta_{t+1} = \sphere_1 \setminus \cup_{s=1}^t \cC_{X_s}$.
-    Provided that $t \delta \leq \frac{1}{2}$,
-    \begin{align*}
-        \bbP(X_{t+1} \in \cC_{\theta_\star}|X_1,\ldots,X_t \notin \cC_{\theta_\star})
-        = \frac{\sigma(\cC_{\theta_\star} \cap \Theta_{t+1})}{\sigma(\Theta_{t+1})}
-        \leq \frac{\delta}{1 - t \delta}
-        \leq 2\delta \,.
-    \end{align*}
-    Hence, with $n_0 = \min(n, \floor{1/(4\delta)})$,
-    \begin{align*}
-        \BReg_n(\ts, \xi)
-        \geq \BReg_{n_0}(\ts, \xi) \geq
-        \frac{3n_0}{4} \bbP(X_1,\ldots,X_{n_0} \notin \cC_{\theta_\star}) \geq \frac{3n_0}{4} \left(1 - 2n_0 \delta\right) \geq \frac{3n_0}{8} \,.
-    \end{align*}
-    The result is completed since $\delta \leq \exp(-d/32)$ follows from concentration of measure on the sphere \citep[Theorem B.1]{tkocz2018asymptotic}.
-\end{proof}
-\begin{definition}\label{def:C_theta}
+We first give a quick sketch of the proof.
+We will construct a prior such that with high probability \ts{} obtains limited information while suffering high regret.
+We assume there is no noise and let $f$ and $f_\theta$ be defined as in Lemma~\ref{lem:f-theta} with $\epsilon = 1/4$.
+Let $\sigma$ be the uniform probability measure on $\sphere_1$ and
+the prior $\xi$ be the law of $f_\theta$ when $\theta$ is sampled from $\sigma$.
+By the definition of $f_\theta$ and the fact that $\epsilon = 1/4$, for any $x \in \sphere_1$,
+$f(x) = f_\theta(x)$ holds if and only if $\ip{x, \theta} \leq \frac{1}{4}$.
+Since \ts{} plays the minimiser of some $f_\theta$ in every round, it follows that \ts{} always plays in $\sphere_1$.
+Let $\cC_\theta = \{x \in \sphere_1 : \ip{x, \theta} > \frac{1}{4}\}$ and $\delta = \sigma(\cC_\theta)$.
+Let $f_{\theta_\star}$ be the true loss function sampled from $\xi$.
+Suppose that $X_1,\ldots,X_t \in \sphere_1 \setminus \cC_{\theta_\star}$,
+which means that $Y_s = f(X_s) = \frac{3}{4}$ for $1 \leq s \leq t$ and
+the posterior is the uniform distribution on $\Theta_{t+1} = \sphere_1 \setminus \cup_{s=1}^t \cC_{X_s}$.
+Provided that $t \delta \leq \frac{1}{2}$,
+\begin{align*}
+    \bbP(X_{t+1} \in \cC_{\theta_\star}|X_1,\ldots,X_t \notin \cC_{\theta_\star})
+    = \frac{\sigma(\cC_{\theta_\star} \cap \Theta_{t+1})}{\sigma(\Theta_{t+1})}
+    \leq \frac{\delta}{1 - t \delta}
+    \leq 2\delta \,.
+\end{align*}
+Hence, with $n_0 = \min(n, \floor{1/(4\delta)})$,
+\begin{align*}
+    \BReg_n(\ts, \xi)
+    \geq \BReg_{n_0}(\ts, \xi) \geq
+    \frac{3n_0}{4} \bbP(X_1,\ldots,X_{n_0} \notin \cC_{\theta_\star}) \geq \frac{3n_0}{4} \left(1 - 2n_0 \delta\right) \geq \frac{3n_0}{8} \,.
+\end{align*}
+The result is completed since $\delta \leq \exp(-d/32)$, which follows
+from the upper bound on the area of spherical caps on sphere \citep[Theorem B.1]{tkocz2018asymptotic}.
+
+We now turn to the detailed argument. We start with some definitions.
+\begin{definition}[Spherical caps]\label{def:C_theta}
     For \(\theta \in \bS_1\) and $\epsilon \in [0,1/2]$, define
     \begin{align*}
         \cC_{\theta, \epsilon}
@@ -1878,6 +1946,7 @@ Equivalently, its epigraph is the convex hull of the epigraphs of $f$ and the co
         % \sup_{y \in \cC_\theta} \paren{ f(y) + \nabla f(y)^\top(x-y)}\,.
     \end{align*}
     and $\bar{\cC}_{\theta, \epsilon} = \bS_1 \setminus \cC_{\theta, \epsilon}$.
+    Note that $\cC_{\theta, \epsilon} = \{x \in \bS_1 : \ip{\theta, x} > \tfrac{1}{2} - \epsilon\}$.
 \end{definition}
 
 \begin{definition}\label{def:uniform-sphere}
@@ -1906,8 +1975,8 @@ We use the following theorem from \citep{tkocz2018asymptotic} to bound the surfa
     \begin{align*}
         f_\theta(x) =
         \begin{cases}
-            f(x)                                                 & \text{if } x \in \bar{\cC}_{\theta}, \\
-            \ip{\theta, x} - 1 + \sqrt{\frac32}\norm{\theta - x} & \text{if } x \in \cC_{\theta}\,,
+            f(x),                                                 & \text{if } x \in \bar{\cC}_{\theta}; \\
+            \ip{\theta, x} - 1 + \sqrt{\frac32}\norm{\theta - x}, & \text{if } x \in \cC_{\theta}\,,
         \end{cases}
     \end{align*}
     where we drop the $\epsilon$ from $\cC_{\theta, \epsilon}$
@@ -1957,16 +2026,18 @@ We use the following theorem from \citep{tkocz2018asymptotic} to bound the surfa
     %    \todoa{Is this clear?}
 
     \paragraph{Step 1:}
-    First we show that if the posterior distribution $\xi_t$ at round $t \in [T]$ is
+    First we show that if the posterior distribution $\sigma_t$ at round $t \in [T]$ is
     uniform over $\Theta_t$, and the algorithm observes the loss
     $Y_t = \frac34$ as a result of playing $X_t$,
-    then the posterior distribution $\xi_{t+1}$ at round $t+1$ is uniform over $\Theta_{t+1}$,
-    i.e., $\xi_{t+1} = \sigma_{\Theta_{t+1}}$.
-    To this end, observe that
+    then the posterior distribution $\sigma_{t+1}$ at round $t+1$ is uniform over $\Theta_{t+1}$,
+    i.e., $\sigma_{t+1} = \sigma_{\Theta_{t+1}}$.
+    To this end,
+    recall that $\mP_{t-1}(\cdot) = \mP(\cdot | X_1, Y_1, \ldots, X_{t-1}, Y_{t-1})$,
+    and observe that
     if $Y_t = \frac34$ then
     for any set $B \subseteq \Theta_t$,
     \begin{align}
-        \xi_{t+1}(B)
+        \sigma_{t+1}(B)
         =
         \mP_{t-1}\paren{
             \theta_\star \in B
@@ -2011,7 +2082,7 @@ We use the following theorem from \citep{tkocz2018asymptotic} to bound the surfa
     and the fact that $X_t = \theta_t$,
     we have
     \begin{align*}
-        \xi_{t+1}(B)
+        \sigma_{t+1}(B)
          & =
         \frac{
         \mP_{t-1}(f_{\theta_\star}(X_t) = \frac34| X_t, \theta_\star \in B)
@@ -2056,7 +2127,7 @@ We use the following theorem from \citep{tkocz2018asymptotic} to bound the surfa
             \sigma(\Theta_t \cap \bar{\cC}_{\theta_t})
         }
     \end{align*}
-    which implies that $\xi_{t+1}$ is uniform over
+    which implies that $\sigma_{t+1}$ is uniform over
     $\Theta_{t} \cap \bar{\cC}_{\theta_t}$.
     Lastly, note that
     \begin{align*}
@@ -2088,7 +2159,7 @@ We use the following theorem from \citep{tkocz2018asymptotic} to bound the surfa
     Consider the event $\mathcal{E}_t$ where $X_1, \ldots, X_t \in \bar{\cC}_{\theta_\star}$,
     which implies both that $Y_1, \ldots, Y_t = \frac34$, and
     that $\xi_{t+1}$ is uniform over $\Theta_{t+1}$.
-    Conditioned on $\mathcal{E}_t$, we have
+    On the event $\mathcal{E}_t$, we have
     \begin{align*}
         \sigma(\Theta_{t+1})
          & =
@@ -2280,31 +2351,31 @@ We use the following theorem from \citep{tkocz2018asymptotic} to bound the surfa
 
 \chapter{$\IR$ Lower-‌‌Bound for General Convex Functions}
 Theorem~\ref{thm:ts-lower} shows that Thompson sampling has large regret for general bandit convex optimization.
-The next theorem shows there exist priors for which the information ratio for any policy is at least $\Omega(d^2)$.
+The next theorem shows there exist priors for which the (regret-to-)information ratio for any policy is at least $\Omega(d^2)$.
 At least naively, this means that the information-theoretic machinery will not yield a bound on the regret for general bandit convex optimization that
 is better than $\tilde O(d^{1.5} \sqrt{n})$
 %\todoa{add (with a "slightly better"/"different" constant)?}
 
 \begin{theorem}\label{thm:inf-lower}
     Suppose that $\cK = \ball_1$ and $d>256$. Then there exists a prior $\xi$ on $\sF_{\pb\pl}$ such that for all probability measures $\pi$ on $\cK$,
-    $\Delta(\pi, \xi) \geq 2^{-19} \frac{d}{\log(d)} \sqrt{\I(\pi, \xi)}$. %\todot{probably want this in $(\alpha, \beta)$ format.}
+    $\Delta(\pi, \xi) \geq 2^{-9} \frac{d}{\log(d)} \sqrt{\I(\pi, \xi)}$. %\todot{probably want this in $(\alpha, \beta)$ format.}
 \end{theorem}
 
-The prior $\xi$ is the same as used in the proof of Theorem~\ref{thm:ts-lower} but with $\epsilon = \tilde \Theta(1/d)$.
+The prior $\xi$ is the same as the one used in the proof of Theorem~\ref{thm:ts-lower} but we let $\epsilon = \tilde \Theta(1/d)$.
 The argument is based on proving that for any policy the regret is $\Omega(\epsilon)$ while the information gain is $\tilde O(\epsilon^2)$.
 
 Throughout this section, we use the same construction as the one used in \cref{chp:ts-lower-proof}
 except with $\epsilon = \frac{8\log(d)}{d}$.
 Therefore, we have
 \begin{align*}
-    f(x)         = \frac12 \norm{x} + \frac{8\log(d)}{d}\,, \quad \text{and} \quad
+    f(x)         = \frac12 \norm{x}^2 + \frac{8\log(d)}{d}\,, \quad \text{and} \quad
     f_\theta(x)  =
     \begin{cases}
-        f(x)                                                                 & \text{if } x \in \bar{\cC}_{\theta}, \\
-        \ip{\theta, x} - 1 + \sqrt{1 + \frac{16\log(d)}{d}}\norm{\theta - x} & \text{if } x \in \cC_{\theta}\,.
+        f(x),                                                                 & \text{if } x \in \bar{\cC}_{\theta}; \\
+        \ip{\theta, x} - 1 + \sqrt{1 + \frac{16\log(d)}{d}}\norm{\theta - x}, & \text{if } x \in \cC_{\theta}\,.
     \end{cases}
 \end{align*}
-Further, let $\xi$ be the law of $f_\theta$ where $\theta \sim \sigma$,
+Further, let $\xi$ be the law of $f_\theta$ where $\theta \sim \text{Unif}(\sphere_1)$,
 and for $x \in \mathbb{B}_1$ define
 \begin{align*}
     \Delta_x & = \E\brak{
@@ -2317,7 +2388,7 @@ and for $x \in \mathbb{B}_1$ define
         \paren{f_\theta(x) - \E\brak{f_\theta(x)}}^2
     } \,,
 \end{align*}
-which should be thought of as the expected loss and the expected information gain at $x$.
+which is the expected loss and the expected information gain at $x$.
 Therefore, for any policy $\pi$ we have
 \begin{align*}
     \Delta(\pi, \xi) = \E[\Delta_X] \qquad \text{and } \qquad
@@ -2331,32 +2402,38 @@ for any policy $\pi$, and hence the claimed lower bound.
 
 Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\log(d)/d}$ in the rest of this section.
 \begin{lemma}{\label{lem:inf-lower-large-r}}
-    For $\tau \leq r$, and $x \in \mathbb{B}_1$
-    with $\norm{x} = r$,
+    For any $x \in \mathbb{B}_1$
+    such that $\tau \leq \norm{x}$,
     $\displaystyle \mP\paren{
             f_\theta(x) = f(x)
         }
-        \geq 1 - \frac{1}{d^4}$.
+        \geq 1 - \frac{1}{d^4}$,
+    where $\theta \sim \text{Unif}(\sphere_1)$.
 \end{lemma}
 \begin{proof}
     From Lemma~\ref{lem:f-theta},
     $f_\theta(x) = f(x)$ if $\norm{\theta - x}^2 \geq 1 + 2\epsilon$.
-    Moreover, for $x \in \ball_1$ with $\norm{x} = r$,
+    Moreover, for $x \in \ball_1$ with $r \triangleq \norm{x}$,
     \begin{align*}
         \norm{\theta - x}^2
         = \norm{\theta}^2 + r^2 - 2\ip{\theta, x}
         = 1 + r^2 - 2\ip{\theta, x},
     \end{align*}
     which implies that $f(x) = f_\theta(x)$ if $\ip{\theta, x} \leq \frac{r^2}{2} - \epsilon$.
-    Since $\theta \sim \sigma$,
+    We thus have
     \begin{align*}
+        \mP\left(
+        f_\theta(x) = f(x)
+        \right)
+         & =
         \mP\paren{
             \ip{\theta, x} \leq \frac{r^2}{2} - \epsilon
-        }
+        }       \\
          & =
         \mP\paren{
             \ip{\theta, e_1} \leq \paren{\frac{r^2}{2} - \epsilon}\norm{x}^{-1}
         }
+        \tag{since $\theta \sim \text{Unif}(\sphere_1)$}
         \\
          & =
         1 -
@@ -2372,21 +2449,24 @@ Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\l
             \paren{\frac{r}{2} - \frac{\epsilon}{r}}^2
             \frac{d}{2}
         }
+        \tag{by \cref{thm:spherical-cap}}
+        % \\
+        %  & \geq
+        % 1
+        % -
+        % \exp\paren{
+        %     -
+        %     \paren{
+        %         4\sqrt{\frac{\log(d)}{d}}
+        %         -
+        %         \frac{\sqrt{d}\log(d)}{d\sqrt{\log(d)}}
+        %     }^2
+        %     \frac{d}{2}
+        % }
         \\
-         & \geq
-        1
-        -
-        \exp\paren{
-            -
-            \paren{
-                4\sqrt{\frac{\log(d)}{d}}
-                -
-                \frac{\sqrt{d}\log(d)}{d\sqrt{\log(d)}}
-            }^2
-            \frac{d}{2}
-        }
-        \\
-         & =
+         &
+        \explan{(a)}
+        \geq
         1
         -
         \exp
@@ -2440,8 +2520,10 @@ Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\l
         1 - \frac{1}{d^4}
         ,
     \end{align*}
-    where the first inequality follows from \cref{thm:spherical-cap},
-    and the second inequality follows from the fact that $r \geq \tau \geq \sqrt{2\epsilon}$.
+    where \texttt{(a)} follows because
+    $r \geq \tau \geq \sqrt{2\epsilon}$,
+    hence $\tfrac{r}{2} - \tfrac{\epsilon}{r} \geq
+        \tfrac{\tau}{2} - \tfrac{\epsilon}{\tau} = 4 \sqrt{\tfrac{\log(d)}{d}} - \sqrt{\tfrac{\epsilon}{8}} = 3 \sqrt{\tfrac{\log(d)}{d}}$.
 \end{proof}
 
 \begin{lemma}\label{lem:f-lower-bound}
@@ -2459,6 +2541,7 @@ Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\l
 \end{lemma}
 \begin{proof}
     Let $r = \norm{x}$.
+    Recall that $\Delta_x = \E\brak{f_\theta(x)}$ where $\theta \sim \text{Unif}(\sphere_1)$.
     We prove this result by considering two cases.
     \begin{enumcases}
         \item If $r \geq \tau$,
@@ -2473,7 +2556,7 @@ Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\l
                 1- \frac{1}{d^4}
             }
             \paren{
-                \frac12 r^2
+                \frac12 \tau^2
                 +
                 \epsilon
             }
@@ -2485,10 +2568,11 @@ Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\l
                 \frac{8\log(d)}{d}
             }
             \geq
-            \frac{20\log(d)}{d}
+            \frac{2\log(d)}{d}
             \,,
         \end{align*}
-        where \texttt{(a)} follows from Lemma~\ref{lem:inf-lower-large-r}.
+        where \texttt{(a)} follows from Lemma~\ref{lem:inf-lower-large-r},
+        and the definition of $f$ and $r \geq \tau$.
         \item If $r < \tau$,
         using the lower bound on $f_\theta(x)$ from Lemma~\ref{lem:f-lower-bound},
         \begin{align*}
@@ -2501,7 +2585,7 @@ Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\l
             }       \\
              &
             \explan{(a)}
-            = \sqrt{1 + 2\epsilon}\E\brak{
+            = \sqrt{1 + 2\epsilon}\, \E\brak{
                 \sqrt{
                     1 + r^2 - 2\ip{\theta, x}
                 }
@@ -2590,15 +2674,17 @@ Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\l
         for $0\leq r \leq \sqrt{3/4}$,
         and is decreasing in $r$
         for $r \in [\sqrt{3/4}, 1]$.
-        Therefore,
+        Therefore, with $r \leq \tau$, we get
         \begin{align*}
             1 + \frac{3r^2}{8} - \frac{r^4}{2}
             \geq
             \min(1, 1 + \frac{3\tau^2}{8} - \frac{\tau^4}{2})
             =
-            1 + \min(0, 3\epsilon - 4\epsilon^2)
-            \,.
+            1 + \min(0, 3\epsilon - 32\epsilon^2)
+            \geq 1
+            \,,
         \end{align*}
+        where the last inequality holds because $3\epsilon - 32\epsilon^2 \geq 0$ for our choice of $\epsilon$ and $d$.
         This let us further lower bound $\E[f_\theta(x)]$ as
         \begin{align*}
             \E\brak{
@@ -2608,51 +2694,46 @@ Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\l
             \paren{
                 1 + \epsilon - 2\epsilon^2
             }
-            \paren{
-                1 + \min(0, 3\epsilon - 4\epsilon^2)
-            }
-            - 1.
+            - 1
+            = \epsilon - 2\epsilon^2\,.
         \end{align*}
-        Now, since we have $\epsilon\leq1/3$, we have $3\epsilon - 4\epsilon^2 \geq 0$,
-        which gives
+        The proof is finished by noting that
+        $\epsilon \leq \tfrac{1}{3}$ by the choice of $\epsilon$ and $d$, hence
         \begin{align*}
-            \E\brak{
-                f_\theta(x)
-            }
-            \geq
-            1+ \epsilon - 2\epsilon^2 - 1
-            =
             \epsilon - 2\epsilon^2
             \geq
             \epsilon - \frac23\epsilon
             \geq
             \frac{8\log(d)}{3d}
+            \geq \frac{2\log(d)}{d}
             \,.
         \end{align*}
     \end{enumcases}
 \end{proof}
 
 \begin{lemma}\label{lem:small-I-anyr}
-    For all $x \in \mathbb{B}_1$ and $d > 256$,
-    $
-        \I_x \leq 2^{40} \frac{\log(d)^4}{d^4}$.
+    For all $x \in \mathbb{B}_1$, $d > 256$,
+    and $\theta \in \text{Uniform}(\mathbb{S}^{d-1})$,
+    $\I_x \leq 2^{10} \frac{\log(d)^4}{d^4}$.
 \end{lemma}
 \begin{proof}
     Let $x \in \ball_1$ and $r = \norm{x}$.
+    Note that
+    \begin{align}
+        \cI_x = \E\brak{
+            \paren{f_\theta(x) - \E\brak{f_\theta(x)}}^2
+        }
+         & \leq
+        \E\brak{
+            \paren{f_\theta(x) - f(x)}^2
+        }\,.
+        \label{ineq:small-I-mean-min}
+    \end{align}
     We prove this result by considering two cases.
     \begin{enumcases}
-        \item If $r \geq \tau$, then we have
+        \item If $r \geq \tau$, then starting from \cref{ineq:small-I-mean-min}, we get
         \begin{align}
-            \E\brak{
-                \paren{f_\theta(x) - \E\brak{f_\theta(x)}}^2
-            }
-             & \leq
-            \E\brak{
-                \paren{f_\theta(x) - f(x)}^2
-            }
-            \label{ineq:small-I-mean-min}
-            \\
-             & \leq
+            \I_x & \leq
             \mP\paren{f_\theta(x) = f(x)}
             \paren{f(x) - f(x)}^2
             +
@@ -2660,7 +2741,7 @@ Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\l
             \paren{\frac12 r^2 + \epsilon}^2
             \nonumber
             \\
-             & \leq
+                 & \leq
             \frac{1}{d^4}\paren{\frac12 r^2 + \epsilon}^2
             \leq
             \frac{1}{d^4}\paren{\frac12 + \frac13}^2
@@ -2669,7 +2750,12 @@ Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\l
             \, ,\nonumber
         \end{align}
         where the first inequality holds since the mean minimizes the squared deviation,
-        and the second inequality holds since $0 \leq f(x) - f_\theta(x) \leq \frac12 r^2 + \epsilon$.
+        the second inequality holds since
+        $0 \leq f_\theta \leq f$ by \cref{lem:f-theta},
+        $0 \leq f(x) - f_\theta(x) \leq \frac12 r^2 + \epsilon$,
+        where the last inequality is by the definition of $f$ and because $\norm{x}=r\geq \tau$.
+        The next inequality holds because by \cref{lem:inf-lower-large-r},
+        $\mP(f_\theta(x) \neq f(x)) \leq \frac{1}{d^4}$.
         \item Now suppose that $r < \tau$.
         We have
         \begin{align*}
@@ -2728,16 +2814,16 @@ Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\l
              &
             \explan{(d)}
             \leq
-            30
+            4
             \paren{r^2 + \abs{\ip{\theta, x}} + \epsilon}^2
             ,
         \end{align*}
-        where \texttt{(a)} follows from $f(x) \geq f_\theta(x)$,
-        the \texttt{(b)} follows from Lemma~\ref{lem:f-lower-bound},
-        \texttt{(c)} follows from $\sqrt{1 + x} \geq 1 + \frac{x}{2} - \frac{x^2}{2}$ for all $x\geq-1$,
-        and \texttt{(d)} follows from the fact that $r, \epsilon, \abs{\ip{\theta, x}} \leq 1$,
-        and the expression in the previous line a polynomial of
-        these terms with degree at least 2 and sum of coefficients at most 30.
+        where \texttt{(a)} follows from $f(x) \geq f_\theta(x)$ which holds by \cref{lem:f-theta};
+        \texttt{(b)} follows from Lemma~\ref{lem:f-lower-bound},
+        \texttt{(c)} follows from the definition of $f$, and $\sqrt{1 + x} \geq 1 + \frac{x}{2} - \frac{x^2}{2}$ for all $x\geq-1$,
+        and \texttt{(d)} follows from the fact that $r^2, \epsilon, \abs{\ip{\theta, x}} \leq 1$,
+        and the expression in the previous line is a homogeneous polynomial of
+        these terms with degree at most 2 and coefficients at most 4.
     \end{enumcases}
     %\todoa{Clear?}
     Next,
@@ -2746,6 +2832,7 @@ Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\l
     starting from the right-hand side of \cref{ineq:small-I-mean-min},
     we have
     \begin{align*}
+        \cI_x \leq
         \E\brak{
             \paren{
                 f(x)
@@ -2755,7 +2842,7 @@ Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\l
         }
          & \leq
         \E\brak{
-            30^2
+            4^2
             \paren{
                 r^2
                 +
@@ -2768,7 +2855,7 @@ Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\l
          &
         \explan{(a)}
         \leq
-        30^2
+        4^2
         \E\brak{
             27
             \paren{
@@ -2781,7 +2868,7 @@ Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\l
         }
         \\
          & \leq
-        30^3
+        4^3
         \paren{
             r^8
             +
@@ -2795,7 +2882,7 @@ Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\l
          &
         \explan{(b)}
         \leq
-        30^3
+        4^3
         \paren{
             r^8
             +
@@ -2806,8 +2893,8 @@ Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\l
         \\
          &
         \explan{(c)}
-        \leq
-        30^3
+        <
+        4^3
         \paren{
             8^4 \epsilon^4
             +
@@ -2818,7 +2905,7 @@ Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\l
         \\
          &
         \leq
-        30^3
+        4^3
         \paren{
             8^4 \epsilon^4
             +
@@ -2827,10 +2914,10 @@ Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\l
             \epsilon^4
         }
         \\
-         & \leq 2^{28} \epsilon^4 = 2^{40} \frac{\log(d)^4}{d^4}
+         & \leq 2^{10} \epsilon^4 = 2^{10} \frac{\log(d)^4}{d^4}
         \,,
     \end{align*}
-    where \texttt{(a)} follows from $(a + b + c)^4 \leq 27(a^4 + b^4 + c^4)$,
+    where \texttt{(a)} follows from $(a + b + c)^4 \leq 16(a^4 + b^4 + c^4)$,
     \texttt{(b)} follows from the fact that $\E[\ip{\theta, x}^4] = \frac{3r^4}{d(d+2)} < \frac{3r^4}{d^2}$,
     and \texttt{(c)} follows from $r < \tau = \sqrt{8\epsilon}$.
     % \todot{Should be consistent with $\log$ vs $\log$. I suggest $\log$.}
@@ -2840,7 +2927,7 @@ Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\l
 \end{proof}
 
 \begin{proof}[Proof of Theorem~\ref{thm:inf-lower}]
-    Let $\xi$ be the law of $f_\theta$ when $\theta$ has law $\sigma$.
+    Let $\xi$ be the law of $f_\theta$ when $\theta$ has law $\text{Unif}(\sphere_1)$.
     Then for any policy $\pi$, and $X \sim \pi$,
     from Lemma~\ref{lem:large-delta-anyr} we have
     \begin{align*}
@@ -2851,12 +2938,12 @@ Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\l
     \end{align*}
     and from Lemma~\ref{lem:small-I-anyr} we have
     \begin{align*}
-        \I(\pi, \xi) = \E[\I_X] \leq \frac{2^{40}\log(d)^4}{d^4} \,,
+        \I(\pi, \xi) = \E[\I_X] \leq \frac{2^{10}\log(d)^4}{d^4} \,,
     \end{align*}
     which together imply
     \begin{align*}
         \frac{\Delta(\pi, \xi)}{\sqrt{\I(\pi, \xi)}}
-        \geq \frac{d}{2^{19}\log(d)}\,.
+        \geq \frac{d}{2^{9}\log(d)}\,.
     \end{align*}
 \end{proof}
 
@@ -3035,7 +3122,7 @@ the first of which is only used to prove the second one.
     \end{align*}
     \begin{proof}
         Define the function
-        $h(x) = \frac{\E[g(x)]}{\E[x]}g(x)$,
+        $h(x) = \frac{\E[x]}{\E[g(x)]}g(x)$,
         and observe that
         \begin{align*}
             \frac{
@@ -3333,254 +3420,254 @@ the first of which is only used to prove the second one.
     and the fact that $X'$ is supported on $\R_+$.
 \end{proof}
 
-\clearpage
-\newpage
-\KnownRidgeLemma
-\begin{proof}
-    Let $\xi_\ts \in \sP(\R^d \times \R^d)$
-    be the joint law of the parameter $\theta$ and the
-    greedy action $X$, i.e.
-    \begin{align*}
-        (\theta, X) \sim \xi_\ts,
-        \qquad
-        \text{where } X = \argmin_{x \in \cK} \ell(\langle x, \theta\rangle).
-    \end{align*}
-    It follows that
-    \begin{align*}
-        \Delta(\pi^\xi_\ts, \xi)
-         & =
-        \E\left[\ell(X^\top \theta') - \ell(X^\top \theta)\right]\,,
-        \qquad
-        \I(\pi^\xi_\ts, \xi)
-        = \E\left[(\ell(X^\top \theta') - \E[\ell(X^\top \theta')|X])^2\right]\,.
-    \end{align*}
-    Define
-    \begin{align*}
-        \phi(X) = \frac{
-            \E[\ell(X^\top \theta')|X] - \ell(X^\top \theta)
-        }{
-            X^\top \theta - \E[X^\top \theta'|X]
-        }.
-    \end{align*}
-    Let $(\tilde{\theta}, \tilde{X}) \sim \xi_\ts$
-    be such that
-    \begin{align*}
-        \tilde{\theta}^\top \tilde{X} = \essinf_{(X, \theta) \sim \xi_\ts} X^\top \theta,
-    \end{align*}
-    and write
-    \begin{align*}
-        \frac{
-            \E[\ell(\tilde{X}^\top \theta')|\tilde{X}] - \ell(\tilde{X}^\top \tilde{\theta})
-        }{
-            \sqrt{
-                \E\left[
-                    \left(\ell(\tilde{X}^\top \theta) - \E[\ell(\tilde{X}^\top \theta')|\tilde{X}]\right)^2
-                    |\tilde{X}
-                    \right]
-            }
-        }
-         &
-        \explan{(a)}
-        \leq
-        \frac{
-            \E[\tilde{X}^\top \theta'|\tilde{X}] - \tilde{X}^\top \tilde{\theta}
-        }{
-            \sqrt{
-                \E\left[
-                    \left(\tilde{X}^\top \theta' - \E[\tilde{X}^\top \theta'|\tilde{X}]\right)^2
-                    |\tilde{X}
-                    \right]
-            }
-        }
-        \\
-         &
-        \explan{(b)}
-        =
-        \frac{
-            \phi(\tilde{X}) \tilde{X}^\top \theta - \E[\phi(\tilde{X}) \tilde{X}^\top \theta'|\tilde{X}]
-        }{
-            \sqrt{
-                \E\left[
-                    \left(\phi(\tilde{X}) \tilde{X}^\top \theta' - \E[\phi(\tilde{X}) \tilde{X}^\top \theta'|\tilde{X}]\right)^2
-                    |\tilde{X}
-                    \right]
-            }
-        }
-        \\
-         &
-        \explan{(c)}
-        =
-        \frac{
-            \ell(\tilde{X}^\top \tilde{\theta}) - \E[\ell(\tilde{X}^\top \theta')|\tilde{X}]
-        }{
-            \sqrt{
-                \E\left[
-                    \left(\phi(\tilde{X}) \tilde{X}^\top \theta' - \E[\phi(\tilde{X}) \tilde{X}^\top \theta'|\tilde{X}]\right)^2
-                    |\tilde{X}
-                    \right]
-            }
-        },
-    \end{align*}
-    where \texttt{(a)} follows from
-    \begin{align*}
-        \ell(\tilde{X}^\top \theta')
-        \explan{$X'$ greedy}
-        \geq
-        \ell({X'}^\top \theta')
-        \explan{$\tilde{X}$ definition}
-        \geq
-        \ell(\tilde{X}^\top \tilde{\theta})\,,
-    \end{align*}
-    and \cref{lem:key-convex-ineq},
-    \texttt{(b)} follows from multiplying both
-    numerator and denominator by $\phi(X)$,
-    and \texttt{(c)} follows from the definition of $\phi(X)$.
-    Thus, we have
-    \begin{align}
-        \E\left[
-            \left(
-            \ell(\tilde{X}^\top \theta') - \E[\ell(\tilde{X}^\top \theta')|\tilde{X}]
-            \right)^2
-            | \tilde{X}
-            \right]
-        \geq
-        \E\left[
-            \left(
-            \phi(\tilde{X}) \tilde{X}^\top \theta' - \E[\phi(\tilde{X})\tilde{X}^\top \theta'|\tilde{X}]
-            \right)^2
-            | \tilde{X}
-            \right].
-        \label{ineq:i1}
-    \end{align}
-    Therefore, we have
-    \begin{align}
-        \frac{
-            \E[\ell(\tilde{X}^\top \theta')|\tilde{X}]
-            - \ell(\tilde{X}^\top \tilde{\theta})
-        }{
-            \sqrt{
-                \E\left[
-                    \left(\ell(\tilde{X}^\top \theta') - \E[\ell(\tilde{X}^\top \theta')|\tilde{X}]\right)^2
-                    |\tilde{X}
-                    \right]
-            }
-        }
-         & =
-        \frac{
-            \E[\phi(\tilde{X})\tilde{X}^\top \theta'|\tilde{X}] - \phi(\tilde{X})\tilde{X}^\top \tilde{\theta}
-        }{
-            \sqrt{
-                \E\left[
-                    \left(\ell(\tilde{X}^\top \theta') - \E[\ell(\tilde{X}^\top \theta')|\tilde{X}]\right)^2
-                    |\tilde{X}
-                    \right]
-            }
-        } \nonumber
-        \\
-         & \leq
-        \frac{
-            \E[\phi(\tilde{X})\tilde{X}^\top \theta'|\tilde{X}] - \phi(\tilde{X})\tilde{X}^\top \tilde{\theta}
-        }{
-            \sqrt{
-                \E\left[
-                    \left(\phi(\tilde{X})\tilde{X}^\top \theta' -
-                    \E[\phi(\tilde{X})\tilde{X}^\top \theta'|\tilde{X}]\right)^2
-                    |\tilde{X}
-                    \right]
-            }
-        } \nonumber
-        \\
-         & =
-        \frac{
-            \E[\tilde{X}^\top \theta'|\tilde{X}] - \tilde{X}^\top \tilde{\theta}
-        }{
-            \sqrt{
-                \E\left[
-                    \left(\tilde{X}^\top \theta' -
-                    \E[\tilde{X}^\top \theta'|\tilde{X}]\right)^2
-                    |\tilde{X}
-                    \right]
-            }
-        }\,. \label{eq:ir-ts-reduction-to-linear}
-    \end{align}
-    where the first equality follows from the
-    definition of $\phi(\tilde{X})$ and the second inequality follows from \ref{ineq:i1}.
+% \clearpage
+% \newpage
+% \KnownRidgeLemma
+% \begin{proof}
+%     Let $\xi_\ts \in \sP(\R^d \times \R^d)$
+%     be the joint law of the parameter $\theta$ and the
+%     greedy action $X$, i.e.
+%     \begin{align*}
+%         (\theta, X) \sim \xi_\ts,
+%         \qquad
+%         \text{where } X = \argmin_{x \in \cK} \ell(\langle x, \theta\rangle).
+%     \end{align*}
+%     It follows that
+%     \begin{align*}
+%         \Delta(\pi^\xi_\ts, \xi)
+%          & =
+%         \E\left[\ell(X^\top \theta') - \ell(X^\top \theta)\right]\,,
+%         \qquad
+%         \I(\pi^\xi_\ts, \xi)
+%         = \E\left[(\ell(X^\top \theta') - \E[\ell(X^\top \theta')|X])^2\right]\,.
+%     \end{align*}
+%     Define
+%     \begin{align*}
+%         \phi(X) = \frac{
+%             \E[\ell(X^\top \theta')|X] - \ell(X^\top \theta)
+%         }{
+%             X^\top \theta - \E[X^\top \theta'|X]
+%         }.
+%     \end{align*}
+%     Let $(\tilde{\theta}, \tilde{X}) \sim \xi_\ts$
+%     be such that
+%     \begin{align*}
+%         \tilde{\theta}^\top \tilde{X} = \essinf_{(X, \theta) \sim \xi_\ts} X^\top \theta,
+%     \end{align*}
+%     and write
+%     \begin{align*}
+%         \frac{
+%             \E[\ell(\tilde{X}^\top \theta')|\tilde{X}] - \ell(\tilde{X}^\top \tilde{\theta})
+%         }{
+%             \sqrt{
+%                 \E\left[
+%                     \left(\ell(\tilde{X}^\top \theta) - \E[\ell(\tilde{X}^\top \theta')|\tilde{X}]\right)^2
+%                     |\tilde{X}
+%                     \right]
+%             }
+%         }
+%          &
+%         \explan{(a)}
+%         \leq
+%         \frac{
+%             \E[\tilde{X}^\top \theta'|\tilde{X}] - \tilde{X}^\top \tilde{\theta}
+%         }{
+%             \sqrt{
+%                 \E\left[
+%                     \left(\tilde{X}^\top \theta' - \E[\tilde{X}^\top \theta'|\tilde{X}]\right)^2
+%                     |\tilde{X}
+%                     \right]
+%             }
+%         }
+%         \\
+%          &
+%         \explan{(b)}
+%         =
+%         \frac{
+%             \phi(\tilde{X}) \tilde{X}^\top \theta - \E[\phi(\tilde{X}) \tilde{X}^\top \theta'|\tilde{X}]
+%         }{
+%             \sqrt{
+%                 \E\left[
+%                     \left(\phi(\tilde{X}) \tilde{X}^\top \theta' - \E[\phi(\tilde{X}) \tilde{X}^\top \theta'|\tilde{X}]\right)^2
+%                     |\tilde{X}
+%                     \right]
+%             }
+%         }
+%         \\
+%          &
+%         \explan{(c)}
+%         =
+%         \frac{
+%             \ell(\tilde{X}^\top \tilde{\theta}) - \E[\ell(\tilde{X}^\top \theta')|\tilde{X}]
+%         }{
+%             \sqrt{
+%                 \E\left[
+%                     \left(\phi(\tilde{X}) \tilde{X}^\top \theta' - \E[\phi(\tilde{X}) \tilde{X}^\top \theta'|\tilde{X}]\right)^2
+%                     |\tilde{X}
+%                     \right]
+%             }
+%         },
+%     \end{align*}
+%     where \texttt{(a)} follows from
+%     \begin{align*}
+%         \ell(\tilde{X}^\top \theta')
+%         \explan{$X'$ greedy}
+%         \geq
+%         \ell({X'}^\top \theta')
+%         \explan{$\tilde{X}$ definition}
+%         \geq
+%         \ell(\tilde{X}^\top \tilde{\theta})\,,
+%     \end{align*}
+%     and \cref{lem:key-convex-ineq},
+%     \texttt{(b)} follows from multiplying both
+%     numerator and denominator by $\phi(X)$,
+%     and \texttt{(c)} follows from the definition of $\phi(X)$.
+%     Thus, we have
+%     \begin{align}
+%         \E\left[
+%             \left(
+%             \ell(\tilde{X}^\top \theta') - \E[\ell(\tilde{X}^\top \theta')|\tilde{X}]
+%             \right)^2
+%             | \tilde{X}
+%             \right]
+%         \geq
+%         \E\left[
+%             \left(
+%             \phi(\tilde{X}) \tilde{X}^\top \theta' - \E[\phi(\tilde{X})\tilde{X}^\top \theta'|\tilde{X}]
+%             \right)^2
+%             | \tilde{X}
+%             \right].
+%         \label{ineq:i1}
+%     \end{align}
+%     Therefore, we have
+%     \begin{align}
+%         \frac{
+%             \E[\ell(\tilde{X}^\top \theta')|\tilde{X}]
+%             - \ell(\tilde{X}^\top \tilde{\theta})
+%         }{
+%             \sqrt{
+%                 \E\left[
+%                     \left(\ell(\tilde{X}^\top \theta') - \E[\ell(\tilde{X}^\top \theta')|\tilde{X}]\right)^2
+%                     |\tilde{X}
+%                     \right]
+%             }
+%         }
+%          & =
+%         \frac{
+%             \E[\phi(\tilde{X})\tilde{X}^\top \theta'|\tilde{X}] - \phi(\tilde{X})\tilde{X}^\top \tilde{\theta}
+%         }{
+%             \sqrt{
+%                 \E\left[
+%                     \left(\ell(\tilde{X}^\top \theta') - \E[\ell(\tilde{X}^\top \theta')|\tilde{X}]\right)^2
+%                     |\tilde{X}
+%                     \right]
+%             }
+%         } \nonumber
+%         \\
+%          & \leq
+%         \frac{
+%             \E[\phi(\tilde{X})\tilde{X}^\top \theta'|\tilde{X}] - \phi(\tilde{X})\tilde{X}^\top \tilde{\theta}
+%         }{
+%             \sqrt{
+%                 \E\left[
+%                     \left(\phi(\tilde{X})\tilde{X}^\top \theta' -
+%                     \E[\phi(\tilde{X})\tilde{X}^\top \theta'|\tilde{X}]\right)^2
+%                     |\tilde{X}
+%                     \right]
+%             }
+%         } \nonumber
+%         \\
+%          & =
+%         \frac{
+%             \E[\tilde{X}^\top \theta'|\tilde{X}] - \tilde{X}^\top \tilde{\theta}
+%         }{
+%             \sqrt{
+%                 \E\left[
+%                     \left(\tilde{X}^\top \theta' -
+%                     \E[\tilde{X}^\top \theta'|\tilde{X}]\right)^2
+%                     |\tilde{X}
+%                     \right]
+%             }
+%         }\,. \label{eq:ir-ts-reduction-to-linear}
+%     \end{align}
+%     where the first equality follows from the
+%     definition of $\phi(\tilde{X})$ and the second inequality follows from \ref{ineq:i1}.
 
-    Now, observe that
-    \begin{align*}
-        \psi(\xi)
-         & =
-        \frac{\Delta(\pi^\xi_\ts, \xi)^2}{\I(\pi^\xi_\ts, \xi)}
-        \\
-         & =
-        \frac{
-            \E\left[
-                \ell(X^\top \theta') - \ell(X^\top \theta)
-                \right]^2
-        }{
-            \E\left[
-                \left(\ell(X^\top \theta') - \E[\ell(X^\top \theta')|X]\right)^2
-                \right]
-        }
-        \\
-         & =
-        \frac{
-            \left(
-            \mP(X = \tilde{X})\E\left[
-                \ell(\tilde{X}^\top \theta') - \ell(\tilde{X}^\top \tilde{\theta})
-                | X = \tilde{X}
-                \right]
-            +
-            \mP(X \neq \tilde{X})\E\left[
-                \ell(X^\top \theta') - \ell(X^\top \theta)
-                | X \neq \tilde{X}
-                \right]
-            \right)^2
-        }{
-            \mP(X = \tilde{X})\E\left[
-                \left(\ell(\tilde{X}^\top \theta') - \E[\ell(\tilde{X}^\top \theta')|\tilde{X}]\right)^2
-                | X = \tilde{X}
-                \right]
-            +
-            \mP(X \neq \tilde{X})\E\left[
-                \left(\ell(X^\top \theta') - \E[\ell(X^\top \theta')|X]\right)^2
-                | X \neq \tilde{X}
-                \right]
-        }
-    \end{align*}
+%     Now, observe that
+%     \begin{align*}
+%         \psi(\xi)
+%          & =
+%         \frac{\Delta(\pi^\xi_\ts, \xi)^2}{\I(\pi^\xi_\ts, \xi)}
+%         \\
+%          & =
+%         \frac{
+%             \E\left[
+%                 \ell(X^\top \theta') - \ell(X^\top \theta)
+%                 \right]^2
+%         }{
+%             \E\left[
+%                 \left(\ell(X^\top \theta') - \E[\ell(X^\top \theta')|X]\right)^2
+%                 \right]
+%         }
+%         \\
+%          & =
+%         \frac{
+%             \left(
+%             \mP(X = \tilde{X})\E\left[
+%                 \ell(\tilde{X}^\top \theta') - \ell(\tilde{X}^\top \tilde{\theta})
+%                 | X = \tilde{X}
+%                 \right]
+%             +
+%             \mP(X \neq \tilde{X})\E\left[
+%                 \ell(X^\top \theta') - \ell(X^\top \theta)
+%                 | X \neq \tilde{X}
+%                 \right]
+%             \right)^2
+%         }{
+%             \mP(X = \tilde{X})\E\left[
+%                 \left(\ell(\tilde{X}^\top \theta') - \E[\ell(\tilde{X}^\top \theta')|\tilde{X}]\right)^2
+%                 | X = \tilde{X}
+%                 \right]
+%             +
+%             \mP(X \neq \tilde{X})\E\left[
+%                 \left(\ell(X^\top \theta') - \E[\ell(X^\top \theta')|X]\right)^2
+%                 | X \neq \tilde{X}
+%                 \right]
+%         }
+%     \end{align*}
 
-    Further, define $\tilde{X} = \phi(X)X$ and
-    rewrite the inequality as
-    \begin{align*}
-        \frac{
-            \E\left[
-                \ell(X^\top \theta) - \E[\ell(X^\top \theta')|X]
-                \right]
-        }{
-            \sqrt{
-                \E\left[
-                    \left(\ell(X^\top \theta') - \E[\ell(X^\top \theta')|X]\right)^2
-                    \right]
-            }
-        }
-         & \leq
-        \frac{
-            \E\left[
-                \tilde{X}^\top \theta - \E[\tilde{X}^\top \theta'|X]
-                \right]
-        }{
-            \sqrt{
-                \E\left[
-                    \left(\tilde{X}^\top \theta' -
-                    \E[\tilde{X}^\top \theta'|X]\right)^2
-                    \right]
-            }
-        }
-        \leq
-        \sqrt{d}\,,
-    \end{align*}
-    where the $\sqrt{d}$ upper bound follows from \cref{thm:ir-ts-linear}.
-\end{proof}
+%     Further, define $\tilde{X} = \phi(X)X$ and
+%     rewrite the inequality as
+%     \begin{align*}
+%         \frac{
+%             \E\left[
+%                 \ell(X^\top \theta) - \E[\ell(X^\top \theta')|X]
+%                 \right]
+%         }{
+%             \sqrt{
+%                 \E\left[
+%                     \left(\ell(X^\top \theta') - \E[\ell(X^\top \theta')|X]\right)^2
+%                     \right]
+%             }
+%         }
+%          & \leq
+%         \frac{
+%             \E\left[
+%                 \tilde{X}^\top \theta - \E[\tilde{X}^\top \theta'|X]
+%                 \right]
+%         }{
+%             \sqrt{
+%                 \E\left[
+%                     \left(\tilde{X}^\top \theta' -
+%                     \E[\tilde{X}^\top \theta'|X]\right)^2
+%                     \right]
+%             }
+%         }
+%         \leq
+%         \sqrt{d}\,,
+%     \end{align*}
+%     where the $\sqrt{d}$ upper bound follows from \cref{thm:ir-ts-linear}.
+% \end{proof}
 
 \section{Information Ratio of \ts for Known Ridge}
 We are now in position to prove \cref{thm:ridge-known-ir}.
