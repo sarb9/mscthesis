@@ -64,7 +64,7 @@
 \usepackage{graphicx}
 \usepackage{subcaption}
 \usepackage[capitalize]{cleveref}
-\usepackage{natbib}
+\usepackage[authoryear]{natbib}
 \hypersetup{
     pdfstartview=,
     colorlinks,
@@ -264,7 +264,7 @@
 
 \begin{titlepage}
     \centering
-    \textbf{\large{Thompson Sampling for Bandit Convex Optimization\\(Version 3.0)}}
+    \textbf{\large{Thompson Sampling for Bandit Convex Optimization\\(Version 4.0)}}
     \vskip.5in by \vskip.5in
     \large{Alireza Bakhtiari}
 
@@ -1416,6 +1416,7 @@ Our first main theorem shows that \ts{} is statistically efficient when the loss
 
 
 \chapter{Thompson Sampling for Ridge Functions}
+\label{chap:ridge-ts}
 
 We now consider the multi-dimensional convex monotone ridge function setting where $\sF = \sF_{\pb\pl\pr\pm}$
 
@@ -2949,16 +2950,32 @@ Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\l
 \end{proof}
 
 \chapter{$\ts$ for Known Link Function}
-In this chapter we provide a tighter $d$ upper bound for the
-information ratio of $\ts$ in $d$ dimensions, when the link function
-$\ell$ is known and the action set is the unit ball.
-This exactly matches the upper bound of \cite{RV16} for linear bandits,
-effectively showing that adding a known convex monotone ridge function is free in terms of the information ratio, and hence the Bayesian regret upper bound.
+In this chapter we provide a tighter upper bound for the
+information ratio of $\ts$ in $d$ dimensions, when the link function $\ell$ is convex, non-increasing, and known to the learner.
+Being known to the learner can be formalized as $\ell$ is fixed for all the functions in the function class.
+This function class is a subset of $\sF_{\pb\pl\pr\pm}$ that we studied in \cref{chap:ridge-ts}, but the significant difference is that the information ratio upper bound matches the one of linear bandits \citep{RV16} with the same constant.
+This effectively shows that adding a known convex monotone ridge function is free in terms of the information ratio, and hence the Bayesian regret upper bound.
 
-Let $\sF^{\ell}_{\pb\pl\pr\pm}$ be the family of functions with a fixed link function $\ell$. This captures the problem instances where the link function is known to the learner.
-\begin{restatable}{lemma}{KnownRidgeLemma}\label{thm:ridge-known-ir}
-    For the class of functions $\sF^{\ell}_{\pb\pl\pr\pm}$,
-    it holds that $(0, d) \in \IR(\sF^{\ell}_{\pb\pl\pr\pm})$ whenever $\cK = \ball_1$.
+\begin{definition}[Known Ridge Function Class]
+    Let $\Theta \subseteq \R^d$ be a set of parameters and $\ell:\R\to\R$ be a convex, non-increasing function.
+    Define $\sF_{\Theta, \ell}$ be the space of all functions $f:\cK \to \R$ such that
+    there exists $\theta \in \Theta$ such that
+    \begin{align*}
+        f(x) =\ell(\ip{\theta, x})\quad \forall x \in \cK\,.
+    \end{align*}
+\end{definition}
+
+Further, instead of defining the distributions over the space of convex function $f$, we can work with distributions over the parameter space $\Theta \in \R^d$.
+Precisely, for every distribution $\xi \in \sP(\sF_{\Theta, \ell})$, we can define a corresponding distribution over the parameter space $\sigma \in \sP(\Theta)$,
+such that $f_\theta(\cdot) \triangleq \ell(\ip{\theta, \cdot})$ with $\theta \sim \sigma$ has the same distribution as $f$ with $f \sim \xi$.
+
+\begin{restatable}{lemma}{KnownRidgeLemma}
+    \label{thm:ridge-known-ir}
+    It holds that $(0, d) \in \IR(\sF_{\Theta,\ell})$ whenever
+    \begin{align*}
+        \theta = \argmin_{\theta' \in \Theta} \ip{\theta', \argmin_{x \in \cK} \ip{x, \theta}}\,,
+    \end{align*}
+    for all $\theta \in \Theta$.
 \end{restatable}
 First recall that
 \begin{align}
@@ -2973,24 +2990,22 @@ Therefore, to prove that $(0, \beta) \in \IR(\sF)$, it suffices to show that
     \frac{\Delta(\pi^\xi_\ts, \xi)^2}{\I(\pi^\xi_\ts, \xi)} \leq \beta\,,\qquad \forall \xi \in \sP(\sF)
     \label{eq:IR-alpha-0}
 \end{align}
+where the function $\Psi(\xi)$ was the original definition (up to the measure of information used) of information ratio in \citet{RV16}.
 While the proof of \cref{thm:ts-ridge} used the decomposition lemma (\cref{lem:decomp-big}) the proof in this chapter avoids the need for using decomposition lemma thanks to the simpler setting.
-In particular, the proof uses a reduction to the linear case, i.e., the case when the link function $\ell$ is the identity function.
+In particular, the proof uses a reduction to the linear bandits, i.e., the case when the link function $\ell$ is the identity function.
 For completeness, we start by presenting the analysis of the linear setting, borrowed from \cite{RV16}.
 
 \section{Linear \ts}
 \begin{theorem}
-    Assume that $\ell(x) = x \forall x \in \R$,
-    then for all $\xi \in \sP(\sF_{\pb\pl\pr\pm})$, we have
+    If $\ell(x) = x$ for all $x \in \R$,
+    then for all $\xi \in \sP(\sF_{\Theta, \ell})$, we have
     \begin{align*}
         \Psi(\xi) \leq d\,.
     \end{align*}
     \label{thm:ir-ts-linear}
 \end{theorem}
 \begin{proof}
-    From the assumption of the theorem, we have that for $f\sim\xi$
-    we have that $f(x) = \langle x, \theta \rangle$ for some $\theta \in \R^d$.
-    Therefore, without loss of generality, we have that $\exists \sigma \in \cP(\R^d)$
-    such that $f_\theta$ with $\theta \sim \sigma$ has the same distribution as $f$, i.e. $\xi$.
+    Let $\sigma$ be the corresponding distribution over the parameter space $\Theta$.
     Let $(\theta, X)$ be jointly distributed such that $\theta \sim \sigma$, $X = \argmin_{x \in \cK} \langle x, \theta\rangle$.
     Then $X \sim \pi_\ts^\xi$.
     First, we have
@@ -3451,266 +3466,16 @@ the first of which is only used to prove the second one.
     and the fact that $X'$ is supported on $\R_+$.
 \end{proof}
 
-% \clearpage
-% \newpage
-% \KnownRidgeLemma
-% \begin{proof}
-%     Let $\xi_\ts \in \sP(\R^d \times \R^d)$
-%     be the joint law of the parameter $\theta$ and the
-%     greedy action $X$, i.e.
-%     \begin{align*}
-%         (\theta, X) \sim \xi_\ts,
-%         \qquad
-%         \text{where } X = \argmin_{x \in \cK} \ell(\langle x, \theta\rangle).
-%     \end{align*}
-%     It follows that
-%     \begin{align*}
-%         \Delta(\pi^\xi_\ts, \xi)
-%          & =
-%         \E\left[\ell(X^\top \theta') - \ell(X^\top \theta)\right]\,,
-%         \qquad
-%         \I(\pi^\xi_\ts, \xi)
-%         = \E\left[(\ell(X^\top \theta') - \E[\ell(X^\top \theta')|X])^2\right]\,.
-%     \end{align*}
-%     Define
-%     \begin{align*}
-%         \phi(X) = \frac{
-%             \E[\ell(X^\top \theta')|X] - \ell(X^\top \theta)
-%         }{
-%             X^\top \theta - \E[X^\top \theta'|X]
-%         }.
-%     \end{align*}
-%     Let $(\tilde{\theta}, \tilde{X}) \sim \xi_\ts$
-%     be such that
-%     \begin{align*}
-%         \tilde{\theta}^\top \tilde{X} = \essinf_{(X, \theta) \sim \xi_\ts} X^\top \theta,
-%     \end{align*}
-%     and write
-%     \begin{align*}
-%         \frac{
-%             \E[\ell(\tilde{X}^\top \theta')|\tilde{X}] - \ell(\tilde{X}^\top \tilde{\theta})
-%         }{
-%             \sqrt{
-%                 \E\left[
-%                     \left(\ell(\tilde{X}^\top \theta) - \E[\ell(\tilde{X}^\top \theta')|\tilde{X}]\right)^2
-%                     |\tilde{X}
-%                     \right]
-%             }
-%         }
-%          &
-%         \explan{(a)}
-%         \leq
-%         \frac{
-%             \E[\tilde{X}^\top \theta'|\tilde{X}] - \tilde{X}^\top \tilde{\theta}
-%         }{
-%             \sqrt{
-%                 \E\left[
-%                     \left(\tilde{X}^\top \theta' - \E[\tilde{X}^\top \theta'|\tilde{X}]\right)^2
-%                     |\tilde{X}
-%                     \right]
-%             }
-%         }
-%         \\
-%          &
-%         \explan{(b)}
-%         =
-%         \frac{
-%             \phi(\tilde{X}) \tilde{X}^\top \theta - \E[\phi(\tilde{X}) \tilde{X}^\top \theta'|\tilde{X}]
-%         }{
-%             \sqrt{
-%                 \E\left[
-%                     \left(\phi(\tilde{X}) \tilde{X}^\top \theta' - \E[\phi(\tilde{X}) \tilde{X}^\top \theta'|\tilde{X}]\right)^2
-%                     |\tilde{X}
-%                     \right]
-%             }
-%         }
-%         \\
-%          &
-%         \explan{(c)}
-%         =
-%         \frac{
-%             \ell(\tilde{X}^\top \tilde{\theta}) - \E[\ell(\tilde{X}^\top \theta')|\tilde{X}]
-%         }{
-%             \sqrt{
-%                 \E\left[
-%                     \left(\phi(\tilde{X}) \tilde{X}^\top \theta' - \E[\phi(\tilde{X}) \tilde{X}^\top \theta'|\tilde{X}]\right)^2
-%                     |\tilde{X}
-%                     \right]
-%             }
-%         },
-%     \end{align*}
-%     where \texttt{(a)} follows from
-%     \begin{align*}
-%         \ell(\tilde{X}^\top \theta')
-%         \explan{$X'$ greedy}
-%         \geq
-%         \ell({X'}^\top \theta')
-%         \explan{$\tilde{X}$ definition}
-%         \geq
-%         \ell(\tilde{X}^\top \tilde{\theta})\,,
-%     \end{align*}
-%     and \cref{lem:key-convex-ineq},
-%     \texttt{(b)} follows from multiplying both
-%     numerator and denominator by $\phi(X)$,
-%     and \texttt{(c)} follows from the definition of $\phi(X)$.
-%     Thus, we have
-%     \begin{align}
-%         \E\left[
-%             \left(
-%             \ell(\tilde{X}^\top \theta') - \E[\ell(\tilde{X}^\top \theta')|\tilde{X}]
-%             \right)^2
-%             | \tilde{X}
-%             \right]
-%         \geq
-%         \E\left[
-%             \left(
-%             \phi(\tilde{X}) \tilde{X}^\top \theta' - \E[\phi(\tilde{X})\tilde{X}^\top \theta'|\tilde{X}]
-%             \right)^2
-%             | \tilde{X}
-%             \right].
-%         \label{ineq:i1}
-%     \end{align}
-%     Therefore, we have
-%     \begin{align}
-%         \frac{
-%             \E[\ell(\tilde{X}^\top \theta')|\tilde{X}]
-%             - \ell(\tilde{X}^\top \tilde{\theta})
-%         }{
-%             \sqrt{
-%                 \E\left[
-%                     \left(\ell(\tilde{X}^\top \theta') - \E[\ell(\tilde{X}^\top \theta')|\tilde{X}]\right)^2
-%                     |\tilde{X}
-%                     \right]
-%             }
-%         }
-%          & =
-%         \frac{
-%             \E[\phi(\tilde{X})\tilde{X}^\top \theta'|\tilde{X}] - \phi(\tilde{X})\tilde{X}^\top \tilde{\theta}
-%         }{
-%             \sqrt{
-%                 \E\left[
-%                     \left(\ell(\tilde{X}^\top \theta') - \E[\ell(\tilde{X}^\top \theta')|\tilde{X}]\right)^2
-%                     |\tilde{X}
-%                     \right]
-%             }
-%         } \nonumber
-%         \\
-%          & \leq
-%         \frac{
-%             \E[\phi(\tilde{X})\tilde{X}^\top \theta'|\tilde{X}] - \phi(\tilde{X})\tilde{X}^\top \tilde{\theta}
-%         }{
-%             \sqrt{
-%                 \E\left[
-%                     \left(\phi(\tilde{X})\tilde{X}^\top \theta' -
-%                     \E[\phi(\tilde{X})\tilde{X}^\top \theta'|\tilde{X}]\right)^2
-%                     |\tilde{X}
-%                     \right]
-%             }
-%         } \nonumber
-%         \\
-%          & =
-%         \frac{
-%             \E[\tilde{X}^\top \theta'|\tilde{X}] - \tilde{X}^\top \tilde{\theta}
-%         }{
-%             \sqrt{
-%                 \E\left[
-%                     \left(\tilde{X}^\top \theta' -
-%                     \E[\tilde{X}^\top \theta'|\tilde{X}]\right)^2
-%                     |\tilde{X}
-%                     \right]
-%             }
-%         }\,. \label{eq:ir-ts-reduction-to-linear}
-%     \end{align}
-%     where the first equality follows from the
-%     definition of $\phi(\tilde{X})$ and the second inequality follows from \ref{ineq:i1}.
-
-%     Now, observe that
-%     \begin{align*}
-%         \psi(\xi)
-%          & =
-%         \frac{\Delta(\pi^\xi_\ts, \xi)^2}{\I(\pi^\xi_\ts, \xi)}
-%         \\
-%          & =
-%         \frac{
-%             \E\left[
-%                 \ell(X^\top \theta') - \ell(X^\top \theta)
-%                 \right]^2
-%         }{
-%             \E\left[
-%                 \left(\ell(X^\top \theta') - \E[\ell(X^\top \theta')|X]\right)^2
-%                 \right]
-%         }
-%         \\
-%          & =
-%         \frac{
-%             \left(
-%             \mP(X = \tilde{X})\E\left[
-%                 \ell(\tilde{X}^\top \theta') - \ell(\tilde{X}^\top \tilde{\theta})
-%                 | X = \tilde{X}
-%                 \right]
-%             +
-%             \mP(X \neq \tilde{X})\E\left[
-%                 \ell(X^\top \theta') - \ell(X^\top \theta)
-%                 | X \neq \tilde{X}
-%                 \right]
-%             \right)^2
-%         }{
-%             \mP(X = \tilde{X})\E\left[
-%                 \left(\ell(\tilde{X}^\top \theta') - \E[\ell(\tilde{X}^\top \theta')|\tilde{X}]\right)^2
-%                 | X = \tilde{X}
-%                 \right]
-%             +
-%             \mP(X \neq \tilde{X})\E\left[
-%                 \left(\ell(X^\top \theta') - \E[\ell(X^\top \theta')|X]\right)^2
-%                 | X \neq \tilde{X}
-%                 \right]
-%         }
-%     \end{align*}
-
-%     Further, define $\tilde{X} = \phi(X)X$ and
-%     rewrite the inequality as
-%     \begin{align*}
-%         \frac{
-%             \E\left[
-%                 \ell(X^\top \theta) - \E[\ell(X^\top \theta')|X]
-%                 \right]
-%         }{
-%             \sqrt{
-%                 \E\left[
-%                     \left(\ell(X^\top \theta') - \E[\ell(X^\top \theta')|X]\right)^2
-%                     \right]
-%             }
-%         }
-%          & \leq
-%         \frac{
-%             \E\left[
-%                 \tilde{X}^\top \theta - \E[\tilde{X}^\top \theta'|X]
-%                 \right]
-%         }{
-%             \sqrt{
-%                 \E\left[
-%                     \left(\tilde{X}^\top \theta' -
-%                     \E[\tilde{X}^\top \theta'|X]\right)^2
-%                     \right]
-%             }
-%         }
-%         \leq
-%         \sqrt{d}\,,
-%     \end{align*}
-%     where the $\sqrt{d}$ upper bound follows from \cref{thm:ir-ts-linear}.
-% \end{proof}
-
 \section{Information Ratio of \ts for Known Ridge}
 We are now in position to prove \cref{thm:ridge-known-ir}.
-\KnownRidgeLemma
+\KnownRidgeLemma*
 \begin{proof}
     Similar to the proof of \cref{thm:ir-ts-linear},
-    without loss of generality, we have that $\exists \sigma \in \cP(\R^d)$
-    such that $f_\theta$ with $\theta \sim \sigma$ has the same distribution as $f$, i.e. $\xi$.
+    let $\sigma$ be the corresponding distribution over the parameter space $\Theta$.
     Let $(\theta, X)$ be jointly distributed such that $\theta \sim \sigma$, $X = \argmin_{x \in \cK} \langle x, \theta\rangle$.
     Then $X \sim \pi_\ts^\xi$.
 
-    Also note that since $\cK = \ball_1^d$, we have both
+    Also note that because of the assumption of the theorem, we have both
     \begin{align}
         X = \argmin_{x \in \cK} \ell(\langle \theta, x \rangle),\quad \text{and} \quad
         \theta = \argmin_{y \in \Theta} \ell(\langle y, X \rangle)\,.
@@ -5162,6 +4927,6 @@ In many cases you may know the loss belongs to a simple parametric class, in whi
 
 \renewcommand{\bibname}{References}
 \bibliography{ref}
-\bibliographystyle{alpha}
+\bibliographystyle{plainnat}
 
 \end{document}
