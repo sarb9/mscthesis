@@ -264,7 +264,7 @@
 
 \begin{titlepage}
     \centering
-    \textbf{\large{Thompson Sampling for Bandit Convex Optimization\\(Version 2.0)}}
+    \textbf{\large{Thompson Sampling for Bandit Convex Optimization\\(Version 3.0)}}
     \vskip.5in by \vskip.5in
     \large{Alireza Bakhtiari}
 
@@ -552,6 +552,7 @@ as the learner gains information.
 
 \section{Notation}
 Let $\norm{\cdot}$ be the standard euclidean norm on $\R^d$.
+Let $\R_+$ be the set of non-negative real numbers.
 For natural number $k$ let $[k] = \{1,\ldots,k\}$.
 Define $\norm{x}_\Sigma = \sqrt{x^\top \Sigma x}$ for positive definite $\Sigma \in \R^{d\times d}$ and $x \in \R^d$.
 Given a function $f : \cK \to \R$, let $\norm{f}_\infty = \sup_{x \in \cK} |f(x)|$.
@@ -2951,59 +2952,62 @@ Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\l
 In this chapter we provide a tighter $d$ upper bound for the
 information ratio of $\ts$ in $d$ dimensions, when the link function
 $\ell$ is known and the action set is the unit ball.
+This exactly matches the upper bound of \cite{RV16} for linear bandits,
+effectively showing that adding a known convex monotone ridge function is free in terms of the information ratio, and hence the Bayesian regret upper bound.
 
+Let $\sF^{\ell}_{\pb\pl\pr\pm}$ be the family of functions with a fixed link function $\ell$. This captures the problem instances where the link function is known to the learner.
 \begin{restatable}{lemma}{KnownRidgeLemma}\label{thm:ridge-known-ir}
-    $(0, d) \in \IR(\sF_{\pb\pl\pr\pm})$ whenever $\cK = \ball_1^d$ and
-    the link function $\ell$ is known to the learner.
+    For the class of functions $\sF^{\ell}_{\pb\pl\pr\pm}$,
+    it holds that $(0, d) \in \IR(\sF^{\ell}_{\pb\pl\pr\pm})$ whenever $\cK = \ball_1$.
 \end{restatable}
-We let $\alpha=0$ in this chapter, which leads to the alternate definition
-of the $\IR$ set,
+First recall that
 \begin{align}
     \IR(\sF)
-     & = \left\{(\alpha, \beta) \in \R_+^2 : \sup_{\xi \in \sP(\sF)} \left[\Delta(\pi^\xi_\ts, \xi) - \alpha - \sqrt{\beta \I(\pi^\xi_\ts, \xi)}\right] \leq 0 \right\} \nonumber \\
-     & \explan{(a)}= \left\{(0, \beta) \in \R_+^2 : \Delta(\pi^\xi_\ts, \xi) - \sqrt{\beta \I(\pi^\xi_\ts, \xi)} \leq 0, \forall \xi \in \sP(\sF) \right\}              \nonumber \\
-     & \explan{(b)}= \left\{(0, \beta) \in \R_+^2 : \frac{\Delta(\pi^\xi_\ts, \xi)^2}{\I(\pi^\xi_\ts, \xi)} \leq \beta, \forall \xi \in \sP(\sF) \right\}\,, \nonumber
+     & = \left\{(\alpha, \beta) \in \R_+^2 : \sup_{\xi \in \sP(\sF)} \left[\Delta(\pi^\xi_\ts, \xi) - \alpha - \sqrt{\beta \I(\pi^\xi_\ts, \xi)}\right] \leq 0 \right\}\,. \nonumber
+    %  & \explan{(a)}\supseteq \left\{(0, \beta) \in \R_+^2 : \Delta(\pi^\xi_\ts, \xi) - \sqrt{\beta \I(\pi^\xi_\ts, \xi)} \leq 0, \forall \xi \in \sP(\sF) \right\}              \nonumber \\
+    %  & \explan{(b)}= \left\{(0, \beta) \in \R_+^2 : \frac{\Delta(\pi^\xi_\ts, \xi)^2}{\I(\pi^\xi_\ts, \xi)} \leq \beta, \forall \xi \in \sP(\sF) \right\}\,, \nonumber
 \end{align}
-where \texttt{(a)} follows from setting $\alpha=0$ and
-replacing $\sup$ with a universal quantifier,
-and \texttt{(b)} follows from algebra.
 Therefore, to prove that $(0, \beta) \in \IR(\sF)$, it suffices to show that
 \begin{align}
     \Psi(\xi) \triangleq
     \frac{\Delta(\pi^\xi_\ts, \xi)^2}{\I(\pi^\xi_\ts, \xi)} \leq \beta\,,\qquad \forall \xi \in \sP(\sF)
     \label{eq:IR-alpha-0}
 \end{align}
-The proof is followed from different techniques compared to
-the proof of \cref{thm:ridge-ir}, which is mainly reducing the analysis
-to that of the linear setting, i.e. $\ell$ is the identity function.
-Hence, we start by presenting the analysis of the linear setting
-which is by \cite{RV16}, and is included for completeness.
+While the proof of \cref{thm:ts-ridge} used the decomposition lemma (\cref{lem:decomp-big}) the proof in this chapter avoids the need for using decomposition lemma thanks to the simpler setting.
+In particular, the proof uses a reduction to the linear case, i.e., the case when the link function $\ell$ is the identity function.
+For completeness, we start by presenting the analysis of the linear setting, borrowed from \cite{RV16}.
 
 \section{Linear \ts}
 \begin{theorem}
-    For $\ell(x) = x$, $\psi(\xi) \leq d$ for all $\xi \in \sP(\sF_{\pb\pl\pr\pm})$.
+    Assume that $\ell(x) = x \forall x \in \R$,
+    then for all $\xi \in \sP(\sF_{\pb\pl\pr\pm})$, we have
+    \begin{align*}
+        \Psi(\xi) \leq d\,.
+    \end{align*}
     \label{thm:ir-ts-linear}
 \end{theorem}
 \begin{proof}
+    From the assumption of the theorem, we have that for $f\sim\xi$
+    we have that $f(x) = \langle x, \theta \rangle$ for some $\theta \in \R^d$.
+    Therefore, without loss of generality, we have that $\exists \sigma \in \cP(\R^d)$
+    such that $f_\theta$ with $\theta \sim \sigma$ has the same distribution as $f$, i.e. $\xi$.
+    Let $(\theta, X)$ be jointly distributed such that $\theta \sim \sigma$, $X = \argmin_{x \in \cK} \langle x, \theta\rangle$.
+    Then $X \sim \pi_\ts^\xi$.
     First, we have
     \begin{align*}
         \bar f(\cdot) = \E[f(\cdot)] = \E[\langle \cdot, \theta \rangle] = \langle \cdot, \E[\theta]\rangle\,,
     \end{align*}
     from which we define $\bar{\theta} = \E[\theta]$.
-    Moreover, for $X \sim \pi_\ts^\xi$ let
+    Moreover, let
     \begin{align*}
         V = \E[X X^\top].
     \end{align*}
     For the remainder of the proof we suppose that $V$ is invertible,
     which holds as long $X$ is not supported on any subspace of $\R^d$.
-    If $X$ was supported on such a subspace, the proof can be adapted
-    to a basis of that subspace.
+    If $X$ was supported on such a subspace, the proof can be repeated by replacing $\R^d$ with that subspace.
 
-    Let $\theta \sim \xi$, and
-    $X = \argmin_{x \in \cC} \langle x, \theta\rangle$,
-    and $X'$ be an i.i.d copy of $X$, which is equivalent
-    to $X' \sim \pi_\ts^\xi$. Also let $\theta' \sim \xi$,
-    be an i.i.d. copy of $\theta$. We have
+    Let $(\theta', X')$ be an independent copy of $(\theta, X)$.
+    We have
     \begin{align*}
         \Delta(\pi^\xi_\ts, \xi)
          & =
@@ -3041,8 +3045,7 @@ which is by \cite{RV16}, and is included for completeness.
         }\,,
     \end{align*}
     where \texttt{(a)} is by $\ell$ being identity,
-    \texttt{(b)} is by $X'$ and $\theta'$ being i.i.d.
-    copies of $X$ and $\theta$,
+    \texttt{(b)} is by $X'$ and $\theta'$ being independent copies of $X$ and $\theta$,
     and \texttt{(c)} and \texttt{(d)} are by Cauchy-Schwarz.
     Further, we have
     \begin{align*}
@@ -3061,9 +3064,11 @@ which is by \cite{RV16}, and is included for completeness.
     \begin{align*}
         \I(\pi_\ts^\xi, \xi)
          & =
-        E[(f(X) - \bar{f}(X))^2]                                            \\
+        \E[(f_\theta(X') - \bar{f}(X'))^2]                                  \\
          & =
-        \E[(\ell(X^\top \theta') - \E[\ell(X^\top \theta')|X])^2]           \\
+        \E[(X^\top \theta' - \E[X^\top \theta'|X])^2]
+        \tag{Since $(X', \theta')$ is independent copy of $(X, \theta)$}
+        \\
          & =
         \E[(X^\top (\theta' - \bar{\theta}))^2]                             \\
          & =
@@ -3075,7 +3080,8 @@ which is by \cite{RV16}, and is included for completeness.
          & =
         \E[\|\theta' - \bar{\theta}\|_V^2]\,,
     \end{align*}
-    where \texttt{(a)} follows from tower rule.
+    where \texttt{(a)} follows because $\theta'$ and $X$ are independent,
+    the tower rule and the linearity of expectation.
     Putting these together, we have
     \begin{align*}
         \Psi(\xi)
@@ -3092,13 +3098,12 @@ which is by \cite{RV16}, and is included for completeness.
         \\
          & =
         \E[\|X\|^2_{V^{-1}}]
-        =d\,,
+        =d\,.\qedhere
     \end{align*}
-    and the proof terminates.
 \end{proof}
 
-\section{An Inequality for Convex Functions}
-To prove \cref{thm:ridge-known-ir}, we first provide two
+\section{Inequalities for Convex Functions}
+We first provide two
 lemmas about convex functions,
 the first of which is only used to prove the second one.
 \begin{lemma}
@@ -3121,8 +3126,9 @@ the first of which is only used to prove the second one.
         }.
     \end{align*}
     \begin{proof}
+        Without loss of generality, we can assume that $g(x) = 0$ for $x < 0$.
         Define the function
-        $h(x) = \frac{\E[x]}{\E[g(x)]}g(x)$,
+        $h(x) = \frac{\E[g(x)]}{\E[x]}g(x)$,
         and observe that
         \begin{align*}
             \frac{
@@ -3146,36 +3152,46 @@ the first of which is only used to prove the second one.
             \geq
             \E[X^2].
         \end{align*}
-        Also, since $h$ is convex there exists a
-        point $x_0$ such that $h(x) \geq x_0$
-        for all $x \geq x_0$ and $h(x) \leq  x_0$
-        for all $x \leq x_0$.
+        % Define $s(x) = h(x) - x$.
+        % This is convex.
+        % Let $\bar{x} = \E[X]\geq 0$.
+        % Furthermore, $0 = s(0)$.
+        % By Jensen $s(\bar{x}) \leq \E[s(X)] = 0$.
+        % % Hence, $s$ is non-increasing on $[0, \bar{x}]$ and non-decreasing on $[\bar{x}, \infty)$.
+        % Let $x_0 = \inf \{x : s(x) \geq 0\}$.
+        % Since $s(x) > 0$ for $x \in (-\infty, 0), x_0 \geq 0$.
         We have
         \begin{align*}
             \E\left[
                 (h(X) - X)
-                \mI_{\{h(X) \geq X\}}
+                \mI_{\{h(X) < X\}}
                 \right]
              & =
             \E\left[
                 (h(X) - X)
-                (1 - \mI_{\{h(X) \leq X\}})
+                (1 - \mI_{\{h(X) < X\}})
                 \right]
             \\
              & =
             \E\left[
                 -
                 (h(X) - X)
-                \mI_{\{h(X) \leq X\}}
+                \mI_{\{h(X) < X\}}
                 \right]
             \\
              & =
             \E\left[
                 (X - h(X))
-                \mI_{\{h(X) \leq X\}}
+                \mI_{\{h(X) < X\}}
                 \right].
         \end{align*}
-        Further, by the properties of $x_0$ we get
+        Also, since $h$ is convex and non-decreasing there exists a
+        point $x_0$ such that $h(x) \geq x_0$
+        for all $x \geq x_0$ and $h(x) \leq  x_0$
+        for all $x \leq x_0$.
+        To see why such point exists, assume the opposite, then $h(x) < x$ for all $x$,
+        which contradicts the fact that $\E[h(X)] = \E[X]$.
+        Further, by the definition of $x_0$ we get
         \begin{align*}
             \E\left[
                 \left(
@@ -3209,7 +3225,7 @@ the first of which is only used to prove the second one.
                 \left(
                 X - h(X)
                 \right)
-                \mI_{\{h(X) \leq X\}}
+                \mI_{\{h(X) < X\}}
                 \right]
             \\
              & \geq
@@ -3220,7 +3236,7 @@ the first of which is only used to prove the second one.
                 \left(
                 X - h(X)
                 \right)
-                \mI_{\{h(X) \leq X\}}
+                \mI_{\{h(X) < X\}}
                 \right]
             \\
              & =
@@ -3228,18 +3244,19 @@ the first of which is only used to prove the second one.
                 \left(
                 X^2 - h(X)^2
                 \right)
-                \mI_{\{h(X) \leq X\}}
+                \mI_{\{h(X) < X\}}
                 \right],
         \end{align*}
         which by rearranging gives
         \begin{align*}
-            0 & \geq
+            0 &
+            \geq
             -
             \E\left[
                 \left(
                 h(X)^2 - X^2
                 \right)
-                \mI_{\{h(X) \leq X\}}
+                \mI_{\{h(X) < X\}}
                 \right]
             +
             \E\left[
@@ -3249,8 +3266,22 @@ the first of which is only used to prove the second one.
                 \mI_{\{h(X) \geq X\}}
                 \right]
             \\
+              &
+            =\E\left[
+                -
+                \left(
+                h(X)^2 - X^2
+                \right)
+                \mI_{\{h(X) < X\}}
+                +
+                \left(
+                X^2 - h(X)^2
+                \right)
+                \mI_{\{h(X) \geq X\}}
+                \right]
+            \\
               & =
-            \E[X^2] - \E[h(X)^2]
+            \E[X^2] - \E[h(X)^2]\,,
         \end{align*}
         proving the desired inequality.
     \end{proof}
@@ -3361,7 +3392,7 @@ the first of which is only used to prove the second one.
     Note that $g$ is convex and non-decreasing.
     Also, we know that $\essinf X' = \essinf X - x_1 = 0$,
     and $g(0) = f(x_1) - f(x_1) = 0$,
-    which implies that both $\E[X']$, $\E[g(X')]$ are positive,
+    which implies that both $\E[X']$, $\E[g(X')]$ are non-negative,
     Therefore, we may further simplify the
     inequality by squaring and rearranging as
     \begin{align}
@@ -3674,9 +3705,10 @@ We are now in position to prove \cref{thm:ridge-known-ir}.
 \KnownRidgeLemma
 \begin{proof}
     Similar to the proof of \cref{thm:ir-ts-linear},
-    let $X,X' \sim_{\text{i.i.d.}} \pi_\ts^\xi$
-    and $\theta, \theta' \sim_{\text{i.i.d.}} \xi$,
-    with $X = \argmin_{x \in \cK} \ell(\langle x, \theta\rangle)$.
+    without loss of generality, we have that $\exists \sigma \in \cP(\R^d)$
+    such that $f_\theta$ with $\theta \sim \sigma$ has the same distribution as $f$, i.e. $\xi$.
+    Let $(\theta, X)$ be jointly distributed such that $\theta \sim \sigma$, $X = \argmin_{x \in \cK} \langle x, \theta\rangle$.
+    Then $X \sim \pi_\ts^\xi$.
 
     Also note that since $\cK = \ball_1^d$, we have both
     \begin{align}
