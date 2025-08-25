@@ -660,8 +660,8 @@ Firstly, we use variance based measure of information, which lower bounds the mu
 \begin{align*}
     \I(\pi, \xi) = \E\left[(F(X) - \bar F(X))^2\right]\,.
 \end{align*}
-Secondly, given a distribution $\xi$ and a random function $F$ with law $\xi$, we let $\pi^\xi_\ts \in \sP(\cK)$ be the law of $x_f$, which is the minimiser of $F$.
-The generalised information ratio associated with \ts on class of loss functions $\sF$ is the set
+Secondly, given a distribution $\xi$ and a random function $F$ with law $\xi$, we let $\pi^\xi_\ts \in \sP(\cK)$ be the law of $x_f$, which is the minimizer of $F$.
+The generalized information ratio associated with \ts on class of loss functions $\sF$ is the set
 \begin{align*}
     \IR_\ts(\sF) = \left\{(\alpha, \beta) \in \R_+^2 : \sup_{\xi \in \sP(\sF)} \left[\Delta(\pi^\xi_\ts, \xi) - \alpha - \sqrt{\beta \I(\pi^\xi_\ts, \xi)}\right] \leq 0 \right\} \,.
 \end{align*}
@@ -818,7 +818,7 @@ under convex combinations.
         \} \subset \cK$, such that the following properties hold:
     \begin{itemize}
         \item \textit{Closure:} For all $k \in [N]$, $\conv(\sF_k) \subset \sF$.
-              % \item \textit{Common near-minimiser:} $x_k$ is close to all the points in $\{\tilde{x}_f: f \in \sF_k\}$: $\sup_{f \in \sF_k} \norm{\tilde x_f - x_k} \leq \epsilon$.
+              % \item \textit{Common near-minimizer:} $x_k$ is close to all the points in $\{\tilde{x}_f: f \in \sF_k\}$: $\sup_{f \in \sF_k} \norm{\tilde x_f - x_k} \leq \epsilon$.
         \item \textit{Approximation:} For all $f \in \sF$, there exists a $k \in [N]$ such that $\norm{\tilde{x}_f - x_k} \leq \epsilon$, and $\inf_{g \in \sF_k} \norm{f - g}_\infty \leq \epsilon$.
     \end{itemize}
 \end{definition}
@@ -1020,9 +1020,9 @@ The point of the next lemma is to show that approximate minimization policies be
     where the last inequality follows from Lemma~\ref{lem:cont:I}\texttt{(a)} and the fact that $\norm{F - G}_\infty \leq \epsilon$.
 \end{proof}
 
-The next lemma establishes basic properties of the regularised minimisers $\tilde x_f$ and $\bar x_f$, which are defined
+The next lemma establishes basic properties of the regularized minimizers $\tilde x_f$ and $\bar x_f$, which are defined
 in Definition~\ref{def:opt}.
-Remember that $\epsR$ is the amount of regularisation. Larger values make $\tilde x_f$ more stable but also a worse approximation to $x_f$.
+Remember that $\epsR$ is the amount of regularization. Larger values make $\tilde x_f$ more stable but also a worse approximation to $x_f$.
 The optimization error in the definition of $\bar x_f$ is $\epsO$.
 
 \begin{lemma}\label{lem:sc}
@@ -1402,7 +1402,7 @@ Our first main theorem shows that \ts{} is statistically efficient when the loss
              & \explan{(e)}\leq \bar F(x_3) - c \epsilon \,,
         \end{align*}
     \end{enumsteps}
-    where \texttt{(a)} follows by convexity and because $f_4$ is minimised at $x_4$,
+    where \texttt{(a)} follows by convexity and because $f_4$ is minimized at $x_4$,
     \texttt{(b)} from \cref{eq:ts:max},
     \texttt{(c)} from \ref{step:ts:ii},
     \texttt{(d)} since $f_3(x_3) < \bar F(x_3) - \epsilon/2$ by the definition of $\sF_i$
@@ -1768,7 +1768,7 @@ Thompson sampling has poor behaviour for general multi-dimensional convex functi
 that the classical information-theoretic techniques cannot improve on the best known bound for general bandit convex optimization
 of $\tilde O(d^{1.5} \sqrt{n})$. While these seem like quite different results, they are based on the same construction, which is
 based on finding a family of functions and prior that makes learning challenging.
-This family is based on constructing a convex function $f_\theta$ for each $\theta \in \sphere_1$ such that $f_\theta$ is minimised at $\theta$ with minimum value of $0$, and $f_\theta$ exactly agrees with the upward-shifted quadratic function outside of a ball of radius $\sqrt{1 + 2\epsilon}$ centered at $\theta$, where $\epsilon$ is the minimum value the upward-shifted quadratic function takes, which is realized at $x=0$.
+This family is based on constructing a convex function $f_\theta$ for each $\theta \in \sphere_1$ such that $f_\theta$ is minimized at $\theta$ with minimum value of $0$, and $f_\theta$ exactly agrees with the upward-shifted quadratic function outside of a ball of radius $\sqrt{1 + 2\epsilon}$ centered at $\theta$, where $\epsilon$ is the minimum value the upward-shifted quadratic function takes, which is realized at $x=0$.
 
 \begin{figure}[h]
     \centering
@@ -1822,7 +1822,7 @@ This family is based on constructing a convex function $f_\theta$ for each $\the
 
         \end{axis}
     \end{tikzpicture}
-    \caption{Illustration of the function $f_\theta$ for $\epsilon = 0.5$ and $\theta = 1$ in 1 dimension. It can be seen that $f_\theta$ is convex, minimised at $\theta$ and lies below $f$.}
+    \caption{Illustration of the function $f_\theta$ for $\epsilon = 0.5$ and $\theta = 1$ in 1 dimension. It can be seen that $f_\theta$ is convex, minimized at $\theta$ and lies below $f$.}
     \label{fig:ftheta}
 \end{figure}
 
@@ -1851,7 +1851,7 @@ While for our later argument it suffices to consider $f_\theta$ only on $\ball_1
     %                         \ip{\theta, x} - 1 + \sqrt{1 + 2 \epsilon} \norm{\theta - x} & \text{otherwise} \,.
     %                     \end{cases}
     % \end{align*}
-    We need to prove that $f_\theta$ is convex, minimised at $\theta$,
+    We need to prove that $f_\theta$ is convex, minimized at $\theta$,
     $f_\theta(x) \leq f(x)$ for all $x \in \R^d$, and
     when restricted to $\ball_1$, $f_\theta$ is $\sqrt{2 + 2\epsilon}$-Lipschitz.
     That $f_\theta(x) \leq f(x)$ for all $x \in \R^d$ and that $f_\theta$ is convex follows because
@@ -1875,7 +1875,7 @@ While for our later argument it suffices to consider $f_\theta$ only on $\ball_1
     \end{align*}
     Therefore $f_\theta$ is the supremum over a set of linear functions and hence convex.
 
-    That $f_\theta$ is minimised at $\theta$ follows directly from the first-order optimality conditions.
+    That $f_\theta$ is minimized at $\theta$ follows directly from the first-order optimality conditions.
     To see this, let $\eta \in \sphere_1$. Then
     \begin{align*}
         Df_\theta(\theta)[\eta] = \ip{\theta, \eta} + \sqrt{1 + 2 \epsilon} \norm{\eta} > 0 \,,
@@ -1911,7 +1911,7 @@ Let $\sigma$ be the uniform probability measure on $\sphere_1$ and
 the prior $\xi$ be the law of $f_\theta$ when $\theta$ is sampled from $\sigma$.
 By the definition of $f_\theta$ and the fact that $\epsilon = 1/4$, for any $x \in \sphere_1$,
 $f(x) = f_\theta(x)$ holds if and only if $\ip{x, \theta} \leq \frac{1}{4}$.
-Since \ts{} plays the minimiser of some $f_\theta$ in every round, it follows that \ts{} always plays in $\sphere_1$.
+Since \ts{} plays the minimizer of some $f_\theta$ in every round, it follows that \ts{} always plays in $\sphere_1$.
 Let $\cC_\theta = \{x \in \sphere_1 : \ip{x, \theta} > \frac{1}{4}\}$ and $\delta = \sigma(\cC_\theta)$.
 Let $f_{\theta_\star}$ be the true loss function sampled from $\xi$.
 Suppose that $X_1,\ldots,X_t \in \sphere_1 \setminus \cC_{\theta_\star}$,
@@ -2957,8 +2957,8 @@ This function class is a subset of $\sF_{\pb\pl\pr\pm}$ that we studied in \cref
 This effectively shows that adding a known convex monotone ridge function is free in terms of the information ratio, and hence the Bayesian regret upper bound.
 
 \begin{definition}[Known Ridge Function Class]
-    Let $\Theta \subseteq \R^d$ be a set of parameters and $\ell:\R\to\R$ be a convex, non-increasing function.
-    Define $\sF_{\Theta, \ell}$ be the space of all functions $f:\cK \to \R$ such that
+    Let $\Theta \subseteq \R^d$ be a set of parameters and $\ell:\R\to[0, b]$ be a convex, non-increasing function, for some $b > 0$.
+    Define $\sF_{\Theta, \ell}$ be the space of all functions $f:\cK \to [0, b]$ such that
     there exists $\theta \in \Theta$ such that
     \begin{align*}
         f(x) =\ell(\ip{\theta, x})\quad \forall x \in \cK\,.
@@ -2966,16 +2966,19 @@ This effectively shows that adding a known convex monotone ridge function is fre
 \end{definition}
 
 Further, instead of defining the distributions over the space of convex function $f$, we can work with distributions over the parameter space $\Theta \in \R^d$.
-Precisely, for every distribution $\xi \in \sP(\sF_{\Theta, \ell})$, we can define a corresponding distribution over the parameter space $\sigma \in \sP(\Theta)$,
-such that $f_\theta(\cdot) \triangleq \ell(\ip{\theta, \cdot})$ with $\theta \sim \sigma$ has the same distribution as $f$ with $f \sim \xi$.
+Precisely, let $f_\theta(\cdot) = \ell(\ip{\theta, \cdot})$,
+and, for every subset $\Theta' \subseteq \Theta$, let $\sF_{\Theta'} = \{f_\theta(\cdot) : \theta \in \Theta'\}$.
+Define $\sigma \in \cP(\Theta)$ such that for every measurable subset $\Theta'\subseteq \Theta$,
+\begin{align}
+    \sigma\left(\Theta'\right)= \xi\left(\sF_{\Theta'}\right)\,. \label{eq:sigma-xi}
+\end{align}
 
 \begin{restatable}{lemma}{KnownRidgeLemma}
     \label{thm:ridge-known-ir}
-    It holds that $(0, d) \in \IR(\sF_{\Theta,\ell})$ whenever
+    It holds that $(0, d) \in \IR(\sF_{\Theta,\ell})$ whenever for every $\theta \in \Theta$, it holds that
     \begin{align*}
-        \theta = \argmin_{\theta' \in \Theta} \ip{\theta', \argmin_{x \in \cK} \ip{x, \theta}}\,,
+        \theta = \argmin_{\theta' \in \Theta} \ip{\theta', \argmin_{x \in \cK} \ip{x, \theta}}\,.
     \end{align*}
-    for all $\theta \in \Theta$.
 \end{restatable}
 First recall that
 \begin{align}
@@ -2991,7 +2994,7 @@ Therefore, to prove that $(0, \beta) \in \IR(\sF)$, it suffices to show that
     \label{eq:IR-alpha-0}
 \end{align}
 where the function $\Psi(\xi)$ was the original definition (up to the measure of information used) of information ratio in \citet{RV16}.
-While the proof of \cref{thm:ts-ridge} used the decomposition lemma (\cref{lem:decomp-big}) the proof in this chapter avoids the need for using decomposition lemma thanks to the simpler setting.
+While the proof of \cref{thm:ts-ridge} used the decomposition lemma (\cref{lem:decomp-big}) the proof in this chapter avoids the need of this, thanks to the simpler setting.
 In particular, the proof uses a reduction to the linear bandits, i.e., the case when the link function $\ell$ is the identity function.
 For completeness, we start by presenting the analysis of the linear setting, borrowed from \cite{RV16}.
 
@@ -3005,7 +3008,7 @@ For completeness, we start by presenting the analysis of the linear setting, bor
     \label{thm:ir-ts-linear}
 \end{theorem}
 \begin{proof}
-    Let $\sigma$ be the corresponding distribution over the parameter space $\Theta$.
+    Let $\sigma$ be the corresponding distribution over the parameter space $\Theta$, as defined in \cref{eq:sigma-xi}.
     Let $(\theta, X)$ be jointly distributed such that $\theta \sim \sigma$, $X = \argmin_{x \in \cK} \langle x, \theta\rangle$.
     Then $X \sim \pi_\ts^\xi$.
     First, we have
@@ -3082,7 +3085,7 @@ For completeness, we start by presenting the analysis of the linear setting, bor
         \E[(f_\theta(X') - \bar{f}(X'))^2]                                  \\
          & =
         \E[(X^\top \theta' - \E[X^\top \theta'|X])^2]
-        \tag{Since $(X', \theta')$ is independent copy of $(X, \theta)$}
+        \tag{since $(X', \theta')$ is an independent copy of $(X, \theta)$}
         \\
          & =
         \E[(X^\top (\theta' - \bar{\theta}))^2]                             \\
@@ -3125,8 +3128,7 @@ the first of which is only used to prove the second one.
     \label{lem:concave}
     Assume that $g: \R \to \R$ is a convex and non-decreasing function
     such that $g(0) = 0$.
-    Then for any random variable $X$ supported on $\R_+$
-    it holds that
+    Then for any random variable $X$ supported on $[0,b]$ for some $b > 0$, it holds that
     \begin{align*}
         \frac{
             \E[g(X)^2]
@@ -3138,12 +3140,13 @@ the first of which is only used to prove the second one.
             \E[X^2]
         }{
             \E[X]^2
-        }.
+        }\,,
     \end{align*}
+    where we let $\tfrac{0}{0}=1$.
     \begin{proof}
         Without loss of generality, we can assume that $g(x) = 0$ for $x < 0$.
         Define the function
-        $h(x) = \frac{\E[g(x)]}{\E[x]}g(x)$,
+        $h(x) = \frac{\E[x]}{\E[g(x)]}g(x)$,
         and observe that
         \begin{align*}
             \frac{
@@ -3176,16 +3179,29 @@ the first of which is only used to prove the second one.
         % Let $x_0 = \inf \{x : s(x) \geq 0\}$.
         % Since $s(x) > 0$ for $x \in (-\infty, 0), x_0 \geq 0$.
         We have
-        \begin{align*}
+        \begin{align}
             \E\left[
                 (h(X) - X)
-                \mI_{\{h(X) < X\}}
+                \mI_{\{h(X) \geq X\}}
                 \right]
              & =
             \E\left[
                 (h(X) - X)
                 (1 - \mI_{\{h(X) < X\}})
                 \right]
+            \nonumber
+            \\
+             & =
+            \E\left[
+                h(X) - X
+                \right]
+            +
+            \E\left[
+                -
+                (h(X) - X)
+                \mI_{\{h(X) < X\}}
+                \right]
+            \nonumber
             \\
              & =
             \E\left[
@@ -3193,13 +3209,15 @@ the first of which is only used to prove the second one.
                 (h(X) - X)
                 \mI_{\{h(X) < X\}}
                 \right]
+            \nonumber
             \\
              & =
             \E\left[
                 (X - h(X))
                 \mI_{\{h(X) < X\}}
                 \right].
-        \end{align*}
+            \label{eq:convex-ineq-1}
+        \end{align}
         Also, since $h$ is convex and non-decreasing there exists a
         point $x_0$ such that $h(x) \geq x_0$
         for all $x \geq x_0$ and $h(x) \leq  x_0$
@@ -3242,6 +3260,7 @@ the first of which is only used to prove the second one.
                 \right)
                 \mI_{\{h(X) < X\}}
                 \right]
+            \tag{by \cref{eq:convex-ineq-1}}
             \\
              & \geq
             \E\left[
@@ -3266,19 +3285,18 @@ the first of which is only used to prove the second one.
         \begin{align*}
             0 &
             \geq
+            \E\left[
+                \left(
+                X^2 - h(X)^2
+                \right)
+                \mI_{\{h(X) \geq X\}}
+                \right]
             -
             \E\left[
                 \left(
                 h(X)^2 - X^2
                 \right)
                 \mI_{\{h(X) < X\}}
-                \right]
-            +
-            \E\left[
-                \left(
-                X^2 - h(X)^2
-                \right)
-                \mI_{\{h(X) \geq X\}}
                 \right]
             \\
               &
@@ -3305,9 +3323,9 @@ the first of which is only used to prove the second one.
 \begin{lemma}
     \label{lem:key-convex-ineq}
     Assume that $f: \R \to \R$ is a convex and non-decreasing function.
-    Further, let $X$ be a random variable supported on $\R$
+    Further, let $X$ be a random variable supported on $[0, b]$ for some $b > 0$
     and $x_1 = \essinf X$.
-    Then the following inequality holds
+    Then, the following inequality holds
     \begin{align*}
         \frac{
             \E[f(X)] - f(x_1)
@@ -3327,11 +3345,15 @@ the first of which is only used to prove the second one.
                     \left(X - \E[X]\right)^2
                     \right]
             }
-        }
+        }\,,
     \end{align*}
+    where we let $\tfrac{0}{0}=1$.
 \end{lemma}
 \begin{proof}
-    First let $X' = X - x_1$,
+    First, note that both quotients are well-defined.
+    To see that suppose that $\E[(x-\E[X])^2] =0$, which means that $X$ is almost surely constant, which makes $\E[X]= x_1$, and hence the fraction would be $\tfrac{0}{0}=1$. Same argument applies for the other quotient.
+
+    Let $X' = X - x_1$,
     and observe that
     \begin{align*}
         \frac{
@@ -3380,7 +3402,7 @@ the first of which is only used to prove the second one.
     \end{align*}
     Therefore, the desired inequality is
     proved once we show
-    \begin{align*}
+    \begin{align}
         \frac{
             \E[g(X')]
         }{
@@ -3402,15 +3424,14 @@ the first of which is only used to prove the second one.
             }
         }.
         % \tag{Alternative Inequality}.
-        % \label{ineq:alternative}
-    \end{align*}
+        \label{ineq:alternative}
+    \end{align}
     Note that $g$ is convex and non-decreasing.
     Also, we know that $\essinf X' = \essinf X - x_1 = 0$,
     and $g(0) = f(x_1) - f(x_1) = 0$,
     which implies that both $\E[X']$, $\E[g(X')]$ are non-negative,
-    Therefore, we may further simplify the
-    inequality by squaring and rearranging as
-    \begin{align}
+    so \cref{ineq:alternative} is equivalent to
+    \begin{align*}
         \frac{
             \E[g(X')]^2
         }{
@@ -3426,10 +3447,10 @@ the first of which is only used to prove the second one.
             \E\left[
                 \left(X' - \E[X']\right)^2
                 \right]
-        }
-        \nonumber
-        \\
-        \Leftrightarrow
+        }\,,
+    \end{align*}
+    which is equivalent to
+    \begin{align*}
         \frac{
             \E[g(X')^2]
             -
@@ -3445,9 +3466,9 @@ the first of which is only used to prove the second one.
         }{
             \E[X']^2
         }
-        \nonumber
-        \\
-        \Leftrightarrow
+    \end{align*}
+    or equivalently
+    \begin{align}
         \frac{
             \E[g(X')^2]
         }{
@@ -3459,8 +3480,7 @@ the first of which is only used to prove the second one.
         }{
             \E[X']^2
         }
-        \tag{Alternative Inequality},
-        \label{ineq:alternative}
+        \label{ineq:alternative2}
     \end{align}
     which holds by \cref{lem:concave}
     and the fact that $X'$ is supported on $\R_+$.
@@ -3471,9 +3491,9 @@ We are now in position to prove \cref{thm:ridge-known-ir}.
 \KnownRidgeLemma*
 \begin{proof}
     Similar to the proof of \cref{thm:ir-ts-linear},
-    let $\sigma$ be the corresponding distribution over the parameter space $\Theta$.
+    let $\sigma$ be the corresponding distribution over the parameter space $\Theta$, as defined in \cref{eq:sigma-xi}.
     Let $(\theta, X)$ be jointly distributed such that $\theta \sim \sigma$, $X = \argmin_{x \in \cK} \langle x, \theta\rangle$.
-    Then $X \sim \pi_\ts^\xi$.
+    Then $X \sim \pi_\ts^\xi$ as $\ell$ is assumed to be monotone.
 
     Also note that because of the assumption of the theorem, we have both
     \begin{align}
@@ -3482,15 +3502,18 @@ We are now in position to prove \cref{thm:ridge-known-ir}.
         \label{eq:double-greedy}
     \end{align}
 
-    Define
+    Next, we let $\tfrac{0}{0}=1$, and we define the function
     \begin{align*}
-        \phi(X) = \frac{
+        \phi(X) =\frac{
             \ell(X^\top \theta) - \E[\ell(X^\top \theta')|X]
         }{
             X^\top \theta - \E[X^\top \theta'|X]
-        },
+        }
     \end{align*}
-    and write
+    Note that in this quotient,
+    if $X^\top \theta - \E[X^\top \theta'|X] = 0$, then $X^\top \theta = X^\top \nu$ for all $\nu \in \text{supp}(\sigma)$, which makes the numerator $\ell(X^\top \theta) - \E[\ell(X^\top \theta')|X] = 0$ as well.
+    Therefore, the function $\phi(X)$ is well-defined.
+    Further, we have
     \begin{align*}
         % \Psi(\xi)
         %  & =
@@ -3502,7 +3525,7 @@ We are now in position to prove \cref{thm:ridge-known-ir}.
         }{
             \sqrt{
                 \E\left[
-                    \left(\ell(X^\top \theta) - \E[\ell(X^\top \theta')|X]\right)^2
+                    \left(\ell(X^\top \theta') - \E[\ell(X^\top \theta')|X]\right)^2
                     |X
                     \right]
             }
@@ -3836,14 +3859,14 @@ the losses are chosen in an arbitrary way.
 \label{ch:ts-adv}
 In the Bayesian adversarial setting the prior is a probability measure on $\sF^n$ and a whole sequence of loss functions is sampled in secret
 by the environment.
-The natural generalisations of \ts{} in this setting are the following:
+The natural generalizations of \ts{} in this setting are the following:
 \begin{enumerate}
     \item Sample $(f_s)_{s=1}^n$ from the posterior and play $X_t = \argmin_{x \in \cK} f_t(x)$. \label{item:ts-adv:bad}
     \item Sample $(f_s)_{s=1}^n$ from the posterior and play $X_t = \argmin_{x \in \cK} \sum_{s=1}^t f_s(x)$. \label{item:ts-adv:ok}
 \end{enumerate}
 The version in \ref{item:ts-adv:bad} suffers linear regret as the following example shows.
 Let $d = 1$ and $\cK = [-1,1]$ and $f(x) = \epsilon + \max(\epsilon x, (1 - \epsilon) x)$ and $g(x) = f(-x)$.
-Note that $f \in \sF_{\pb\pl}$ and is piecewise linear and minimised at $-1$ with $f(-1) = 0$ and $f(0) = \epsilon$ and $f(1) = 1$.
+Note that $f \in \sF_{\pb\pl}$ and is piecewise linear and minimized at $-1$ with $f(-1) = 0$ and $f(0) = \epsilon$ and $f(1) = 1$.
 The function $g$ is the mirror image of $f$.
 Now let $\nu$ be the uniform distribution on $\{f, g\}$ and $\xi = \nu^n$ be the product measure.
 \ts{} as defined in \ref{item:ts-adv:bad} plays uniformly on $\{1, -1\}$ and an elementary calculation shows that the regret
@@ -3913,7 +3936,7 @@ is $\Omega(n)$.
 We do not know if the version of \ts{} defined in \ref{item:ts-adv:ok} has $\tilde O(\sqrt{n})$ Bayesian regret.
 % But \cite{BDKP15} note that at least naively the information-theoretic machinery is not suitable for analysing this algorithm.
 However, the following example shows that in general the adversarial version of the information ratio is not bounded.
-Because the loss function changes from round to round, the action $X_t$ may not minimise $f_t$. This must be reflected in the definition of the information
+Because the loss function changes from round to round, the action $X_t$ may not minimize $f_t$. This must be reflected in the definition of the information
 ratio. Let $\xi$ be a probability measure on $\sF \times \cK$ and $\pi$ be a probability measure on $\cK$ and let
 \begin{align*}
     \Delta(\pi, \xi) = \E[f(X) - f(X_\star)]  \qquad \text{ and } \qquad
@@ -4130,13 +4153,13 @@ failure of \ts.
 The learner plays $X_t$ and observes $Y_t = f_t(X_t)$ and the Bayesian regret is
 $\BReg(\sA, \xi) = \E[\sup_{x \in \cK} \sum_{t=1}^n (f_t(X_t) - f_t(x))]$.
 One can envisage two possible definitions of Thompson sampling in this setting. One samples $g_t$ from the marginal of the posterior and plays $X_t = x_{g_t}$.
-The second samples $g_1,\ldots,g_n$ from the posterior and plays $X_t$ as the minimiser of $\sum_{t=1}^n g_t$.
+The second samples $g_1,\ldots,g_n$ from the posterior and plays $X_t$ as the minimizer of $\sum_{t=1}^n g_t$.
 The former has linear regret, while \cite{BDKP15} notes
 that the latter has an unbounded information ratio. The situation was discussed in more details in \cref{ch:ts-adv}.
 \section{Tightness of bounds} At present we are uncertain whether or not the monotonicity assumption is needed in the ridge setting. Our best guess is that it is not.
 One may also wonder if the bound on the information ratio in \cref{thm:ridge-ir} can be improved. We are cautiously believe
 that when the loss has the form $f(x) = \ell(\ip{x, \theta})$ for \textit{known} convex link function $\ell : \R \to \R$, then the information ratio is at most $d$.
-This would mean that convex generalised linear bandits are no harder than linear bandits.
+This would mean that convex generalized linear bandits are no harder than linear bandits.
 
 \section{\ts{} vs \IDS} \cref{thm:ts-lower} shows that \ts{} can have more-or-less linear regret in high-dimensional problems. On the other hand,
 \cite{BE18} and \cite{Lat20-cvx} show that \IDS{} has a well-controlled information ratio, but is much harder to compute.
