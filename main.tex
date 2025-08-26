@@ -2951,75 +2951,94 @@ Additional to $\epsilon=8\log(d)/d$, we fix $\tau = \sqrt{8\epsilon} = 8\sqrt{\l
 
 \chapter{$\ts$ for Known Link Function}
 In this chapter we provide a tighter upper bound for the
-information ratio of $\ts$ in $d$ dimensions, when the link function $\ell$ is convex, non-increasing, and known to the learner.
+information ratio of $\ts$ in $d$ dimensions, when the link function $\ell$ is convex, monotone, and known to the learner.
 Being known to the learner can be formalized as $\ell$ is fixed for all the functions in the function class.
-This function class is a subset of $\sF_{\pb\pl\pr\pm}$ that we studied in \cref{chap:ridge-ts}, but the significant difference is that the information ratio upper bound matches the one of linear bandits \citep{RV16} with the same constant.
+This function class is a subset of $\sF_{\pb\pl\pr\pm}$ that we studied in \cref{chap:ridge-ts}, but the significant difference is that the information ratio upper bound exactly matches that of linear bandits \citep{RV16}.
 This effectively shows that adding a known convex monotone ridge function is free in terms of the information ratio, and hence the Bayesian regret upper bound.
 
 \begin{definition}[Known Ridge Function Class]
-    Let $\Theta \subseteq \R^d$ be a set of parameters and $\ell:\R\to\R$ be a convex, non-increasing function, for some $b > 0$.
-    Define $\sF_{\Theta, \ell}$ be the space of all functions $f:\cK \to \R$ such that
-    there exists $\theta \in \Theta$ such that
+    Let $\Theta \subseteq \R^d$ be a set of parameters and $\ell:\R\to\R$ be a convex and monotone function.
+    Define $\sF_{\Theta, \ell}$ to be the space of all functions $f:\cK \to \R$ such that
+    there exists a $\theta \in \Theta$ such that
     \begin{align*}
         f(x) =\ell(\ip{\theta, x})\quad \forall x \in \cK\,.
     \end{align*}
 \end{definition}
-
-Further, instead of defining the distributions over the space of convex function $f$, we can work with distributions over the parameter space $\Theta \in \R^d$.
-Precisely, let $f_\theta(\cdot) = \ell(\ip{\theta, \cdot})$,
-and, for every subset $\Theta' \subseteq \Theta$, let $\sF_{\Theta'} = \{f_\theta(\cdot) : \theta \in \Theta'\}$.
-Define $\sigma \in \cP(\Theta)$ such that for every measurable subset $\Theta'\subseteq \Theta$,
+Since the link function $\ell$ is fixed, in this chapter instead of defining the distribution $\xi$ over the space of convex function $f$, we work with a distribution $\sigma$ over the parameter space $\Theta \subseteq \R^d$.
+Precisely, by letting $\sigma \in \sP(\Theta)$, and $f_\theta(\cdot) = \ell(\ip{\theta, \cdot})$
+for $\theta \sim \sigma$, we can reproduce any distribution $\xi \in \sP\left(\sF_{\Theta, \ell}\right)$ as the law of $f_\theta$ when $\theta \sim \sigma$.
+To see why this is equivalent, for every subset $\Theta' \subseteq \Theta$ define $\sF_{\Theta'} = \{f_\theta(\cdot) : \theta \in \Theta'\}$.
+Then given a distribution $\xi$ over $\sF_{\Theta, \ell}$, define $\sigma \in \cP(\Theta)$ such that for every measurable subset $\Theta'\subseteq \Theta$,
 \begin{align}
-    \sigma\left(\Theta'\right)= \xi\left(\sF_{\Theta'}\right)\,. \label{eq:sigma-xi}
+    \sigma\left(\Theta'\right)= \xi\left(\sF_{\Theta'}\right)\,, \label{eq:sigma-xi}
 \end{align}
+then it follows that $f_\theta$ with $\theta \sim \sigma$ has law $\xi$.
+
+\begin{definition}[Greedy mapping]
+    A greedy mapping is a function
+    \begin{align}
+        \chi: \Theta \to \cK, \quad \sthat \chi(\theta) \in \argmin_{x \in \cK} \ip{\theta, x}\,.
+        \label{eq:ts-mapping}
+    \end{align}
+\end{definition}
+Note that since $\ell$ is assumed to be monotone, $\chi(\theta) \in \argmin_{x \in \cK} \ell(\ip{\theta, x})$.
+
+We define the \ts{} policy $\pi_\chi^\sigma$ given a greedy mapping $\chi$ and a distribution $\sigma \in \sP(\Theta)$ as the law of $\chi(\theta)$ when $\theta \sim \sigma$, i.e.,
+\begin{align*}
+    \pi^\sigma_\chi(A) = \sigma\left(\chi^{-1}(A)\right)\,,
+\end{align*}
+where $\chi^{-1}(\cdot)$ is the preimage of the mapping $\chi$,
+and $A$ is any measurable subset of $\cK$.
+
+With these definitions in place, let $\theta \sim \sigma$, $X=\chi(\theta)$ and $(\theta', X')$
+be an independent copy of $(\theta, X)$.
+Then we can express the gap (expected instantaneous regret) and the information gain of $\pi_\chi^\sigma$ as
+\begin{align*}
+    \Delta(\pi^\sigma_\chi, \sigma)
+    = \E\left[\ell\left(\ip{X', \theta}\right) - \ell\left(\ip{X, \theta}\right)\right]\,, \text{and}                      \qquad
+    \cI(\pi^\sigma_\chi, \sigma)
+    = \E\left[\left(\ell\left(\ip{X', \theta}\right) - \E\left[\ell\left(\ip{X', \theta}\right)|X'\right]\right)^2\right]\,,
+\end{align*}
+and the information ratio as
+\begin{align}
+    \IR(\sF_{\Theta, \ell}, \chi) & = \left\{(\alpha, \beta) \in \R_+^2 : \sup_{\sigma \in \sP(\Theta)} \left[\Delta(\pi^\sigma_\chi, \sigma) - \alpha - \sqrt{\beta \I(\pi^\sigma_\chi, \sigma)}\right] \leq 0 \right\}\,. \nonumber
+\end{align}
+Therefore, to prove that $(0, \beta) \in \IR(\sF_{\Theta, \ell}, \xi)$, it suffices to show that
+\begin{align}
+    \Psi(\sigma, \chi) \triangleq
+    \frac{\Delta(\pi^\sigma_\chi, \sigma)^2}{\I(\pi^\sigma_\chi, \sigma)} \leq \beta\,,\qquad \forall \sigma \in \sP(\Theta).
+    \label{eq:IR-alpha-0}
+\end{align}
+We can now state the main result of this section.
 
 \begin{restatable}{lemma}{KnownRidgeLemma}
     \label{thm:ridge-known-ir}
-    For every $\xi \in \sP(\sF_{\Theta, \ell})$, it holds that
+    Given a greedy mapping $\chi: \Theta \to \cK$, it holds that
     \begin{align*}
-        \Psi(\xi) < d,
+        (0, d) \in \IR(\sF_{\Theta, \ell}, \chi),
     \end{align*}
-    whenever for every $\theta \in \Theta$, it holds that
+    whenever for all $\theta \in \Theta$,
     \begin{align*}
-        \theta = \argmin_{\theta' \in \Theta} \ip{\theta', \argmin_{x \in \cK} \ip{x, \theta}}\,.
+        \theta \in \argmin_{\theta' \in \Theta} \ip{\theta', \chi(\theta)}\,.
     \end{align*}
 \end{restatable}
-First recall that
-\begin{align}
-    \IR(\sF)
-     & = \left\{(\alpha, \beta) \in \R_+^2 : \sup_{\xi \in \sP(\sF)} \left[\Delta(\pi^\xi_\ts, \xi) - \alpha - \sqrt{\beta \I(\pi^\xi_\ts, \xi)}\right] \leq 0 \right\}\,. \nonumber
-    %  & \explan{(a)}\supseteq \left\{(0, \beta) \in \R_+^2 : \Delta(\pi^\xi_\ts, \xi) - \sqrt{\beta \I(\pi^\xi_\ts, \xi)} \leq 0, \forall \xi \in \sP(\sF) \right\}              \nonumber \\
-    %  & \explan{(b)}= \left\{(0, \beta) \in \R_+^2 : \frac{\Delta(\pi^\xi_\ts, \xi)^2}{\I(\pi^\xi_\ts, \xi)} \leq \beta, \forall \xi \in \sP(\sF) \right\}\,, \nonumber
-\end{align}
-Therefore, to prove that $(0, \beta) \in \IR(\sF)$, it suffices to show that
-\begin{align}
-    \Psi(\xi) \triangleq
-    \frac{\Delta(\pi^\xi_\ts, \xi)^2}{\I(\pi^\xi_\ts, \xi)} \leq \beta\,,\qquad \forall \xi \in \sP(\sF)
-    \label{eq:IR-alpha-0}
-\end{align}
-where the function $\Psi(\xi)$ was the original definition (up to the measure of information used) of information ratio in \citet{RV16}.
 While the proof of \cref{thm:ts-ridge} used the decomposition lemma (\cref{lem:decomp-big}) the proof in this chapter avoids the need of this, thanks to the simpler setting.
 In particular, the proof uses a reduction to the linear bandits, i.e., the case when the link function $\ell$ is the identity function.
 For completeness, we start by presenting the analysis of the linear setting, borrowed from \cite{RV16}.
 
 \section{Linear \ts}
 \begin{theorem}
+    Let $\chi: \Theta \to \cK$ be a greedy mapping as defined in \cref{eq:ts-mapping}.
     If $\ell(x) = x$ for all $x \in \R$,
-    then for all $\xi \in \sP(\sF_{\Theta, \ell})$, we have
-    \begin{align*}
-        \Psi(\xi) \leq d\,.
-    \end{align*}
+    then $(0, d) \in \IR(\sF_{\Theta, \ell}, \chi)$,
     \label{thm:ir-ts-linear}
 \end{theorem}
 \begin{proof}
-    Let $\sigma$ be the corresponding distribution over the parameter space $\Theta$, as defined in \cref{eq:sigma-xi}.
-    Let $(\theta, X)$ be jointly distributed such that $\theta \sim \sigma$, $X = \argmin_{x \in \cK} \langle x, \theta\rangle$.
-    Then $X \sim \pi_\ts^\xi$.
-    First, we have
+    Let $X = \chi(\theta)$ where $\theta \sim \sigma$.
+    First, let $\bar{\theta} = \E[\theta]$, and note that
     \begin{align*}
-        \bar f(\cdot) = \E[f(\cdot)] = \E[\langle \cdot, \theta \rangle] = \langle \cdot, \E[\theta]\rangle\,,
+        \E[\langle \cdot, \theta \rangle] = \langle \cdot, \bar{\theta}\rangle\,.
     \end{align*}
-    from which we define $\bar{\theta} = \E[\theta]$.
     Moreover, let
     \begin{align*}
         V = \E[X X^\top].
@@ -3031,7 +3050,7 @@ For completeness, we start by presenting the analysis of the linear setting, bor
     Let $(\theta', X')$ be an independent copy of $(\theta, X)$.
     We have
     \begin{align*}
-        \Delta(\pi^\xi_\ts, \xi)
+        \Delta(\pi^\sigma_\chi, \sigma)
          & =
         \E[
             \ell({X'}^\top \theta) - \ell(X^\top \theta)
@@ -3084,7 +3103,7 @@ For completeness, we start by presenting the analysis of the linear setting, bor
     \end{align*}
     Moreover, we have
     \begin{align*}
-        \I(\pi_\ts^\xi, \xi)
+        \I(\pi_\sigma^\chi, \sigma)
          & =
         \E[(f_\theta(X') - \bar{f}(X'))^2]                                  \\
          & =
@@ -3106,9 +3125,9 @@ For completeness, we start by presenting the analysis of the linear setting, bor
     the tower rule and the linearity of expectation.
     Putting these together, we have
     \begin{align*}
-        \Psi(\xi)
+        \Psi(\sigma, \chi)
          & =
-        \frac{\Delta(\pi^\xi_\ts, \xi)^2}{\I(\pi^\xi_\ts, \xi)}
+        \frac{\Delta(\pi^\sigma_\chi, \sigma)^2}{\I(\pi^\sigma_\chi, \sigma)}
         \\
          & \leq
         \frac{
@@ -3120,7 +3139,7 @@ For completeness, we start by presenting the analysis of the linear setting, bor
         \\
          & =
         \E[\|X\|^2_{V^{-1}}]
-        =d\,.\qedhere
+        =d\,. \qedhere
     \end{align*}
 \end{proof}
 
@@ -3175,7 +3194,7 @@ the first two of which are only used to prove the third one.
 \begin{lemma}
     \label{lem:concave}
     Assume that $g: \R \to \R$ is a convex and non-decreasing function such that $g(0) = 0$.
-    Let $X \geq 0$ be a random variable with $\E[X^2] \leq \infty$.
+    Let $X \geq 0$ be a random variable with $\E[g(X)^2], \E[X^2] \leq \infty$.
     Let $\tfrac{0}{0} = 1$, then it holds that
     \begin{align*}
         \frac{
@@ -3198,7 +3217,7 @@ the first two of which are only used to prove the third one.
         Therefore, $\E[g(X)]^2 = \E[g(X)^2] = 0$,
         and the statement of the lemma holds with equality.
 
-        Define the function
+        Otherwise, define the function
         $h(x) = \frac{\E[x]}{\E[g(x)]}g(x)$,
         and observe that
         \begin{align*}
@@ -3230,7 +3249,7 @@ the first two of which are only used to prove the third one.
 \begin{lemma}
     \label{lem:key-convex-ineq}
     Assume that $f: \R \to \R$ is a convex and non-decreasing function.
-    Further, let $X$ be a random variable supported on $[0, b]$ for some $b > 0$
+    Further, let $0 \leq X$ be a random variable with $\E[f(X)^2], \E[X^2] < \infty$,
     and $x_1 = \essinf X$.
     Then, the following inequality holds
     \begin{align*}
@@ -3356,7 +3375,7 @@ the first two of which are only used to prove the third one.
                 \right]
         }\,,
     \end{align*}
-    which is equivalent to
+    which is further equivalent to
     \begin{align*}
         \frac{
             \E[g(X')^2]
@@ -3394,18 +3413,18 @@ the first two of which are only used to prove the third one.
 \end{proof}
 
 \section{Information Ratio of \ts for Known Ridge}
-We are now in position to prove \cref{thm:ridge-known-ir}.
+We are now ready to prove \cref{thm:ridge-known-ir}.
 \KnownRidgeLemma*
 \begin{proof}
-    Similar to the proof of \cref{thm:ir-ts-linear},
-    let $\sigma$ be the corresponding distribution over the parameter space $\Theta$, as defined in \cref{eq:sigma-xi}.
-    Let $(\theta, X)$ be jointly distributed such that $\theta \sim \sigma$, $X = \argmin_{x \in \cK} \langle x, \theta\rangle$.
-    Then $X \sim \pi_\ts^\xi$ as $\ell$ is assumed to be monotone.
+    Let $\sigma \in \sP(\Theta)$ be any distribution over the parameter space $\Theta$.
+    Further, let $\theta \sim \sigma$, $X = \chi(\theta)$,
+    and $(X', \theta')$ be an independent copy of $(X, \theta)$.
+    Note that $X'$ has the law $\pi_\chi^\sigma$.
 
     Also note that because of the assumption of the theorem, we have both
     \begin{align}
-        X = \argmin_{x \in \cK} \ell(\langle \theta, x \rangle),\quad \text{and} \quad
-        \theta = \argmin_{y \in \Theta} \ell(\langle y, X \rangle)\,.
+        X \in \argmin_{x \in \cK} \ell(\langle \theta, x \rangle),\quad \text{and} \quad
+        \theta \in \argmin_{y \in \Theta} \ell(\langle y, X \rangle)\,.
         \label{eq:double-greedy}
     \end{align}
 
