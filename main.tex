@@ -264,7 +264,7 @@
 
 \begin{titlepage}
     \centering
-    \textbf{\large{Thompson Sampling for Bandit Convex Optimization\\(Version 4.1)}}
+    \textbf{\large{Thompson Sampling for Bandit Convex Optimization\\(Version 4.2)}}
     \vskip.5in by \vskip.5in
     \large{Alireza Bakhtiari}
 
@@ -3125,14 +3125,58 @@ For completeness, we start by presenting the analysis of the linear setting, bor
 \end{proof}
 
 \section{Inequalities for Convex Functions}
-We first provide two
-lemmas about convex functions,
-the first of which is only used to prove the second one.
+We first provide three lemmas about convex functions,
+the first two of which are only used to prove the third one.
+\begin{lemma}
+    \label{lem:convex1}
+    Let $h:[0,\infty)\to[0,\infty)$ be convex, nondecreasing with $h(0)=0$.
+    Let $X\ge 0$ be a random variable with $\mathbb{E}[h(X)]=\mathbb{E}[X]$ and $\mathbb{E}[X^2]<\infty$.
+    Then
+    \[
+        \mathbb{E}[h(X)^2]\;\ge\;\mathbb{E}[X^2].
+    \]
+\end{lemma}
+\begin{proof}
+    Define $\phi(x)=h(x)-x$. Then $\phi$ is convex and continuous, with $\phi(0)=0$.
+    Convexity of $\phi$ implies that $I = \{x\ge 0:\phi(x)\le 0\}$ is a closed interval. Since $\phi(0)=0$, we know that the left endpoint of $I$ is zero.
+    Let $x_0 = \max I$ be its right end-point, possibly $x_0=\infty$.
+    Then,
+    \[
+        h(x)> x \; \Rightarrow \; x> x_0,
+        \qquad
+        h(x)\le x\; \Rightarrow \; x \le x_0\,.
+    \]
+    We consider three cases based on whether $x_0=0$, $0<x_0<\infty$ or $x_0=\infty$.
+    In the first case,
+    $\phi$ is positive on $(0,\infty)$ and since $\mathbb{P}(X>0)>0$, $\mathbb{E}[\phi(X)]>0$, a contradiction to our assumption that $\mathbb{E}[h(X)] = \mathbb{E}[X]$.
+    In the last case when $x_0=\infty$, $\phi$ is is zero on $[0,\infty)$, which implies that $h$ is the identity function, in which case the statement trivially holds.
+
+    Now, let us consider the case when $0<x_0<\infty$.
+    Define the complementary events $A=\{h(X)> X\}$,  $B=\{h(X)\le X\}$.
+    On $A$ we have $X> x_0$ and $h(X)>X> x_0$, hence $h(X)+X> 2x_0$.
+    On $B$, we have $X\le x_0$ and $h(X)\le X \le x_0$, hence $h(X)+X\le 2x_0$.
+    Thus,
+    \begin{align*}
+        (h(X)^2-X^2)\mathbf{1}_A
+         & =(h(X)-X)(h(X)+X)\mathbf{1}_A \;\ge\; 2x_0\,(h(X)-X)\mathbf{1}_A\,, \\
+        (h(X)^2-X^2)\mathbf{1}_B
+         & =(h(X)-X)(h(X)+X)\mathbf{1}_B \;\ge\; 2x_0\,(h(X)-X)\mathbf{1}_B\,.
+    \end{align*}
+    Adding the two inequalities and taking expectations,
+    \[
+        \mathbb{E}[h(X)^2-X^2]
+        \;\ge\; 2x_0\,\mathbb{E}[h(X)-X]
+        \;=\; 0,
+    \]
+    since $\mathbb{E}[h(X)]=\mathbb{E}[X]$.
+    Therefore $\mathbb{E}[h(X)^2]\ge \mathbb{E}[X^2]$.
+\end{proof}
+
 \begin{lemma}
     \label{lem:concave}
-    Assume that $g: \R \to \R$ is a convex and non-decreasing function
-    such that $g(0) = 0$.
-    Then for any random variable $X$ supported on $[0,b]$ for some $b > 0$, it holds that
+    Assume that $g: \R \to \R$ is a convex and non-decreasing function such that $g(0) = 0$.
+    Let $X \geq 0$ be a random variable with $\E[X^2] \leq \infty$.
+    Let $\tfrac{0}{0} = 1$, then it holds that
     \begin{align*}
         \frac{
             \E[g(X)^2]
@@ -3144,11 +3188,16 @@ the first of which is only used to prove the second one.
             \E[X^2]
         }{
             \E[X]^2
-        }\,,
+        }\,.
     \end{align*}
-    where we let $\tfrac{0}{0}=1$.
     \begin{proof}
-        Without loss of generality, we can assume that $g(x) = 0$ for $x < 0$.
+        First, suppose that $\E[X]=0$.
+        Then since $X$ is supported on $\R_+$, $X=0$ almost surely,
+        $\E[X^2]=0$, and $\tfrac{\E[X^2]}{E[X]^2} = \tfrac{0}{0} = 1$.
+        Further, since $g(0)=0$, we have $g(X)=0$ almost surely.
+        Therefore, $\E[g(X)]^2 = \E[g(X)^2] = 0$,
+        and the statement of the lemma holds with equality.
+
         Define the function
         $h(x) = \frac{\E[x]}{\E[g(x)]}g(x)$,
         and observe that
@@ -3172,155 +3221,9 @@ the first of which is only used to prove the second one.
         \begin{align*}
             \E[h(X)^2]
             \geq
-            \E[X^2].
+            \E[X^2],
         \end{align*}
-        % Define $s(x) = h(x) - x$.
-        % This is convex.
-        % Let $\bar{x} = \E[X]\geq 0$.
-        % Furthermore, $0 = s(0)$.
-        % By Jensen $s(\bar{x}) \leq \E[s(X)] = 0$.
-        % % Hence, $s$ is non-increasing on $[0, \bar{x}]$ and non-decreasing on $[\bar{x}, \infty)$.
-        % Let $x_0 = \inf \{x : s(x) \geq 0\}$.
-        % Since $s(x) > 0$ for $x \in (-\infty, 0), x_0 \geq 0$.
-        We have
-        \begin{align}
-            \E\left[
-                (h(X) - X)
-                \mI_{\{h(X) \geq X\}}
-                \right]
-             & =
-            \E\left[
-                (h(X) - X)
-                (1 - \mI_{\{h(X) < X\}})
-                \right]
-            \nonumber
-            \\
-             & =
-            \E\left[
-                h(X) - X
-                \right]
-            +
-            \E\left[
-                -
-                (h(X) - X)
-                \mI_{\{h(X) < X\}}
-                \right]
-            \nonumber
-            \\
-             & =
-            \E\left[
-                -
-                (h(X) - X)
-                \mI_{\{h(X) < X\}}
-                \right]
-            \nonumber
-            \\
-             & =
-            \E\left[
-                (X - h(X))
-                \mI_{\{h(X) < X\}}
-                \right].
-            \label{eq:convex-ineq-1}
-        \end{align}
-        Also, since $h$ is convex and non-decreasing there exists a
-        point $x_0$ such that $h(x) \geq x_0$
-        for all $x \geq x_0$ and $h(x) \leq  x_0$
-        for all $x \leq x_0$.
-        To see why such point exists, assume the opposite, then $h(x) < x$ for all $x$,
-        which contradicts the fact that $\E[h(X)] = \E[X]$.
-        Further, by the definition of $x_0$ we get
-        \begin{align*}
-            \E\left[
-                \left(
-                h(X)^2 - X^2
-                \right)
-                \mI_{\{h(X) \geq X\}}
-                \right]
-             & =
-            \E\left[
-                \left(
-                h(X) - X
-                \right)
-                \left(
-                h(X) + X
-                \right)
-                \mI_{\{h(X) \geq X\}}
-                \right]
-            \\
-             & \geq
-            \E\left[
-                2 x_0
-                \left(
-                h(X) - X
-                \right)
-                \mI_{\{h(X) \geq X\}}
-                \right]
-            \\
-             & =
-            \E\left[
-                2 x_0
-                \left(
-                X - h(X)
-                \right)
-                \mI_{\{h(X) < X\}}
-                \right]
-            \tag{by \cref{eq:convex-ineq-1}}
-            \\
-             & \geq
-            \E\left[
-                \left(
-                X + h(X)
-                \right)
-                \left(
-                X - h(X)
-                \right)
-                \mI_{\{h(X) < X\}}
-                \right]
-            \\
-             & =
-            \E\left[
-                \left(
-                X^2 - h(X)^2
-                \right)
-                \mI_{\{h(X) < X\}}
-                \right],
-        \end{align*}
-        which by rearranging gives
-        \begin{align*}
-            0 &
-            \geq
-            \E\left[
-                \left(
-                X^2 - h(X)^2
-                \right)
-                \mI_{\{h(X) \geq X\}}
-                \right]
-            -
-            \E\left[
-                \left(
-                h(X)^2 - X^2
-                \right)
-                \mI_{\{h(X) < X\}}
-                \right]
-            \\
-              &
-            =\E\left[
-                -
-                \left(
-                h(X)^2 - X^2
-                \right)
-                \mI_{\{h(X) < X\}}
-                +
-                \left(
-                X^2 - h(X)^2
-                \right)
-                \mI_{\{h(X) \geq X\}}
-                \right]
-            \\
-              & =
-            \E[X^2] - \E[h(X)^2]\,,
-        \end{align*}
-        proving the desired inequality.
+        which holds by \cref{lem:convex1} since $h$ is convex, non-decreasing, and $h(0)=0$.
     \end{proof}
 \end{lemma}
 
@@ -3682,17 +3585,22 @@ We are now in position to prove \cref{thm:ridge-known-ir}.
 \chapter{Empirical Performance of \ts}
 In this chapter we study the empirical performance of \ts
 for 1-dimensional \bco problems.
-The main challenge for bringing \ts to life
-for \bco is designing a prior $\xi$ on $\sF_{\pb\pl}$
-and a posterior $\xi_t$ which can be sampled from efficiently.
-We design such a modelling but only for the 1-dimensional case.
+The main challenge of implementing \ts
+for \bco is sampling from the posterior distribution.
+This empirical analysis has multiple goals:
+\begin{itemize}
+    \item it forces us to think about efficiency,
+    \item it gives us a glimpse into the performance of \ts{} in relation to some competing designs.
+\end{itemize}
+In particular, sampling from the posterior defined over some function space in general is intractable.
+Here, we design an approximate sampling method for a special case when $\cK=[-1,1]$.
 We don't provide any theoretical guarantees for our sampling
 scheme, but instead we show that it works well in practice.
 
 \section{A Probability Distribution on $\sF_{\pb\pl}$}
 \label{sec:ts-empirical}
 We consider the case where $\cK = [-1, 1]$ and $d = 1$.
-We define a prior $\xi$ on $\sF_{\pb\pl}$ as follows.
+We define a prior $\xi$ on $\sF_{\pb\pl}^+=\sF_{\pb\pl} \cap \{f: f\geq0\}$ as follows.
 Let
 \begin{align*}
     \phi_{y}(x) = \abs{x - y},
@@ -3704,13 +3612,17 @@ Now let
 \begin{align}
     \Phi = \{ \phi_{\epsilon y} : \epsilon y \in \cK, y \in \mathbb{Z}\}\,.
 \end{align}
-Let $d = \|\Phi\|$, and $\R_+$ as the set of non-negative reals.
+Let $d = |\Phi|$.
 Then for any $\theta \in \R_+^d$,
 \begin{align*}
     f_\theta(x) = \sum_{i=1}^d \theta_i \phi_{y_i}(x)\,,
 \end{align*}
 where $y_i$ is the $i$-th element of $\Phi$.
 Since $\theta \in \R_+^d$, the function $f_\theta$ is convex and non-negative.
+As it is well-known, the set $\left\{
+    \sum_{i=1}^{d} \theta_i \phi_{y_i}: d\geq 1, \theta_i\geq 0, y_i \in Y
+    \right\}$
+is dense in $\sF_{\pb\pl}^+$ in the uniform norm, provided that $Y\subseteq \R$ is dense \citep{billingsley2013convergence}, justifying our choice.
 This construction allows us to define a probability distribution over the space of convex functions,
 by defining a probability measure on $\R_+^d$.
 
@@ -3721,16 +3633,20 @@ We suppose that $f_\star$, the true loss function, has the form
 and we assume that $\theta_\star$ is sampled from
 a $\R_+-$truncated multivariate Gaussian distribution
 with mean $\mu$ and covariance matrix $\Sigma$.
-We denote the law of $\theta_\star$ by $\xi_\theta$,
+We denote the law of $\theta_\star$ by $\sigma$,
 and the law of $f_\star$ by $\xi$.
 Further, we assume that
 \begin{align}
-    Y_t = f_{\theta_\star}(X_t) + \sigma \varepsilon_t\,,
+    Y_t = f_{\theta_\star}(X_t) + \sigma_0 \varepsilon_t\,,
 \end{align}
 where $\varepsilon_t$ is a standard Gaussian noise,
 and $\sigma$ is a positive constant.
-The posterior $\xi_t$ is defined as the law of $\theta_\star$ given the
-observations $(X_s, Y_s)_{s=1}^t$.
+The posterior density of $\theta \in \R_+^d$ is proportional to
+\begin{align*}
+    \pi_t(\theta) := \exp\left(
+    -\frac{1}{2c} \norm{\theta - \mu}^2_{} \sum_{s=1}^t (Y_s - f_\theta(X_s))^2
+    \right)
+\end{align*}
 
 \subsection{Hit-and-Run Samplers}
 \label{sec:hit-and-run}
@@ -3753,7 +3669,7 @@ Given the current state $\theta^{(m)}$, HAR proceeds by
               t_{\max} = \min_{i:v_i>0} \frac{-\theta^{(m)}_i}{v_i},\qquad
               I=[t_{\min},t_{\max}]\,.
           \]
-    \item Sample $t$ from the one-dimensional density proportional to $\tilde\pi(\theta^{(m)} + t v)$ on $I$.
+    \item Sample $t$ from the one-dimensional density proportional to $\pi(\theta^{(m)} + t v)$ on $I$.
     \item Set $\theta^{(m+1)} = \theta^{(m)} + t v$.
 \end{enumerate}
 
@@ -3764,20 +3680,22 @@ restricted to $I$.
 
 \section{Bayesian Regret}
 \label{sec:ts-empirical-results-bayesian}
-\begin{figure}[h!]
+\begin{figure}[t!]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/bayesian_regret.png}
     \caption{Bayesian regret for 1-dimensional bandit convex optimization.
         The plot shows the cumulative regret over $n = 100$ rounds, averaged over 10 independent runs.
         The loss functions are sampled from a multivariate Gaussian prior with $d = 100$ basis functions,
-        and observations are corrupted with Gaussian noise $\mathcal{N}(0, 0.1^2)$.}
+        and observations are corrupted with Gaussian noise $\mathcal{N}(0, 0.1^2)$,
+        i.e. $\sigma_0 = 0.1$.
+    }
     \label{fig:bayesian-regret}
 \end{figure}
 First we study Bayesian regret.
 We first sample $\theta_\star$ from a multivariate Gaussian distribution
 that is known to the learner.
-We set the observation noise $\mathcal{N}(0, \sigma^2)$
-with $\sigma = 0.1$.
+We set the observation noise $\mathcal{N}(0, \sigma_0^2)$
+with $\sigma_0 = 0.1$.
 The number of basis functions is set to $d = 100$.
 We run the experiment for $n = 100$ rounds,
 and report the average performance over $10$ runs in Figure~\ref{fig:bayesian-regret}.
