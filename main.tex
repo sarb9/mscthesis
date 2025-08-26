@@ -264,7 +264,7 @@
 
 \begin{titlepage}
     \centering
-    \textbf{\large{Thompson Sampling for Bandit Convex Optimization\\(Version 4.0)}}
+    \textbf{\large{Thompson Sampling for Bandit Convex Optimization\\(Version 4.1)}}
     \vskip.5in by \vskip.5in
     \large{Alireza Bakhtiari}
 
@@ -2957,8 +2957,8 @@ This function class is a subset of $\sF_{\pb\pl\pr\pm}$ that we studied in \cref
 This effectively shows that adding a known convex monotone ridge function is free in terms of the information ratio, and hence the Bayesian regret upper bound.
 
 \begin{definition}[Known Ridge Function Class]
-    Let $\Theta \subseteq \R^d$ be a set of parameters and $\ell:\R\to[0, b]$ be a convex, non-increasing function, for some $b > 0$.
-    Define $\sF_{\Theta, \ell}$ be the space of all functions $f:\cK \to [0, b]$ such that
+    Let $\Theta \subseteq \R^d$ be a set of parameters and $\ell:\R\to\R$ be a convex, non-increasing function, for some $b > 0$.
+    Define $\sF_{\Theta, \ell}$ be the space of all functions $f:\cK \to \R$ such that
     there exists $\theta \in \Theta$ such that
     \begin{align*}
         f(x) =\ell(\ip{\theta, x})\quad \forall x \in \cK\,.
@@ -2975,7 +2975,11 @@ Define $\sigma \in \cP(\Theta)$ such that for every measurable subset $\Theta'\s
 
 \begin{restatable}{lemma}{KnownRidgeLemma}
     \label{thm:ridge-known-ir}
-    It holds that $(0, d) \in \IR(\sF_{\Theta,\ell})$ whenever for every $\theta \in \Theta$, it holds that
+    For every $\xi \in \sP(\sF_{\Theta, \ell})$, it holds that
+    \begin{align*}
+        \Psi(\xi) < d,
+    \end{align*}
+    whenever for every $\theta \in \Theta$, it holds that
     \begin{align*}
         \theta = \argmin_{\theta' \in \Theta} \ip{\theta', \argmin_{x \in \cK} \ip{x, \theta}}\,.
     \end{align*}
@@ -3572,11 +3576,11 @@ We are now in position to prove \cref{thm:ridge-known-ir}.
             }
         },
     \end{align*}
-    where \texttt{(a)} follows from \cref{lem:key-convex-ineq},
+    where \texttt{(a)} follows from \cref{eq:double-greedy} and \cref{lem:key-convex-ineq},
     \texttt{(b)} follows from multiplying both
     numerator and denominator by $\phi(X)$,
     and \texttt{(c)} follows from the definition of $\phi(X)$.
-    Thus, we have
+    Thus, by rearranging and simplifying, we obtain
     \begin{align}
         \E\left[
             \left(
@@ -3593,9 +3597,9 @@ We are now in position to prove \cref{thm:ridge-known-ir}.
             \right].
         \label{ineq:i1}
     \end{align}
-    Using this inequality, we can write
+    Further, we can write
     \begin{align*}
-        \frac{
+        \Psi(\xi)^{\tfrac{1}{2}} = \frac{
             \E\left[
                 \ell(X^\top \theta) - \E[\ell(X^\top \theta')|X]
                 \right]
@@ -3644,6 +3648,7 @@ We are now in position to prove \cref{thm:ridge-known-ir}.
     Further, define $\tilde{X} = \phi(X)X$ and
     rewrite the inequality as
     \begin{align*}
+        \Psi(\xi)^{\tfrac{1}{2}} =
         \frac{
             \E\left[
                 \ell(X^\top \theta) - \E[\ell(X^\top \theta')|X]
