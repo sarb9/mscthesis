@@ -264,7 +264,7 @@
 
 \begin{titlepage}
     \centering
-    \textbf{\large{Thompson Sampling for Bandit Convex Optimization\\(Version 4.3)}}
+    \textbf{\large{Thompson Sampling for Bandit Convex Optimization\\(Version 4.4)}}
     \vskip.5in by \vskip.5in
     \large{Alireza Bakhtiari}
 
@@ -3339,7 +3339,7 @@ the first two of which are only used to prove the third one.
                     \right]
             }
         }
-        \geq
+        \leq
         \frac{
             \E[X']
         }{
@@ -3366,7 +3366,7 @@ the first two of which are only used to prove the third one.
                 - \E[g(X')]\right)^2
                 \right]
         }
-         & \geq
+         & \leq
         \frac{
             \E[X']^2
         }{
@@ -3384,7 +3384,7 @@ the first two of which are only used to prove the third one.
         }{
             \E[g(X')]^2
         }
-         & \leq
+         & \geq
         \frac{
             \E[X'^2]
             -
@@ -3638,6 +3638,8 @@ Then for any $\theta \in \R_+^d$,
 \end{align*}
 where $y_i$ is the $i$-th element of $\Phi$.
 Since $\theta \in \R_+^d$, the function $f_\theta$ is convex and non-negative.
+We can control the Lipschitzness constant by bounding the sum of coefficients $\theta_i$s
+by $\sum_{i=1}^d \theta_i \leq C$ for some constant $C > 0$.
 As it is well-known, the set $\left\{
     \sum_{i=1}^{d} \theta_i \phi_{y_i}: d\geq 1, \theta_i\geq 0, y_i \in Y
     \right\}$
@@ -3663,18 +3665,20 @@ and $\sigma$ is a positive constant.
 The posterior density of $\theta \in \R_+^d$ is proportional to
 \begin{align*}
     \pi_t(\theta) := \exp\left(
-    -\frac{1}{2c} \norm{\theta - \mu}^2_{} \sum_{s=1}^t (Y_s - f_\theta(X_s))^2
-    \right)
+    -\frac{1}{2c} \norm{\theta - \mu}^2_{\Sigma^{-1}} - \tfrac{1}{\sqrt{2\sigma_0^2}} \sum_{s=1}^t (Y_s - f_\theta(X_s))^2
+    \right)\,.
 \end{align*}
+Note that $-\log\left(\pi_t(\cdot)\right)$ is convex, i.e. the posterior is log-concave;
+in fact it is itself a truncated Gaussian distribution.
 
 \subsection{Hit-and-Run Samplers}
 \label{sec:hit-and-run}
 We use Hit-and-run (HAR) methods to sample from the posterior $\xi_t$.
 HAR methods generate proposals by first choosing a random direction and
 then moving along that line according to the target density restricted to the line.
-Originally developed for uniform sampling from convex bodies \citep[e.g.][]{smith1984efficient,lovasz1999hit}, they extend naturally to general log-concave (and even non log-concave) densities by sampling from the one-dimensional conditional along each line.
+Originally developed for uniform sampling from convex bodies \citep[e.g.][]{smith1984efficient,lovasz1999hit}, they extend naturally to general log-concave (and even non log-concave) densities by sampling from the one-dimensional conditional along each line \citep{lovasz2007geometry}.
 
-Let $\pi(\theta)\propto \tilde\pi(\theta)$ be the target on a convex subset $\mathcal{X}\subseteq\R^d$ (here $\mathcal{X}=\R_+^d$).
+Let $\pi$ be the target density on a convex subset $\mathcal{X}\subseteq\R^d$ (here $\mathcal{X}=\R_+^d$, and $\pi = \pi_t$).
 Given the current state $\theta^{(m)}$, HAR proceeds by
 \begin{enumerate}
     \item Draw a direction $v$ from a spherically symmetric distribution (commonly $v \sim \Normal(0,I_d)$ then normalise $v\leftarrow v/\|v\|$).
@@ -3718,12 +3722,12 @@ with $\sigma_0 = 0.1$.
 The number of basis functions is set to $d = 100$.
 We run the experiment for $n = 100$ rounds,
 and report the average performance over $10$ runs in Figure~\ref{fig:bayesian-regret}.
-The performance is compared to the Bisection Method \citep{agarwal2010optimal},
-the Exponential Weights with kernel estimation \citep{BEL16}, and
-Online Newton Step \citep{LFMV24-improved}.
+The performance is compared to the bisection method \citep{agarwal2010optimal},
+the exponential weights with kernel estimation \citep{BEL16}, and
+online Newton step \citep{LFMV24-improved}.
 The superiority of \ts can be explained by the fact that
 it is able to use the knowledge of prior, and also the fact that
-most of the other algorithms are designed for the adversarial setting primarily.
+some of the other algorithms (online Newton step and exponential weights) are designed for the adversarial setting.
 
 \section{Regret Against Specific Losses}
 \label{sec:ts-empirical-results-regret}
@@ -3799,6 +3803,7 @@ the losses are chosen in an arbitrary way.
 
 \chapter{Thompson Sampling for Adversarial Problems}
 \label{ch:ts-adv}
+The purpose of this chapter is to study the performance of \ts in the Bayesian adversarial settings.
 In the Bayesian adversarial setting the prior is a probability measure on $\sF^n$ and a whole sequence of loss functions is sampled in secret
 by the environment.
 The natural generalizations of \ts{} in this setting are the following:
@@ -3806,15 +3811,86 @@ The natural generalizations of \ts{} in this setting are the following:
     \item Sample $(f_s)_{s=1}^n$ from the posterior and play $X_t = \argmin_{x \in \cK} f_t(x)$. \label{item:ts-adv:bad}
     \item Sample $(f_s)_{s=1}^n$ from the posterior and play $X_t = \argmin_{x \in \cK} \sum_{s=1}^t f_s(x)$. \label{item:ts-adv:ok}
 \end{enumerate}
-The version in \ref{item:ts-adv:bad} suffers linear regret as the following example shows.
-Let $d = 1$ and $\cK = [-1,1]$ and $f(x) = \epsilon + \max(\epsilon x, (1 - \epsilon) x)$ and $g(x) = f(-x)$.
-Note that $f \in \sF_{\pb\pl}$ and is piecewise linear and minimized at $-1$ with $f(-1) = 0$ and $f(0) = \epsilon$ and $f(1) = 1$.
-The function $g$ is the mirror image of $f$.
-Now let $\nu$ be the uniform distribution on $\{f, g\}$ and $\xi = \nu^n$ be the product measure.
-\ts{} as defined in \ref{item:ts-adv:bad} plays uniformly on $\{1, -1\}$ and an elementary calculation shows that the regret
-is $\Omega(n)$.
+We first analyze the version in \ref{item:ts-adv:bad}.
+% The function class in the following lower bound only includes two linear functions,
+% which means $\ts$ as defined in \ref{item:ts-adv:bad} suffers linear regret even for linear functions
+% which are a subset of convex functions.
+\begin{theorem}
+    Let $\epsilon \geq 0$, and $f(x) = \epsilon + \max(\epsilon x, (1-\epsilon)x)$,
+    and $g(x) = f(-x)$.
+    Let $\nu$ be the uniform distribution on $\{f, g\}$,
+    and $\xi = \nu^n$ be the product measure.
+    Then with $(f_s)_{s=1}^n \sim \xi$, and $X_t$ chosen according to \ref{item:ts-adv:bad},
+    we have
+    \begin{align*}
+        \E\left[
+            \sum_{t=1}^n f_t(X_t) - \min_{x \in \cK} \sum_{t=1}^n f_t(x)
+            \right]
+        \geq \frac{n (1 - 2\epsilon)}{2}\,.
+    \end{align*}
+    \begin{proof}
+        Note that $f \in \sF_{\pb\pl}$ and is piecewise linear and minimized at $-1$ with $f(-1) = 0$, $f(0) = \epsilon$, and $f(1) = 1$.
+        On the other hand $g \in \sF_{\pb\pl}$ is the mirror image of $f$ and is minimized at $1$ with $g(1) = 0$, $g(0) = \epsilon$, and $g(-1) = 1$.
+        Since $\xi$ is the product measure, at time step $t$,
+        the observations $(X_1, Y_1), \ldots, (X_{t-1}, Y_{t-1})$ do not inference the distribution on
+        $f_t, \ldots, f_n$, which remains uniform on $\{f, g\}$.
+        Therefore, $X_t$ is chosen uniformly from $\{1, -1\}$ for all $t \in [n]$.
+        We have
+        \begin{align*}
+            \E\left[
+                \sum_{t=1}^n f_t(X_t) - \min_{x \in \cK} \sum_{t=1}^n f_t(x)
+                \right]
+             & =
+            \sum_{t=1}^n
+            \E\left[
+                f_t(X_t)\right]
+            -
+            \E\left[
+                \min_{x \in \cK} \sum_{t=1}^n f_t(x)
+                \right]
+            \\
+             & =
+            \sum_{t=1}^n
+            \frac{1}{2}
+            -
+            \E\left[
+                \min_{x \in \cK} \sum_{t=1}^n f_t(x)
+                \right]
+            \\
+             & =
+            \frac{n}{2}
+            -
+            \E\left[
+                \min_{x \in \cK} \sum_{t=1}^n f_t(x)
+                \right]
+            \,.
+        \end{align*}
+        It remains to bound $\E\left[
+                \min_{x \in \cK} \sum_{t=1}^n f_t(x)
+                \right]$.
+        We have
+        \begin{align*}
+            \E\left[
+                \min_{x \in \cK} \sum_{t=1}^n f_t(x)
+                \right]
+            \leq
+            \E\left[
+                \sum_{t=1}^n f_t(0)
+                \right]
+            =
+            n \epsilon\,,
+        \end{align*}
+        which by plugging back into previous display gives
+        \begin{align*}
+            \E\left[
+                \sum_{t=1}^n f_t(X_t) - \min_{x \in \cK} \sum_{t=1}^n f_t(x)
+                \right]
+            \geq \frac{n (1 - 2\epsilon)}{2}\,.
+        \end{align*}
+    \end{proof}
+\end{theorem}
 
-\begin{figure}[h!]
+\begin{figure}[t!]
     \centering
     \begin{tikzpicture}
         \begin{axis}[
@@ -3877,205 +3953,249 @@ is $\Omega(n)$.
 \end{figure}
 We do not know if the version of \ts{} defined in \ref{item:ts-adv:ok} has $\tilde O(\sqrt{n})$ Bayesian regret.
 % But \cite{BDKP15} note that at least naively the information-theoretic machinery is not suitable for analysing this algorithm.
-However, the following example shows that in general the adversarial version of the information ratio is not bounded.
-Because the loss function changes from round to round, the action $X_t$ may not minimize $f_t$. This must be reflected in the definition of the information
-ratio. Let $\xi$ be a probability measure on $\sF \times \cK$ and $\pi$ be a probability measure on $\cK$ and let
+However, the next theorem shows that in general the adversarial version of the information ratio is not bounded.
+Note that with \ts as defined in \ref{item:ts-adv:ok}, $X_t$ is not necessarily the minimizer of $f_t$,
+which must be reflected in the definition of the information ratio.
+For the rest of this chapter, we \textbf{redefine} $\xi$ to be a probability measure on $\sF \times \cK$ and $\pi$ be a probability measure on $\cK$ and let
 \begin{align*}
     \Delta(\pi, \xi) = \E[f(X) - f(X_\star)]  \qquad \text{ and } \qquad
     \I(\pi, \xi) = \E[(f(X) - \E[f(X)|X])^2]\,,
 \end{align*}
 where $(f, X_\star, X)$ has law $\xi \otimes \pi$.
-Thompson sampling as in \cref{item:ts-adv:ok} is the policy $\pi$ with the same law as $X_\star$. The claim is that in general it does not hold
-that
-\begin{align*}
-    \Delta(\pi, \xi) \leq \alpha + \sqrt{\beta \I(\pi, \xi)}\,,
-\end{align*}
-unless $\alpha$ is unreasonably large.
-Let $d = 1, \epsilon \in (0, 2^{-7}), \cK = [-1,1]$, and $f(x) = \epsilon + (1 - \epsilon) x^2$.
-Given $\theta \in [-1,1]$ let $f_\theta(x)$ be defined as
-\begin{align*}
-    f_\theta(x) = \begin{cases}
-                      (1-\epsilon) (\theta^2 + 2 (x - \theta)(\theta + \sqrt{\frac{\epsilon}{1-\epsilon}}))
-                           & \theta \leq x \leq \theta + \sqrt{\frac{\epsilon}{1-\epsilon}} \\
-                      (1-\epsilon) (\theta^2 + 2 (x - \theta)(\theta - \sqrt{\frac{\epsilon}{1-\epsilon}}))
-                           & \theta - \sqrt{\frac{\epsilon}{1-\epsilon}} \leq x < \theta    \\
-                      f(x) & \text{otherwise},
-                  \end{cases}
-\end{align*}
-which is convex and smaller than $f$ for all $x \in \cK$.
-Essentially, $f_\theta$ should be thought of as the largest convex function
-that is smaller than $f$ and has $f_\theta(\theta) = f(\theta) - \epsilon$
-(see \cref{fig:adversarial-lower-bound}).
-Moreover, an elementary calculation shows that $\max_{x \in \cK} |f(x) - f_\theta(x)| = \epsilon$ for all $\theta \in [-1,1]$.
-Let $\xi$ be the law of $(f_\theta, \theta)$ when $\theta$ is sampled uniformly from $[-1,1]$ and $\pi$ be uniform on $[-1,1]$ which is the \ts{}
-policy as defined in \ref{item:ts-adv:ok}.
-Then, by letting $\theta'$ be an i.i.d. copy of $\theta$ we have
-\begin{align*}
-    \Delta(\pi, \xi)
-     & =
-    \E\brak{
-        f_{\theta}(\theta') - f_\theta(\theta)
-    }
-    =
-    \E\brak{
-        f_{\theta}(\theta') - f(\theta)
-    } + \epsilon
-    =
-    \E\brak{
-        f_{\theta'}(\theta) - f(\theta)
-    } + \epsilon
-\end{align*}
-where the second equality follows from the definition of $f_\theta$ and the third equality follows from $f_\theta(\theta) = f(\theta) - \epsilon$.
-Next, we have
-\begin{align*}
-    \E\brak{
-        f_{\theta'}(\theta) - f(\theta)
-    }
-     & =
-    \E\brak{
-        \sind_{
-            \left\{
-            |\theta - \theta'| \leq \sqrt{\frac{\epsilon}{1-\epsilon}}
-            \right\}
-        }
-        \paren{
-            f_{\theta'}(\theta) - f(\theta)
-        }
-        +
-        \sind_{
-            \left\{
-            |\theta - \theta'| \geq \sqrt{\frac{\epsilon}{1-\epsilon}}
-            \right\}
-        }
-        \paren{
-            f_{\theta'}(\theta) - f(\theta)
-        }
-    }    \\
-     &
-    \explan{(a)}
-    =
-    \E\brak{
-        \sind_{
-            \left\{
-            |\theta - \theta'| \leq \sqrt{\frac{\epsilon}{1-\epsilon}}
-            \right\}
-        }
-        \paren{
-            f_{\theta'}(\theta) - f(\theta)
-        }
-    }
-    \\
-     &
-    \explan{(b)}
-    \geq
-    -
-    \mathbb{P}\paren{
-        |\theta - \theta'| \leq \sqrt{\frac{\epsilon}{1-\epsilon}}
-    }
-    \epsilon
-    \\
-     &
-    \explan{(c)}
-    \geq
-    -
-    2 \sqrt{\frac{\epsilon}{1-\epsilon}}
-    \epsilon\,,
-\end{align*}
-where \texttt{(a)} follows from the fact that $f_{\theta'}(\theta) = f(\theta)$
-if $|\theta - \theta'| \geq \sqrt{\frac{\epsilon}{1-\epsilon}}$;
-\texttt{(b)} follows from the fact that $f_{\theta'} \leq f(\theta)$
-and the fact that $\max_{x \in \cK} |f(x) - f_\theta(x)| = \epsilon$;
-and \texttt{(c)} follows from the fact that $\theta$ and $\theta'$ are i.i.d. on $[-1,1]$.
-Therefore,
-\begin{align*}
-    \Delta(\pi, \xi)
-    \geq
-    \epsilon \paren{1 - 2 \sqrt{\frac{\epsilon}{1-\epsilon}}}\,.
-\end{align*}
-Next, we turn our attention to $\I(\pi, \xi)$, which can be upper bounded as
-\begin{align*}
-    \I(\pi, \xi)
-     & =
-    \E\brak{
-        \paren{
-            f_{\theta'}(\theta) - \E\brak{f_{\theta'}(\theta)|\theta}
-        }^2
-    }
-    \\
-     &
-    \explan{(a)}
-    \leq
-    \E\brak{
-        \paren{
-            f_{\theta'}(\theta) - f(\theta)
-        }^2
-    }
-    \\
-     &
-    \explan{(b)}
-    \leq
-    \mathbb{P}\paren{
-        |\theta - \theta'| \leq \sqrt{\frac{\epsilon}{1-\epsilon}}
-    }
-    \epsilon^2
-    \\
-     &
-    \explan{(c)}
-    \leq
-    2 \epsilon^2\sqrt{\frac{\epsilon}{1-\epsilon}}\,,
-\end{align*}
-where \texttt{(a)} follows from the fact that the mean minimizes the squared deviation;
-\texttt{(b)} follows from the fact that $f_{\theta'}(\theta) = f(\theta)$
-if $|\theta - \theta'| \geq \sqrt{\frac{\epsilon}{1-\epsilon}}$;
-and \texttt{(c)} follows from the fact that $\theta$ and $\theta'$ are i.i.d. on $[-1,1]$.
-Therefore, by putting the two inequalities together we have
-\begin{align*}
-    \frac{
-        \Delta(\pi, \xi)
-    }{
-        \sqrt{\I(\pi, \xi)}
-    }
-    \geq
-    \frac{
-        \epsilon \paren{1 - 2 \sqrt{\frac{\epsilon}{1-\epsilon}}}
-    }{
-        \sqrt{2 \epsilon^2\sqrt{\frac{\epsilon}{1-\epsilon}}}
-    }
-    =
-    \frac{
-        1 - \sqrt{\frac{4\epsilon}{1-\epsilon}}
-    }{
-        \sqrt[4]{\frac{4\epsilon}{1-\epsilon}}
-    }
-    =
-    \sqrt[4]{\frac{1-\epsilon}{4\epsilon}}
-    -
-    \sqrt[4]{\frac{4\epsilon}{1-\epsilon}}\,,
-\end{align*}
-which can be further lower bounded by
-\begin{align*}
-    \frac{
-        \Delta(\pi, \xi)
-    }{
-        \sqrt{\I(\pi, \xi)}
-    }
-    \geq
-    \sqrt[4]{\frac{1-\epsilon}{4\epsilon}}
-    -
-    \sqrt[4]{\frac{4\epsilon}{1-\epsilon}}
-    \geq
-    \sqrt[4]{\frac{1}{4\epsilon} - \frac{1}{4}}
-    -
-    \sqrt[4]{8\epsilon}
-    \geq
-    \sqrt[4]{\frac{1}{8\epsilon}}
-    -
-    \sqrt[4]{8\epsilon}
-    \geq
-    \frac{1}{4}\epsilon^{-\frac14}\,,
-\end{align*}
-where the all inequalities follow from $\epsilon \in (0,2^{-7})$.
-Therefore, the information ratio is unbounded as $\epsilon \to 0$.
+Thompson sampling as defined in \ref{item:ts-adv:ok} is the law of $X_\star$.
+\begin{theorem}
+    Then there exists a probability measure $\xi \in \sP\left(\sF_{\pb\pl} \times \cK\right)$,
+    such that there doesn't exist any pair $(\alpha, \beta)$, with $\alpha \in [0, \tfrac{1}{100})$ and
+    $0 \leq \beta < \infty$ such that
+    \begin{align*}
+        \Delta(\pi, \xi) \leq \alpha + \sqrt{\beta \I(\pi, \xi)}\,.
+    \end{align*}
+    \begin{proof}
+        Let $\epsilon \in (0, \frac{1}{10})$ be a free parameter.
+        Let $d = 1, \cK = [-1,1]$, and $f(x) = \epsilon + (1 - \epsilon) x^2$.
+        Given $\theta \in [-1,1]$ let $f_\theta(x)$ be defined as the largest convex function
+        that is smaller than $f$ over $\cK$ and has $f_\theta(\theta) = f(\theta) - \epsilon$
+        (see \cref{fig:adversarial-lower-bound}).
+        The closed form of $f_\theta$ is given by
+        \begin{align*}
+            f_\theta(x) = \begin{cases}
+                              (1-\epsilon) (\theta^2 + 2 (x - \theta)(\theta + \sqrt{\frac{\epsilon}{1-\epsilon}})),
+                                    & \theta \leq x \leq \theta + \sqrt{\frac{\epsilon}{1-\epsilon}}; \\
+                              (1-\epsilon) (\theta^2 + 2 (x - \theta)(\theta - \sqrt{\frac{\epsilon}{1-\epsilon}})),
+                                    & \theta - \sqrt{\frac{\epsilon}{1-\epsilon}} \leq x < \theta;    \\
+                              f(x), & \text{otherwise}.
+                          \end{cases}
+        \end{align*}
+        Moreover, an elementary calculation shows that $\max_{x \in \cK} |f(x) - f_\theta(x)| = \epsilon$ for all $\theta \in [-1,1]$.
+
+        First, we lower bound $\Delta(\pi, \xi)$.
+        Let $\xi$ be the law of $(f_\theta, \theta)$ when $\theta$ is sampled uniformly from $[-1,1]$ and $\pi$ be uniform on $[-1,1]$ which is the \ts{}
+        policy as defined in \ref{item:ts-adv:ok}.
+
+        Then, by letting $\theta'$ be an i.i.d. copy of $\theta$ we have
+        \begin{align*}
+            \Delta(\pi, \xi)
+             & =
+            \E\brak{
+                f_{\theta}(\theta') - f_\theta(\theta)
+            }
+            =
+            \E\brak{
+                f_{\theta}(\theta') - f(\theta)
+            } + \epsilon
+            =
+            \E\brak{
+                f_{\theta'}(\theta) - f(\theta)
+            } + \epsilon
+        \end{align*}
+        where the second equality follows $f_\theta(\theta) = f(\theta) - \epsilon$,
+        and the third equality follows from the fact that $\theta$ and $\theta'$ are i.i.d.
+        Next, we have
+        \begin{align*}
+            \E\brak{
+                f_{\theta'}(\theta) - f(\theta)
+            }
+             & =
+            \E\brak{
+                \sind_{
+                    \left\{
+                    |\theta - \theta'| \leq \sqrt{\frac{\epsilon}{1-\epsilon}}
+                    \right\}
+                }
+                \paren{
+                    f_{\theta'}(\theta) - f(\theta)
+                }
+                +
+                \sind_{
+                    \left\{
+                    |\theta - \theta'| \geq \sqrt{\frac{\epsilon}{1-\epsilon}}
+                    \right\}
+                }
+                \paren{
+                    f_{\theta'}(\theta) - f(\theta)
+                }
+            }    \\
+             &
+            \explan{(a)}
+            =
+            \E\brak{
+                \sind_{
+                    \left\{
+                    |\theta - \theta'| \leq \sqrt{\frac{\epsilon}{1-\epsilon}}
+                    \right\}
+                }
+                \paren{
+                    f_{\theta'}(\theta) - f(\theta)
+                }
+            }
+            \\
+             &
+            \explan{(b)}
+            \geq
+            -
+            \mathbb{P}\paren{
+                |\theta - \theta'| \leq \sqrt{\frac{\epsilon}{1-\epsilon}}
+            }
+            \epsilon
+            \\
+             &
+            \explan{(c)}
+            \geq
+            -
+            2 \sqrt{\frac{\epsilon}{1-\epsilon}}
+            \epsilon\,,
+        \end{align*}
+        where \texttt{(a)} follows from the fact that $f_{\theta'}(\theta) = f(\theta)$
+        if $|\theta - \theta'| > \sqrt{\frac{\epsilon}{1-\epsilon}}$;
+        \texttt{(b)} follows from the fact that $f_{\theta'} \leq f$
+        and the fact that $\max_{x \in \cK} |f(x) - f_\theta(x)| = \epsilon$;
+        and \texttt{(c)} follows from the fact that $\theta$ and $\theta'$ are i.i.d. on $[-1,1]$.
+        Therefore,
+        \begin{align}
+            \Delta(\pi, \xi)
+            \geq
+            \epsilon \paren{1 - 2 \sqrt{\frac{\epsilon}{1-\epsilon}}}
+            \geq
+            \epsilon \paren{1 - 2 \sqrt{\frac{\tfrac{1}{10}}{\tfrac{9}{10}}}}
+            \geq \frac{\epsilon}{3}
+            \,,
+            \label{eq:adv-D-lower}
+        \end{align}
+        where the second inequality follows from the fact that $\left(1 - 2 \sqrt{\frac{\epsilon}{1-\epsilon}}\right)$ is decreasing in $\epsilon$ and $\epsilon \leq \frac{1}{10}$.
+
+        Next, we turn our attention to $\I(\pi, \xi)$, which can be upper bounded as
+        \begin{align}
+            \I(\pi, \xi)
+             & =
+            \E\brak{
+                \paren{
+                    f_{\theta'}(\theta) - \E\brak{f_{\theta'}(\theta)|\theta}
+                }^2
+            }
+            \nonumber
+            \\
+             &
+            \explan{(a)}
+            \leq
+            \E\brak{
+                \paren{
+                    f_{\theta'}(\theta) - f(\theta)
+                }^2
+            }
+            \nonumber
+            \\
+             &
+            \explan{(b)}
+            \leq
+            \mathbb{P}\paren{
+                |\theta - \theta'| \leq \sqrt{\frac{\epsilon}{1-\epsilon}}
+            }
+            \epsilon^2
+            \nonumber
+            \\
+             &
+            \explan{(c)}
+            \leq
+            2 \epsilon^2\sqrt{\frac{\epsilon}{1-\epsilon}}
+            \explan{(d)}
+            \leq
+            4 \epsilon^{2.5}\,,
+            \label{eq:adv-I-upper}
+        \end{align}
+        where \texttt{(a)} follows from the fact that the mean minimizes the squared deviation;
+        \texttt{(b)} follows from the fact that $f_{\theta'}(\theta) = f(\theta)$
+        if $|\theta - \theta'| > \sqrt{\frac{\epsilon}{1-\epsilon}}$;
+        \texttt{(c)} follows from the fact that $\theta$ and $\theta'$ are i.i.d. on $[-1,1]$,
+        and \texttt{(d)} follows from the fact that $\sqrt{1/\epsilon} \leq 2$ for $\epsilon \in (0, \frac{1}{10})$.
+
+        Recall that $\alpha \in (0, \frac{1}{100})$, which implies that
+        $\alpha \leq \epsilon^{1.25}$. For
+        \begin{align*}
+            \Delta(\pi, \xi) \leq \alpha + \sqrt{\beta \I(\pi, \xi)}\,,
+        \end{align*}
+        to hold, it is required by \cref{eq:adv-D-lower,eq:adv-I-upper}that
+        \begin{align*}
+            \frac{\epsilon}{3} & \leq \alpha + \sqrt{4 \beta \epsilon^{2.5}}
+            \Rightarrow
+            \frac{\epsilon}{3} & \leq \alpha + 2  \epsilon^{1.25} \sqrt{\beta}\,,
+        \end{align*}
+        which by upper bounding $\alpha$ gives
+        \begin{align*}
+            \frac{\epsilon}{3} & \leq \epsilon^{1.25} \left(1 + 2\sqrt{\beta}\right)\,,
+            \Rightarrow
+            \epsilon^{- 0.25} \leq 3\left(1 + 2\sqrt{\beta}\right)\,,
+        \end{align*}
+        which as the choice of $\epsilon$ is arbitrary in $(0, \frac{1}{10})$ means that $\beta$ must be unbounded.
+    \end{proof}
+\end{theorem}
+% Therefore, by putting the two inequalities together we have
+% \begin{align*}
+%     \frac{
+%         \Delta(\pi, \xi)
+%     }{
+%         \sqrt{\I(\pi, \xi)}
+%     }
+%     \geq
+%     \frac{
+%         \epsilon \paren{1 - 2 \sqrt{\frac{\epsilon}{1-\epsilon}}}
+%     }{
+%         \sqrt{2 \epsilon^2\sqrt{\frac{\epsilon}{1-\epsilon}}}
+%     }
+%     =
+%     \frac{
+%         1 - \sqrt{\frac{4\epsilon}{1-\epsilon}}
+%     }{
+%         \sqrt[4]{\frac{4\epsilon}{1-\epsilon}}
+%     }
+%     =
+%     \sqrt[4]{\frac{1-\epsilon}{4\epsilon}}
+%     -
+%     \sqrt[4]{\frac{4\epsilon}{1-\epsilon}}\,,
+% \end{align*}
+% which can be further lower bounded by
+% \begin{align*}
+%     \frac{
+%         \Delta(\pi, \xi)
+%     }{
+%         \sqrt{\I(\pi, \xi)}
+%     }
+%     \geq
+%     \sqrt[4]{\frac{1-\epsilon}{4\epsilon}}
+%     -
+%     \sqrt[4]{\frac{4\epsilon}{1-\epsilon}}
+%     \geq
+%     \sqrt[4]{\frac{1}{4\epsilon} - \frac{1}{4}}
+%     -
+%     \sqrt[4]{8\epsilon}
+%     \geq
+%     \sqrt[4]{\frac{1}{8\epsilon}}
+%     -
+%     \sqrt[4]{8\epsilon}
+%     \geq
+%     \frac{1}{4}\epsilon^{-\frac14}\,,
+% \end{align*}
+% where the all inequalities follow from $\epsilon \in (0,2^{-7})$.
+% Therefore, the information ratio is unbounded as $\epsilon \to 0$.
 
 \chapter{Discussion}
 In this thesis, we explored the performance of Thompson sampling (\ts) for Bayesian bandit convex optimization (\bco), revealing a nuanced picture of its capabilities.
